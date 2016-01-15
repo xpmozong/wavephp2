@@ -138,7 +138,7 @@ class Controller
      */
     public function verifyCode($key = 'verifycode', $num = 4, $width = 130, $height = 40, $expire = 600)
     {
-        require Wave::app()->frameworkPath.'captcha/VerifyCode.class.php';
+        // require Wave::app()->frameworkPath.'captcha/VerifyCode.class.php';
         $VerifyCode = new VerifyCode();
         $VerifyCode->codelen = $num;
         $VerifyCode->width = $width;

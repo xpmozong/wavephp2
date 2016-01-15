@@ -20,7 +20,15 @@
     },
     "autoload": {
         "classmap": [
-            "framework/Wave.php"
+            "framework/cache",
+            "framework/captcha",
+            "framework/core",
+            "framework/db",
+            "framework/language",
+            "framework/session",
+            "framework/web",
+            "framework/Wave.php",
+            "framework/Base.php"
         ]
     }
 }

@@ -31,7 +31,7 @@ class View
      */
     public function __construct(){
         $app = Wave::app();
-        require $app->frameworkPath.'Library/Smarty/Smarty.class.php';
+        // require $app->frameworkPath.'Library/Smarty/Smarty.class.php';
         $dir = $app->projectPath.$app->projectName;
 
         $config = Wave::app()->config['smarty'];

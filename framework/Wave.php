@@ -42,19 +42,18 @@ class Wave
      */
     public function __construct($configfile = null)
     {
-        echo $configfile;die;
-        // global $config;
-        // require dirname(__FILE__).'/Base.php';
-        // if(empty($config) && file_exists($configfile)) {
-        //     require $configfile;
-        // }
-        // $this->config = $config;
-        // $this->Base = Base::getInstance();
-        // $this->Base->init($this->config);
+        global $config;
+        require dirname(__FILE__).'/Base.php';
+        if(empty($config) && file_exists($configfile)) {
+            require $configfile;
+        }
+        $this->config = $config;
+        $this->Base = Base::getInstance();
+        $this->Base->init($this->config);
         // $this->Base->requireFrameworkFile('Cache/Cache_Interface');
         // $this->Base->requireFrameworkFile('Core/WaveLoader');
         // spl_autoload_register(array('WaveLoader', 'loader'));
-        // self::$app = $this->Base->app();
+        self::$app = $this->Base->app();
     }
 
     /**
