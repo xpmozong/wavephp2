@@ -1,5 +1,5 @@
 {
-    "name": "wavephp/wavephp",
+    "name": "xpmozong/wavephp2",
     "type": "framework",
     "description": "PHP framework",
     "keywords": ["PHP framework"],
@@ -21,10 +21,5 @@
         "classmap": [
             
         ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.0.x-dev"
-        }
     }
 }
