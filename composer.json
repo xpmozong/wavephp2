@@ -1,0 +1,30 @@
+{
+    "name": "wavephp/wavephp",
+    "type": "framework",
+    "description": "PHP framework",
+    "keywords": ["PHP framework"],
+    "homepage": "http://www.37study.com",
+    "license": "wavephp-2.0",
+    "authors": [
+        {
+            "name": "xuping",
+            "email": "361131953@qq.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/xpmozong/wavephp2.0/issues"
+    },
+    "require": {
+        "php": ">=5.2"
+    },
+    "autoload": {
+        "classmap": [
+            
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}
