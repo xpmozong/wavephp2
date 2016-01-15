@@ -12,7 +12,7 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/xpmozong/wavephp2.0/issues"
+        "issues": "https://github.com/xpmozong/wavephp2/issues"
     },
     "require": {
         "php": ">=5.2"
