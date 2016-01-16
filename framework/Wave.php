@@ -31,7 +31,6 @@ if (function_exists('memory_get_usage'))
 class Wave
 {
     public $Base            = null;
-    public $Import          = null;
     public $config          = array();
     public static $app      = array();
     public static $_debug   = array();

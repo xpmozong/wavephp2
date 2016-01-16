@@ -30,7 +30,6 @@ class Base
     private static $pathInfo;           // 除域名外以及index.php
     private static $homeUrl;            // 除域名外的地址
     private static $baseUrl;            // 除域名外的根目录地址
-    private static $import;             // 需要加载的文件夹
     private static $config;             // 配置项目
     private static $defaultControl;     // 默认控制层
     
@@ -57,8 +56,6 @@ class Base
         self::$projectName = !empty($config['projectName']) ? $config['projectName'] : 'protected';
 
         self::$modelName = !empty($config['modelName']) ? $config['modelName'] : 'protected';
-
-        self::$import = !empty($config['import']) ? $config['import'] : '';
 
         self::$defaultControl = !empty($config['defaultController']) 
             ? $config['defaultController'] : 'site';
@@ -92,7 +89,7 @@ class Base
         }else{
             self::$pathInfo = 
                 isset($_SERVER['PATH_INFO']) 
-                ? strtolower($_SERVER['PATH_INFO']) : '/site/index';
+                ? strtolower($_SERVER['PATH_INFO']) : '/'.self::$defaultControl.'/index';
 
             self::$homeUrl = 
                 isset($_SERVER['SCRIPT_NAME']) 
@@ -120,7 +117,6 @@ class Base
         $parameter['homeUrl']           = self::$homeUrl;
         $parameter['defaultControl']    = self::$defaultControl;
         $parameter['config']            = self::$config;
-        $parameter['import']            = self::$import;
         $request['hostInfo']            = self::$hostInfo;
         $request['pathInfo']            = self::$pathInfo;
         $request['baseUrl']             = self::$baseUrl;
@@ -139,7 +135,6 @@ class Base
         self::$projectPath      = '';
         self::$projectName      = '';
         self::$config           = '';
-        self::$import           = '';
         self::$hostInfo         = '';
         self::$pathInfo         = '';
         self::$homeUrl          = '';
