@@ -15,11 +15,11 @@
         "issues": "https://github.com/xpmozong/wavephp2/issues"
     },
     "require": {
-        "php": ">=5.2",
-        "smarty/smarty": "~3.1"
+        "php": ">=5.2"
     },
     "autoload": {
         "classmap": [
+            "framework/smarty/Smarty.class.php",
             "framework/cache",
             "framework/captcha",
             "framework/core",
