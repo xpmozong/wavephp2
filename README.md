@@ -4,7 +4,7 @@ composer.json 配置
 
     {
         "require": {
-            "xpmozong/wavephp2": "^1.7"
+            "xpmozong/wavephp2": "^1.8"
         }
     }
 
