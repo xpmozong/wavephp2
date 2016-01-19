@@ -18,7 +18,7 @@
  * @link http://smarty.php.net/manual/en/language.modifier.cat.php cat
  *          (Smarty online manual)
  * @author   Monte Ohrt <monte at ohrt dot com>
- * @version 1.0
+ * @Version 2.0
  * @param string
  * @param string
  * @return string
