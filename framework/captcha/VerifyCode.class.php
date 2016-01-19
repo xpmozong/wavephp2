@@ -38,7 +38,7 @@ class VerifyCode
     public function __construct()
     {
         $path = Wave::app()->frameworkPath;
-        $this->font = $path.'Library/Captcha/font/Elephant.ttf';
+        $this->font = $path.'captcha/font/Elephant.ttf';
     }
 
     /**
