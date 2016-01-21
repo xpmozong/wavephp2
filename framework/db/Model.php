@@ -700,8 +700,12 @@ class Model
      * @return bool
      *
      */
-    public function insert($data)
+    public function insert($data, $cache_key = '')
     {
+        if (!empty($cache_key) && is_object($this->cache)){
+            $this->cache->delete($cache_key);
+        }
+
         $tableName = $this->getTableName();
         if($this->getDb()->insertdb($tableName, $data)){
             return $this->getDb()->insertId();
@@ -722,11 +726,12 @@ class Model
      */
     public function update($data, $where, $cache_key = '')
     {
-        $tableName = $this->getTableName();
         if(!isset($where) || !is_array($where) ) exit('参数错误');
         if (!empty($cache_key) && is_object($this->cache)){
             $this->cache->delete($cache_key);
         }
+
+        $tableName = $this->getTableName();
         $this->where($where);
         $conditions = implode(' ', $this->_where);
 
@@ -755,11 +760,12 @@ class Model
      */
     public function delete($where, $cache_key = '')
     {
-        $tableName = $this->getTableName();
         if(!isset($where) || !is_array($where) ) exit('参数错误');
         if (!empty($cache_key) && is_object($this->cache)){
             $this->cache->delete($cache_key);
         }
+
+        $tableName = $this->getTableName();
         $this->where($where);
         $conditions = implode(' ', $this->_where);
         $this->getDb()->delete($tableName, $conditions);
