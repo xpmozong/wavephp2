@@ -94,7 +94,7 @@ class WaveCommon
     }
 
     /**
-     * 过滤
+     * 加转义
      * @param array $data   需过滤的数组
      * @return array        过滤数组
      */

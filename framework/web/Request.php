@@ -157,7 +157,7 @@ class Request
     }
 
     /**
-     *获得参数 加转义
+     * 获得参数 加转义
      *
      * @param string $key
      * @return string
