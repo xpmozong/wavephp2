@@ -4,8 +4,14 @@ composer.json 配置
 
     {
         "require": {
-            "xpmozong/wavephp2": "^1.8"
-        }
+            "xpmozong/wavephp2": "*"
+        },
+        "repositories": [
+            {
+                "type": "vcs",
+                "url": "https://github.com/xpmozong/wavephp2"
+            }
+        ]
     }
 
 
