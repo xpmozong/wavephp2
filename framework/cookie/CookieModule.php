@@ -42,6 +42,7 @@ class CookieModule
      */
     public function setState($key, $val, $expire = 0)
     {
+        $val = json_encode($val);
         if (!empty($this->domain)) {
             setcookie($key, $val, time() + $this->lifeTime, $this->domain);
         }else{
@@ -64,7 +65,7 @@ class CookieModule
             $txt = $_COOKIE[$key];
         }
 
-        return $txt;
+        return json_decode($txt, true);
     }
 
     /**
