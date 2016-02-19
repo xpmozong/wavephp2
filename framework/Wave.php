@@ -60,6 +60,7 @@ class Wave
         $this->loadMemcache();
         $this->loadRedis();
         $this->loadSession();
+        $this->loadCookie();
         self::$Route = new Route();
         self::$Route->route();
         $this->Base->clear();
@@ -124,6 +125,18 @@ class Wave
                              array(&$session,"gc"));
 
                 self::$app->session = $session;
+            }
+        }
+    }
+
+    /**
+     * COOKIE
+     */
+    private function loadCookie()
+    {
+        if(!empty(self::$app->config)){
+            if(isset(self::$app->config['cookie'])){
+                self::$app->cookie = new CookieModule();
             }
         }
     }
