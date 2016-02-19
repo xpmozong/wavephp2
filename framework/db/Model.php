@@ -346,6 +346,28 @@ class Model
     }
 
     /**
+     * 过滤
+     */
+    public function safe_replace($string) 
+    {
+        $string = str_replace('%20','',$string);
+        $string = str_replace('%27','',$string);
+        $string = str_replace('%2527','',$string);
+        $string = str_replace('*','',$string);
+        $string = str_replace('"','"',$string);
+        $string = str_replace("'",'',$string);
+        $string = str_replace('"','',$string);
+        $string = str_replace(';','',$string);
+        $string = str_replace('<','<',$string);
+        $string = str_replace('>','>',$string);
+        $string = str_replace("{",'',$string);
+        $string = str_replace('}','',$string);
+        $string = str_replace('\\','',$string);
+        
+        return $string;
+    } 
+
+    /**
      * 模糊查询
      *
      * @param array $where      条件数组
@@ -360,21 +382,18 @@ class Model
     {
         if (!empty($where) && is_array($where)) {
             foreach ( $where as $k => $v ) {
-                $prefix = (count($this->_like) == 0) ? '' : $type.' ';
+                $v = $this->safe_replace($v);
+                $prefix = (count($this->_like) == 0) ? '' : ' '.$type.' ';
                 $not = ($not) ? ' NOT' : '';
                 $arr = array();
-                $v = str_replace("+", " ", $v);
-                $values = explode( ' ', $v );
-                foreach ( $values as $value ) {
-                    if ( $like == 'left' ) {
-                        $keyword = "'%{$value}'";
-                    }else if ( $like == 'right' ) {
-                        $keyword = "'{$value}%'";
-                    }else {
-                        $keyword = "'%{$value}%'";
-                    }
-                    $arr[] =  $k . $not.' LIKE '.$keyword;
+                if ( $like == 'left' ) {
+                    $keyword = "'%{$v}'";
+                }else if ( $like == 'right' ) {
+                    $keyword = "'{$v}%'";
+                }else {
+                    $keyword = "'%{$v}%'";
                 }
+                $arr[] =  $k . $not.' LIKE '.$keyword;
                 $this->_like[] = $prefix .'('.  implode(" OR ", $arr) . ') ';
             }
         }
