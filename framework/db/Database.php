@@ -21,7 +21,7 @@
  *
  */
 abstract class Database {
-
+    public static $db;
     /**
      * 工厂方法
      *
@@ -39,7 +39,7 @@ abstract class Database {
         }
         
         $class = ucfirst($driver);
-        $db = new $class($option);
+        $db = self::$db[$dbname] = new $class($option);
         
         return $db;
     }
