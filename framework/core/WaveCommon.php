@@ -23,6 +23,60 @@
 class WaveCommon
 {
     /**
+     * 发送邮件函数
+     *
+     * @param string $to            发送对方  多个以英文逗号分开
+     * @param string $subject       标题
+     * @param string $body          内容
+     * @param bool $isHTML          是否为html页 默认为true
+     * @param string $fromName      来源名称 默认为wavephp
+     * @param string $attachment    可以添加附件，绝对路径 默认为空
+     * @param int $wordWrap         设置每行字符串的长度 默认为80
+     * @param string $charSet       设置邮件的字符编码，默认为UTF-8
+     * @param int $SMTPAuth         开启认证 默认为true
+     * 
+     * @return bool true为成功
+     *
+     */
+    public static function sendMail($to         = '', 
+                                    $subject    = '', 
+                                    $body       = '',
+                                    $isHTML     = true,
+                                    $fromName   = 'wavephp',
+                                    $attachment = '',
+                                    $wordWrap   = 80,
+                                    $charSet    = 'UTF-8',
+                                    $SMTPAuth   = true)
+    {
+        $mail_config = Wave::app()->config['mail_config'];
+        try {
+            $mail = new PHPMailer(true); 
+            $mail->IsSMTP();
+            $mail->CharSet    = $charSet;   // 设置邮件的字符编码，这很重要，不然中文乱码
+            $mail->SMTPAuth   = $SMTPAuth;  // 开启认证
+            $mail->Port       = $mail_config['port'];
+            $mail->Host       = $mail_config['host'];
+            $mail->Username   = $mail_config['username'];
+            $mail->Password   = $mail_config['password'];
+            $mail->From       = $mail_config['username'];
+            $mail->FromName   = $fromName;
+            $mail->Subject    = $subject;
+            $mail->Body       = $body;
+            $mail->WordWrap   = $wordWrap;
+            $mail->AddAddress($to);
+            if (!empty($attachment)) {
+                $mail->AddAttachment($attachment);
+            }
+            $mail->IsHTML(true); 
+            $mail->Send();
+            
+            return true;
+        } catch (phpmailerException $e) {
+            return 'send mail failure: '.$e->errorMessage();
+        }
+    }
+
+    /**
      * curl
      * @param string    $url        地址
      * @param string    $method     方法

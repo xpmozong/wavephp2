@@ -26,6 +26,7 @@
             "framework/core",
             "framework/db",
             "framework/language",
+            "framework/mail",
             "framework/session",
             "framework/web",
             "framework/Wave.php",
