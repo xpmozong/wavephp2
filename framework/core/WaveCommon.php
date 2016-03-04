@@ -28,9 +28,9 @@ class WaveCommon
      * @param string $to            发送对方  多个以英文逗号分开
      * @param string $subject       标题
      * @param string $body          内容
-     * @param bool $isHTML          是否为html页 默认为true
      * @param string $fromName      来源名称 默认为wavephp
      * @param string $attachment    可以添加附件，绝对路径 默认为空
+     * @param bool $isHTML          是否为html页 默认为true
      * @param int $wordWrap         设置每行字符串的长度 默认为80
      * @param string $charSet       设置邮件的字符编码，默认为UTF-8
      * @param int $SMTPAuth         开启认证 默认为true
@@ -41,9 +41,9 @@ class WaveCommon
     public static function sendMail($to         = '', 
                                     $subject    = '', 
                                     $body       = '',
-                                    $isHTML     = true,
                                     $fromName   = 'wavephp',
                                     $attachment = '',
+                                    $isHTML     = true,
                                     $wordWrap   = 80,
                                     $charSet    = 'UTF-8',
                                     $SMTPAuth   = true)
@@ -63,7 +63,10 @@ class WaveCommon
             $mail->Subject    = $subject;
             $mail->Body       = $body;
             $mail->WordWrap   = $wordWrap;
-            $mail->AddAddress($to);
+            $toArr = explode(',', $to);
+            foreach ($toArr as $key => $toUser) {
+                $mail->AddAddress($toUser);
+            }
             if (!empty($attachment)) {
                 $mail->AddAttachment($attachment);
             }
