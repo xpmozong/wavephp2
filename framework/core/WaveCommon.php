@@ -184,14 +184,19 @@ class WaveCommon
      * @param bool $code        错误码
      * @param string $msg       信息
      */
-    public static function exportResult($code, $msg, $data = array())
+    public static function exportResult($code, $msg, $data = array(), $callback = null)
     {
         $json_array = array();
         $json_array['code'] = $code;
         $json_array['msg'] = $msg;
         $json_array['data'] = $data;
-        echo json_encode($json_array);
+        if (!empty($callback)) {
+            echo $callback.'('.json_encode($json_array).')';
+        } else {
+            echo json_encode($json_array);
+        }
         unset($json_array);die;
     }
+
 }
 ?>
