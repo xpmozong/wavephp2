@@ -198,5 +198,23 @@ class WaveCommon
         unset($json_array);die;
     }
 
+    /** 
+     * 循环创建目录
+     * 
+     * @param string $dir 文件夹
+     * @param $mode 文件夹权限
+     *
+     * @return bool
+     * 
+     */ 
+    public static function mkDir($dir, $mode = 0777) 
+    { 
+        if($dir == '') return true;
+        if (is_dir($dir) || @mkdir($dir,$mode)) return true; 
+        if (!WaveCommon::mkDir(dirname($dir),$mode)) return false;
+
+        return @mkdir($dir,$mode); 
+    }
+    
 }
 ?>
