@@ -23,7 +23,7 @@
 class Cache_Redis implements Cache_Interface 
 {
     protected $cacheArray = array();
-    protected $cache_name = null;
+    public $cache_name = null;
 
     public function __construct($came = 'redis') 
     {

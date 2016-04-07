@@ -25,7 +25,7 @@ class Cache_Memcached implements Cache_Interface
     public $pconnect = true;
     public $lifetime = 3600;
     protected $cacheArray = array();
-    protected $cache_name = null;
+    public $cache_name = null;
 
     public function __construct($came = 'memcached') 
     {
