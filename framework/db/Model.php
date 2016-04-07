@@ -688,7 +688,8 @@ class Model
     public function getAll($field = '*', $where = array(), $cache_key = '', $exp = 0)
     {
         if (!empty($cache_key) && is_object($this->cache)) {
-            if ($rs = $this->cache->get($cache_key)) {
+            $rs = $this->cache->get($cache_key);
+            if ($rs) {
                 $res = json_decode($rs, true);
                 $this->resetSelect();
                 return $res;
@@ -739,7 +740,8 @@ class Model
     public function getOne($field = '*', $where = null, $cache_key = '', $exp = 0)
     {
         if (!empty($cache_key) && is_object($this->cache)) {
-            if ($rs = $this->cache->get($cache_key)) {
+            $rs = $this->cache->get($cache_key);
+            if ($rs) {
                 $res = json_decode($rs, true);
                 $this->resetSelect();
                 return $res;
