@@ -61,12 +61,12 @@ class RedisCluster
         if($isMaster){
             $this->_linkHandle['master'] = new Redis();
             $ret = $this->_linkHandle['master']
-                        ->connect($config['host'],$config['port']);
+                        ->connect($config['host'],$config['port'],1);
         }else{
             // 多个 Slave 连接
             $this->_linkHandle['slave'][$this->_sn] = new Redis();
             $ret = $this->_linkHandle['slave'][$this->_sn]
-                        ->connect($config['host'],$config['port']);
+                        ->connect($config['host'],$config['port'],1);
             ++$this->_sn;
         }
         return $ret;

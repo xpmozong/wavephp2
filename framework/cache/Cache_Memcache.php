@@ -21,8 +21,6 @@
  *
  */
 class Cache_Memcache implements Cache_Interface {
-
-    protected $hosts = array();
     protected $pconnect = true;
     protected $lifetime = 3600;
     protected $cacheArray = array();
@@ -39,14 +37,16 @@ class Cache_Memcache implements Cache_Interface {
         if (extension_loaded('memcache') == false ) {
             exit('extension memcache not found!');
         }
-        $this->hosts = Wave::app()->config[$this->cache_name];
+        $hosts = Wave::app()->config[$this->cache_name];
         $this->cacheArray[$this->cache_name] = new Memcache();
         
         $i = 1;
-        foreach ($this->hosts as $key => $value) {
+        foreach ($hosts as $key => $value) {
             if ($i == 1) {
-                if (!$this->cacheArray[$this->cache_name]->connect($value['host'], $value['port'])) {
-                    throw new Exception('memcahce server '.$value['host'].':'.$value['port'].' connection faild.');
+                if (!@$this->cacheArray[$this->cache_name]->connect($value['host'], $value['port'])) {
+                    // throw new Exception('memcahce server '.$value['host'].':'.$value['port'].' connection faild.');
+                    $this->cacheArray = null;
+                    $this->cache_name = null;
                 }
             } else {
                 $this->cacheArray[$this->cache_name]->addServer($value['host'], $value['port']);

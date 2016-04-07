@@ -91,6 +91,9 @@ class Wave
                 }else{
                     self::$app->memcache = new Cache_Memcache();
                 }
+                if (empty(self::$app->memcache->cacheArray)) {
+                    self::$app->memcache = null;
+                }
             }
         }
     }
@@ -103,6 +106,9 @@ class Wave
         if(empty(self::$app->redis)){
             if(!empty(self::$app->config['redis'])){
                 self::$app->redis = new Cache_Redis();
+                if (empty(self::$app->redis->cacheArray)) {
+                    self::$app->redis = null;
+                }
             }
         }
     }

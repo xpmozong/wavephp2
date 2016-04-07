@@ -22,8 +22,6 @@
  */
 class Cache_Memcached implements Cache_Interface 
 {
-
-    public $hosts = array();
     public $pconnect = true;
     public $lifetime = 3600;
     protected $cacheArray = array();
@@ -40,18 +38,20 @@ class Cache_Memcached implements Cache_Interface
         if (extension_loaded('memcached') == false ) {
             exit('extension memcached not found!');
         }
-        $this->hosts = Wave::app()->config[$this->cache_name];
+        $hosts = Wave::app()->config[$this->cache_name];
         $this->cacheArray[$this->cache_name] = new Memcached();
 
         $this->cacheArray[$this->cache_name]->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
         $i = 0;
         $servers = array();
-        foreach ($this->hosts as $key => $value) {
+        foreach ($hosts as $key => $value) {
             $servers[$i] = array($value['host'], $value['port'], $i);
             $i++;
         }
         if (!$this->cacheArray[$this->cache_name]->addServers($servers)) {
-            throw new Exception('memcahced server '.json_encode($servers).' connection faild.');
+            // throw new Exception('memcahced server '.json_encode($servers).' connection faild.');
+            $this->cacheArray = null;
+            $this->cache_name = null;
         }
     }
 

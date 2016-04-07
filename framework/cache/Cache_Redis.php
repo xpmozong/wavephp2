@@ -36,31 +36,39 @@ class Cache_Redis implements Cache_Interface
         if (extension_loaded('redis') == false ) {
             exit('extension redis not found!');
         }
-        $this->hosts = Wave::app()->config[$this->cache_name];
-        if (isset($this->hosts['slave'])) {
+        $hosts = Wave::app()->config[$this->cache_name];
+        if (isset($hosts['slave'])) {
             $this->cacheArray[$this->cache_name] = new RedisCluster(true);
             $ret1 = $this->cacheArray[$this->cache_name]->connect(array(
-                                        'host'=>$this->hosts['master']['host'], 
-                                        'port'=>$this->hosts['master']['port']), true);
-            if (!$ret1) {
-                throw new Exception('redis server '.$this->hosts['master']['host'].':'.
-                    $this->hosts['master']['port'].' connection faild.');
-            }
-            foreach ($this->hosts['slave'] as $key => $value) {
-                $ret = $this->cacheArray[$this->cache_name]->connect(array(
-                                            'host'=>$value['host'],
-                                            'port'=>$value['port']), false);
-                if (!$ret) {
-                    throw new Exception('redis server '.$value['host'].':'.$value['port'].' connection faild.');
+                                        'host'=>$hosts['master']['host'], 
+                                        'port'=>$hosts['master']['port']), true);
+            // if (!$ret1) {
+            //     throw new Exception('redis server '.$this->hosts['master']['host'].':'.$this->hosts['master']['port'].' connection faild.');
+            // }
+            if ($ret1) {
+                foreach ($hosts['slave'] as $key => $value) {
+                    $ret = $this->cacheArray[$this->cache_name]->connect(array(
+                                                'host'=>$value['host'],
+                                                'port'=>$value['port']), false);
+                    if (!$ret) {
+                        // throw new Exception('redis server '.$value['host'].':'.$value['port'].' connection faild.');
+                        $this->cacheArray = null;
+                        $this->cache_name = null;
+                    }
                 }
+            }else{
+                $this->cacheArray = null;
+                $this->cache_name = null;
             }
         }else{
             $this->cacheArray[$this->cache_name] = new RedisCluster(false);
             $ret = $this->cacheArray[$this->cache_name]->connect(array(
-                                        'host'=>$this->hosts['master']['host'], 
-                                        'port'=>$this->hosts['master']['port']) );
+                                        'host'=>$hosts['master']['host'], 
+                                        'port'=>$hosts['master']['port']));
             if (!$ret) {
-                throw new Exception('redis server '.$value['host'].':'.$value['port'].' connection faild.');
+                // throw new Exception('redis server '.$value['host'].':'.$value['port'].' connection faild.');
+                $this->cacheArray = null;
+                $this->cache_name = null;
             }
         }
     }
