@@ -35,8 +35,13 @@ abstract class Db_Abstract
             return true;
         }
         $this->conn[$tag] = $this->_connect($tag);
+        $wconfig = Wave::app()->config;
         if (!$this->conn[$tag]) {
-            die('Can not connect to MySQL server:'.$this->config[$tag]['dbhost']);
+            if ($wconfig['crash_show_sql']) {
+                die('Can not connect to MySQL server:'.$this->config[$tag]['dbhost']);
+            }else{
+                die('Can not connect to MySQL server');
+            }
         }
 
         if (!$this->db_set_charset($tag)) {
@@ -44,7 +49,11 @@ abstract class Db_Abstract
         }
 
         if (!$this->db_select($tag)) {
-            die('Cannot use database:'.$this->config[$tag]['dbname']);
+            if ($wconfig['crash_show_sql']) {
+                die('Cannot use database:'.$this->config[$tag]['dbname']);
+            }else{
+                die('Cannot use database');
+            }
         }
     }
 
