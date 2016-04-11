@@ -76,7 +76,7 @@ class CookieModule
         if (!empty($this->domain)) {
             setcookie($key, '', time() - $this->lifeTime, '/', $this->domain);
         }else{
-            setcookie($key, $val, time() + $this->lifeTime);
+            setcookie($key, '', time() + $this->lifeTime);
         }
     }
 }
