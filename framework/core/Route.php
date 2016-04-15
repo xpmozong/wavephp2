@@ -24,6 +24,7 @@ class Route
 {
     private $isDebuger          = false;    // 是否开启日志输出
     private $isSmarty           = false;    // 是否用Smarty模板
+    private $isCustomLog        = false;    // 自定义日志
     private $projectPath        = '';       // 项目路径
     private $projectName        = '';       // 项目名称
     private $defaultControl     = '';       // 默认控制层
@@ -44,6 +45,9 @@ class Route
         }
         if (isset($app->config['debuger'])) {
             $this->isDebuger = $app->config['debuger'];
+        }
+        if (isset($app->config['custom_log'])) {
+            $this->isCustomLog = $app->config['custom_log'];
         }
         $this->projectPath      = $app->projectPath;
         $this->projectName      = $app->projectName;
@@ -115,6 +119,11 @@ class Route
                         call_user_func_array(array($cc,$f), $callarray);
                     }else{
                         $cc->$f();
+                    }
+                    if ($this->isCustomLog) {
+                        if (method_exists($cc, 'WaveLog')) {
+                            $cc->waveLog($this->getClassName(), $this->getActionName());
+                        }
                     }
                     $cc->debuger();
                     if ($this->isSmarty) {
