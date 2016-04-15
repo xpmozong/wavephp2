@@ -115,15 +115,15 @@ class Route
             if(class_exists($c)){
                 $cc = new $c;
                 if(method_exists($cc, $f)){
-                    if(!empty($callarray)){
-                        call_user_func_array(array($cc,$f), $callarray);
-                    }else{
-                        $cc->$f();
-                    }
                     if ($this->isCustomLog) {
                         if (method_exists($cc, 'WaveLog')) {
                             $cc->waveLog($this->getClassName(), $this->getActionName());
                         }
+                    }
+                    if(!empty($callarray)){
+                        call_user_func_array(array($cc,$f), $callarray);
+                    }else{
+                        $cc->$f();
                     }
                     $cc->debuger();
                     if ($this->isSmarty) {
