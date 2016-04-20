@@ -196,18 +196,32 @@ class Wave
 
     /**
      * 写入缓存文件
+     *
+     * @param string $filepath 文件地址
+     * @param string $content 内容
+     * @param string $mod 写入类型 默认 w
+     *
+     * @return int $strlen 写入字符长度 
+     *
      */
     public static function writeCache($filepath, $content, $mod = 'w') 
     {
         $fp = fopen($filepath, $mod);
         flock($fp, LOCK_EX);
-        fwrite($fp, $content);
+        $strlen = fwrite($fp, $content);
         flock($fp, LOCK_UN);
         fclose($fp);
+
+        return $strlen;
     }
 
     /**
      * 读缓存文件
+     *
+     * @param string $filepath 文件地址
+     *
+     * @return string 内容
+     *
      */
     public static function readCache($filepath)
     {
@@ -215,7 +229,7 @@ class Wave
             return file_get_contents($filepath);
         }
         
-        return false;
+        return '';
     }
 }
 
