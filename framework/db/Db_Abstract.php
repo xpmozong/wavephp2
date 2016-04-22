@@ -32,6 +32,7 @@ abstract class Db_Abstract
      */
     public function init($tag) {
         if (isset($this->conn[$tag])) {
+            $this->selectCharsetAndDb($tag);
             return true;
         }
         $this->conn[$tag] = $this->_connect($tag);
@@ -44,6 +45,14 @@ abstract class Db_Abstract
             }
         }
 
+        $this->selectCharsetAndDb($tag);
+    }
+
+    /**
+     * 字符选择、数据库选择
+     */
+    public function selectCharsetAndDb($tag)
+    {
         if (!$this->db_set_charset($tag)) {
             die('Unable to set database connection charset:'.$this->config[$tag]['charset']);
         }

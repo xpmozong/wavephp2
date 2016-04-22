@@ -20,7 +20,7 @@
  * @author          许萍
  *
  */
-abstract class Database {
+class Database {
     public static $db;
     /**
      * 工厂方法
@@ -39,9 +39,9 @@ abstract class Database {
         }
         
         $class = ucfirst($driver);
-        $db = self::$db[$dbname] = new $class($option);
+        self::$db[$dbname] = new $class($option);
         
-        return $db;
+        return self::$db[$dbname];
     }
 }
 
