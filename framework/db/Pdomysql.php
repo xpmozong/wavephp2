@@ -63,7 +63,7 @@ class Pdomysql extends Db_Abstract
      * 数据库选择
      */
     protected function db_select($tag) {
-        $this->conn[$tag]->exec('use '.$this->config[$tag]['dbname']);
+        // $this->conn[$tag]->exec('use '.$this->config[$tag]['dbname']);
 
         return true;
     }
@@ -72,7 +72,7 @@ class Pdomysql extends Db_Abstract
      * 数据库字符类型选择
      */
     protected function db_set_charset($tag) {
-        $this->conn[$tag]->exec('SET NAMES '.$this->config[$tag]['charset']);
+        // $this->conn[$tag]->exec('SET NAMES '.$this->config[$tag]['charset']);
 
         return true;
     }
