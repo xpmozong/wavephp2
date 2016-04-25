@@ -13,14 +13,14 @@
 /**
  * Wavephp Application Mysql Class
  *
- * 数据库类
+ * pdo数据库类
  *
  * @package         Wavephp
  * @subpackage      db
  * @author          许萍
  *
  */
-class Mysql extends Db_Abstract
+class Pdomysql extends Db_Abstract
 {
     private     $errno;             // 错误信息
     
@@ -39,14 +39,23 @@ class Mysql extends Db_Abstract
      */
     protected function _connect($tag)
     {
-        if ($this->config[$tag]['pconnect']) {
-            return @mysql_pconnect( $this->config[$tag]['dbhost'], 
-                                    $this->config[$tag]['username'], 
-                                    $this->config[$tag]['password']);
-        } else {
-            return @mysql_connect(  $this->config[$tag]['dbhost'], 
-                                    $this->config[$tag]['username'], 
-                                    $this->config[$tag]['password']);
+        $dbport = isset($this->config[$tag]['dbport']) ? $this->config[$tag]['dbport'] : 3306;
+        $dbh = 'mysql:host='.$this->config[$tag]['dbhost'].';dbname='.$this->config[$tag]['dbname'].';port='.$dbport;
+        $username = $this->config[$tag]['username'];
+        $password = $this->config[$tag]['password'];
+        $error = PDO::ERRMODE_SILENT;
+        if (Wave::app()->config['crash_show_sql']) {
+            $error = PDO::ERRMODE_EXCEPTION;
+        }
+        $driverOptions = array(
+            PDO::ATTR_PERSISTENT                 => $this->config[$tag]['pconnect'],
+            PDO::ATTR_ERRMODE                    => $error,
+            PDO::MYSQL_ATTR_INIT_COMMAND         => 'SET NAMES '.$this->config[$tag]['charset'],
+        );
+        try{
+            return new PDO($dbh, $username, $password, $driverOptions);
+        } catch (PDOException $e){
+            return null;
         }
     }
 
@@ -54,14 +63,18 @@ class Mysql extends Db_Abstract
      * 数据库选择
      */
     protected function db_select($tag) {
-        return @mysql_select_db($this->config[$tag]['dbname'], $this->conn[$tag]);
+        $this->conn[$tag]->exec('use '.$this->config[$tag]['dbname']);
+
+        return true;
     }
 
     /**
      * 数据库字符类型选择
      */
     protected function db_set_charset($tag) {
-        return @mysql_query("SET character_set_connection=".$this->config[$tag]['charset'].", character_set_results=".$this->config[$tag]['charset'].", character_set_client=".$this->config[$tag]['charset']."", $this->conn[$tag]);
+        $this->conn[$tag]->exec('SET NAMES '.$this->config[$tag]['charset']);
+
+        return true;
     }
  
     /**
@@ -70,25 +83,22 @@ class Mysql extends Db_Abstract
      * @return blooean
      *
      */
-    protected function _query($sql, $conn_id)
+    protected function _query($sql, $conn, $is_rw)
     {
         if (Wave::app()->config['debuger']) {
             $start_time = microtime(TRUE);
         }
-        
-        $result = @mysql_query($sql, $conn_id);
-        // 可以用自定义错误信息的方法，就要压制本身的错误信息
-        if($result == true) {
+        if ($is_rw) {
+            $result = $conn->exec($sql);
+        }else{
+            $result = $conn->query($sql);
+        }
+        if ($result) {
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
-            return $result;
-        }else{
-            // 有错误发生
-            $this->errno = mysql_error($conn_id);
-            // 强制报错并且die
-            $this->msg();
         }
+        return $result;
     }
 
     /**
@@ -111,7 +121,8 @@ class Mysql extends Db_Abstract
         $tbcolumn = "(".trim($tbcolumn,',').")";
         $tbvalue = "(".trim($tbvalue,',').")";
         $sql = "INSERT INTO `".$table."` ".$tbcolumn." VALUES ".$tbvalue;
-        return $this->dbquery($sql);
+
+        return $this->dbquery($sql, true);
     }
 
     /**
@@ -120,9 +131,9 @@ class Mysql extends Db_Abstract
      * @return int id
      *
      */
-    protected function _insertId($conn_id)
+    protected function _insertId($conn)
     {
-        return mysql_insert_id($conn_id);
+        return $conn->lastInsertId();
     }
 
     /**
@@ -144,7 +155,8 @@ class Mysql extends Db_Abstract
         }
         $update = implode(",", $update);
         $sql = 'UPDATE `'.$table.'` SET '.$update.' WHERE '.$conditions;
-        return $this->dbquery($sql);
+
+        return $this->dbquery($sql, true);
     }
 
     /**
@@ -155,7 +167,7 @@ class Mysql extends Db_Abstract
      */
     protected function _affectedRows()
     {
-        return mysql_affected_rows();
+        return 1;
     }
 
     /**
@@ -166,8 +178,11 @@ class Mysql extends Db_Abstract
      */
     protected function _getOne($sql) 
     {
-        $res = $this->dbquery($sql);
-        return mysql_fetch_assoc($res);
+        if ($this->dbquery($sql)) {
+            return $this->dbquery($sql)->fetch(PDO::FETCH_ASSOC);
+        }else{
+            return array();
+        }
     }
  
     /**
@@ -178,13 +193,11 @@ class Mysql extends Db_Abstract
      */
     protected function _getAll($sql)
     {
-        $res = $this->dbquery($sql);
-        $arr = array();
-        while($row = mysql_fetch_assoc($res)) {
-            $arr[] = $row;
+        if ($this->dbquery($sql)) {
+            return $this->dbquery($sql)->fetchAll(PDO::FETCH_ASSOC);
+        }else{
+            return array();
         }
-
-        return $arr;
     }
 
     /**
@@ -200,7 +213,7 @@ class Mysql extends Db_Abstract
     {
         $sql = "DELETE FROM $table WHERE $fields";
         
-        return $this->dbquery($sql);
+        return $this->dbquery($sql, true);
     }
 
     /**
@@ -234,7 +247,7 @@ class Mysql extends Db_Abstract
     protected function _truncate($table) {
         $sql = 'TRUNCATE '.$this->_table($table);
 
-        return $this->dbquery($sql);
+        return $this->query($sql);
     }
 
     /**
@@ -256,29 +269,11 @@ class Mysql extends Db_Abstract
      * @return blooean
      *
      */
-    protected function _close() 
+    protected function _close($tag) 
     {
-        return mysql_close($this->dblink);
+        return $this->config[$tag] = null;
     }
 
-    /**
-     * 显示自定义错误
-     */
-    protected function msg() 
-    {
-        if($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
-            echo $this->getLastSql()."<br>";
-            $errMsg = mysql_error();
-            echo "<div style='color:red;'>\n";
-                echo "<h4>数据库操作错误</h4>\n";
-                echo "<h5>错误代码：".$this->errno."</h5>\n";
-                echo "<h5>错误信息：".$errMsg."</h5>\n";
-            echo "</div>";
-            die;
-        }else{
-            exit('数据库操作错误');
-        }
-    }
 }
 
 ?>

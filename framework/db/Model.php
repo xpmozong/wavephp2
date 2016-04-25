@@ -838,10 +838,10 @@ class Model
         $this->where($where);
         $conditions = implode(' ', $this->_where);
 
-        $this->getDb()->updatedb($tableName, $data, $conditions);
+        $num = $this->getDb()->updatedb($tableName, $data, $conditions);
         $this->resetSelect();
 
-        return $this->getDb()->affectedRows();
+        return $num;
     }
 
     /**
@@ -873,10 +873,10 @@ class Model
         $tableName = $this->getTableName();
         $this->where($where);
         $conditions = implode(' ', $this->_where);
-        $this->getDb()->delete($tableName, $conditions);
+        $num = $this->getDb()->delete($tableName, $conditions);
         $this->resetSelect();
 
-        return $this->getDb()->affectedRows();
+        return $num;
     }
 
     /**
