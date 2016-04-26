@@ -238,7 +238,7 @@ class Pdomysql extends Db_Abstract
     protected function _list_columns($table) {
         $sql = 'SHOW COLUMNS FROM '.$this->_table($table);
 
-        return $this->getAll($sql);
+        return $this->dbquery($sql);
     }
 
     /**
@@ -247,7 +247,7 @@ class Pdomysql extends Db_Abstract
     protected function _truncate($table) {
         $sql = 'TRUNCATE '.$this->_table($table);
 
-        return $this->query($sql);
+        return $this->dbquery($sql, true);
     }
 
     /**
