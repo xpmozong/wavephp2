@@ -88,19 +88,24 @@ class Route
         $rpathInfo = $this->pathInfo;
         if(!empty($rpathInfo) && $rpathInfo !== '/'){
             $pos = strpos($rpathInfo, '?');
-            if( $pos !== false){
+            if($pos !== false){
                  $rpathInfo = substr($rpathInfo, 0, $pos);
             }
             $rpathInfo = trim($rpathInfo, '/');
-            $rpathInfo = $this->filterStr($rpathInfo);
-            $pathInfoArr = explode('/', $rpathInfo);
-            $c = ucfirst($pathInfoArr[0]).'Controller';
-            $f = !empty($pathInfoArr[1]) ? 
-                'action'.ucfirst($pathInfoArr[1]) : 'actionIndex';
-            if(count($pathInfoArr) > 2){
-                array_shift($pathInfoArr);
-                array_shift($pathInfoArr);
-                $callarray = $pathInfoArr;
+            if (empty($rpathInfo)) {
+                $c = ucfirst($this->defaultControl).'Controller';
+                $f = 'actionIndex';
+            }else{
+                $rpathInfo = $this->filterStr($rpathInfo);
+                $pathInfoArr = explode('/', $rpathInfo);
+                $c = ucfirst($pathInfoArr[0]).'Controller';
+                $f = !empty($pathInfoArr[1]) ? 
+                    'action'.ucfirst($pathInfoArr[1]) : 'actionIndex';
+                if(count($pathInfoArr) > 2){
+                    array_shift($pathInfoArr);
+                    array_shift($pathInfoArr);
+                    $callarray = $pathInfoArr;
+                }
             }
         }else{
             $c = ucfirst($this->defaultControl).'Controller';
