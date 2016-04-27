@@ -38,7 +38,7 @@ class Cache_Redis implements Cache_Interface
         }
         $hosts = Wave::app()->config[$this->cache_name];
         if (isset($hosts['slave'])) {
-            $this->cacheArray[$this->cache_name] = new RedisCluster(true);
+            $this->cacheArray[$this->cache_name] = new WaveRedisCluster(true);
             $ret1 = $this->cacheArray[$this->cache_name]->connect(array(
                                         'host'=>$hosts['master']['host'], 
                                         'port'=>$hosts['master']['port']), true);

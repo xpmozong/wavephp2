@@ -19,11 +19,10 @@
  * @author          许萍
  *
  */
-class RedisCluster 
+class WaveRedisCluster 
 {
-  
     // 是否使用 M/S 的读写集群方案
-    private $_iSUSECluster = false;
+    private $_isUseCluster = false;
   
     // Slave 句柄标记
     private $_sn = 0;
@@ -43,7 +42,7 @@ class RedisCluster
     {
         $this->_isUseCluster = $isUseCluster;
     }
-  
+
     /**
      * 连接服务器,注意：这里使用长连接，提高效率，但不会自动关闭
      *
@@ -515,4 +514,5 @@ class RedisCluster
         return $hash;
     }
 }
+
 ?>
