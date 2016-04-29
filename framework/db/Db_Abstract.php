@@ -72,10 +72,11 @@ abstract class Db_Abstract
      * @return blooean
      *
      */
-    public function dbquery($sql, $is_rw = false)
+    public function dbquery($sql)
     {
         $this->lastSql = $sql;
-        if($this->is_single || $this->is_write($sql)) {
+        $is_rw = $this->is_write($sql);
+        if($this->is_single || $is_rw) {
             $this->init('master');
             return $this->_query($sql, $this->conn['master'], $is_rw);
         } else {

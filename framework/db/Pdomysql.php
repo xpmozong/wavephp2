@@ -122,7 +122,7 @@ class Pdomysql extends Db_Abstract
         $tbvalue = "(".trim($tbvalue,',').")";
         $sql = "INSERT INTO `".$table."` ".$tbcolumn." VALUES ".$tbvalue;
 
-        return $this->dbquery($sql, true);
+        return $this->dbquery($sql);
     }
 
     /**
@@ -156,7 +156,7 @@ class Pdomysql extends Db_Abstract
         $update = implode(",", $update);
         $sql = 'UPDATE `'.$table.'` SET '.$update.' WHERE '.$conditions;
 
-        return $this->dbquery($sql, true);
+        return $this->dbquery($sql);
     }
 
     /**
@@ -213,7 +213,7 @@ class Pdomysql extends Db_Abstract
     {
         $sql = "DELETE FROM $table WHERE $fields";
         
-        return $this->dbquery($sql, true);
+        return $this->dbquery($sql);
     }
 
     /**
@@ -247,7 +247,7 @@ class Pdomysql extends Db_Abstract
     protected function _truncate($table) {
         $sql = 'TRUNCATE '.$this->_table($table);
 
-        return $this->dbquery($sql, true);
+        return $this->dbquery($sql);
     }
 
     /**

@@ -671,7 +671,7 @@ class Model
      */
     public function sqlQuery($sql)
     {
-        return $this->getDb()->query($sql);
+        return $this->getDb()->dbquery($sql);
     }
 
     /**
