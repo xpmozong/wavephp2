@@ -61,7 +61,7 @@ class Cache_Redis implements Cache_Interface
                 $this->cache_name = null;
             }
         }else{
-            $this->cacheArray[$this->cache_name] = new RedisCluster(false);
+            $this->cacheArray[$this->cache_name] = new WaveRedisCluster(false);
             $ret = $this->cacheArray[$this->cache_name]->connect(array(
                                         'host'=>$hosts['master']['host'], 
                                         'port'=>$hosts['master']['port']));
