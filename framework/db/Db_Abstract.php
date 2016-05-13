@@ -53,6 +53,7 @@ abstract class Db_Abstract
      */
     public function selectCharsetAndDb($tag)
     {
+        $wconfig = Wave::app()->config;
         if (!$this->db_set_charset($tag)) {
             die('Unable to set database connection charset:'.$this->config[$tag]['charset']);
         }
