@@ -20,7 +20,7 @@
  * @author          许萍
  *
  */
-class Mysql extends Db_Abstract
+class Wmysqli extends Db_Abstract
 {
     private     $errno;             // 错误信息
     
@@ -40,29 +40,25 @@ class Mysql extends Db_Abstract
     protected function _connect($tag)
     {
         $dbport = isset($this->config[$tag]['dbport']) ? $this->config[$tag]['dbport'] : 3306;
-        if ($this->config[$tag]['pconnect']) {
-            return @mysql_pconnect( $this->config[$tag]['dbhost'].':'.$dbport, 
-                                    $this->config[$tag]['username'], 
-                                    $this->config[$tag]['password']);
-        } else {
-            return @mysql_connect(  $this->config[$tag]['dbhost'].':'.$dbport, 
-                                    $this->config[$tag]['username'], 
-                                    $this->config[$tag]['password']);
-        }
+        return new mysqli(  $this->config[$tag]['dbhost'], 
+                            $this->config[$tag]['username'], 
+                            $this->config[$tag]['password'], 
+                            $this->config[$tag]['dbname'],
+                            $dbport); 
     }
 
     /**
      * 数据库选择
      */
     protected function db_select($tag) {
-        return @mysql_select_db($this->config[$tag]['dbname'], $this->conn[$tag]);
+        return true;
     }
 
     /**
      * 数据库字符类型选择
      */
     protected function db_set_charset($tag) {
-        return @mysql_query("SET character_set_connection=".$this->config[$tag]['charset'].", character_set_results=".$this->config[$tag]['charset'].", character_set_client=".$this->config[$tag]['charset']."", $this->conn[$tag]);
+        return true;
     }
  
     /**
@@ -71,25 +67,18 @@ class Mysql extends Db_Abstract
      * @return blooean
      *
      */
-    protected function _query($sql, $conn_id, $is_rw = false)
+    protected function _query($sql, $conn, $is_rw = false)
     {
         if (Wave::app()->config['debuger']) {
             $start_time = microtime(TRUE);
         }
-        
-        $result = @mysql_query($sql, $conn_id);
-        // 可以用自定义错误信息的方法，就要压制本身的错误信息
-        if($result == true) {
+        $result = $conn->query($sql);
+        if ($result) {
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
-            return $result;
-        }else{
-            // 有错误发生
-            $this->errno = mysql_error($conn_id);
-            // 强制报错并且die
-            $this->msg();
         }
+        return $result;
     }
 
     /**
@@ -121,9 +110,9 @@ class Mysql extends Db_Abstract
      * @return int id
      *
      */
-    protected function _insertId($conn_id)
+    protected function _insertId($conn)
     {
-        return mysql_insert_id($conn_id);
+        return $conn->insert_id;
     }
 
     /**
@@ -167,8 +156,13 @@ class Mysql extends Db_Abstract
      */
     protected function _getOne($sql) 
     {
-        $res = $this->dbquery($sql);
-        return mysql_fetch_assoc($res);
+        $result = $this->dbquery($sql);
+        while ($row = $result->fetch_assoc()) {
+            $arr = $row;
+        }
+        $result->free();
+
+        return $arr;
     }
  
     /**
@@ -179,11 +173,12 @@ class Mysql extends Db_Abstract
      */
     protected function _getAll($sql)
     {
-        $res = $this->dbquery($sql);
+        $result = $this->dbquery($sql);
         $arr = array();
-        while($row = mysql_fetch_assoc($res)) {
+        while($row = $result->fetch_assoc()) {
             $arr[] = $row;
         }
+        $result->free();
 
         return $arr;
     }
@@ -259,7 +254,7 @@ class Mysql extends Db_Abstract
      */
     protected function _close($conn) 
     {
-        return mysql_close($conn);
+        return $conn->close();
     }
 
     /**

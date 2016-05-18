@@ -201,8 +201,8 @@ abstract class Db_Abstract
     /**
      * table list
      */
-    public function list_tables() {
-        return $this->_list_tables();
+    public function list_tables($dbname) {
+        return $this->_list_tables($dbname);
     }
 
     /**
@@ -240,7 +240,15 @@ abstract class Db_Abstract
      */
     public function close()
     {
-        return $this->_close();
+        if (!empty($this->conn['slave'])) {
+            $this->_close($this->conn['slave']);
+        }
+
+        if (!empty($this->conn['master'])) {
+            $this->_close($this->conn['master']);
+        }
+
+        return true;
     }
     
     /**

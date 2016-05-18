@@ -932,14 +932,22 @@ class Model
     }
 
     /**
+     * 关闭数据库
+     */
+    public function closedb()
+    {
+        return $this->getDb()->close();
+    }
+
+    /**
      * 获得表列表
      *
      * @return array
      *
      */
-    public function listTables()
+    public function listTables($dbname)
     {
-        return $this->getDb()->list_tables();
+        return $this->getDb()->list_tables($dbname);
     }
 
     /**
