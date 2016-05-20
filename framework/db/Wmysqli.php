@@ -156,12 +156,15 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getOne($sql) 
     {
-        $result = $this->dbquery($sql);
         $arr = array();
-        while ($row = $result->fetch_assoc()) {
-            $arr = $row;
+        $result = $this->dbquery($sql);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $arr = $row;
+            }
+            $result->free();
         }
-        $result->free();
+
         return $arr;
     }
  
@@ -173,12 +176,14 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getAll($sql)
     {
-        $result = $this->dbquery($sql);
         $arr = array();
-        while($row = $result->fetch_assoc()) {
-            $arr[] = $row;
+        $result = $this->dbquery($sql);
+        if ($result) {
+            while($row = $result->fetch_assoc()) {
+                $arr[] = $row;
+            }
+            $result->free();
         }
-        $result->free();
 
         return $arr;
     }

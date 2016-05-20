@@ -922,11 +922,14 @@ class Model
         
         $sql = $this->count($field)->where($where)->compileSelect();
         $arr = $this->getDb()->getOne($sql);
-        $res = $arr['count'];
-        if (!empty($cache_key) && is_object($this->cache)) {
-            $this->cache->set($cache_key, $res, $exp);
+        $res = 0;
+        if (!empty($arr)) {
+            $res = $arr['count'];
+            if (!empty($cache_key) && is_object($this->cache)) {
+                $this->cache->set($cache_key, $res, $exp);
+            }
+            $this->resetSelect();
         }
-        $this->resetSelect();
 
         return $res;
     }
