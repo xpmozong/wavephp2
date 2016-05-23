@@ -122,7 +122,7 @@ class WaveUpload
             $finfo   =  finfo_open ( FILEINFO_MIME_TYPE );
         }
         // 对上传文件数组信息处理
-        $files   =  $this->dealFiles($files);    
+        $files   =  $this->dealFiles($files);
         foreach ($files as $key => $file) {
             $file['name']  = strip_tags($file['name']);
             if(!isset($file['key']))   $file['key']    =   $key;
@@ -157,14 +157,17 @@ class WaveUpload
                 }
             }
 
-            $savepath = rtrim($this->savePath, '/').'/'.$savename;
+            $saveDir = rtrim($this->savePath, '/').'/';
+            WaveCommon::mkDir($saveDir);
+            $savepath = $saveDir.$savename;
 
             /* 保存文件 并记录保存成功的文件 */
             if (move_uploaded_file($file['tmp_name'], $savepath)) {
                 unset($file['error'], $file['tmp_name']);
                 $info[$key] = $file;
             } else {
-                
+                $this->error = '上传失败！';
+                continue;
             }
         }
         if(isset($finfo)){
