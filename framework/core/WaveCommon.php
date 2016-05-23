@@ -124,6 +124,62 @@ class WaveCommon
     }
 
     /**
+     * curl
+     * @param string    $url        地址
+     * @param string    $method     方法
+     * @param array     $data       提交数组
+     * @param int       $timeout    超时时间
+     *
+     * @return array("status"=>ture|false, "data"=>"", "error"=>"", "http_status"=>200);
+     *
+     */
+    public static function wcurl($url = '', $method = 'GET', $data = array(), $timeout = 60) 
+    {
+        $result = array('status' => false,
+                        'http_status' => 0,
+                        'data' => '',
+                        'error' => '');
+        try{
+
+            $ch = curl_init();
+            if(strtoupper($method) == 'GET' && $data){
+                $postdata = http_build_query($data, '', '&');
+                $url .= '?'.$postdata;
+            } elseif (strtoupper($method) == 'POST' && $data){
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            } elseif(strtoupper($method) == 'JSON' && $data) {
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type:application/json'));
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            }
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+            $contents = curl_exec($ch);
+            $response = curl_getinfo($ch);           
+            $result['status'] = true;
+            $result['http_status'] = $response['http_code'];
+            $result['data'] = $contents;
+
+            // 出错
+            if(curl_errno($ch)) {
+                $result['error'] = curl_error($ch);
+            }
+            curl_close ($ch);
+
+        }catch(Exception $ex){
+            $result['status'] = false;
+            $result['error'] = $ex;
+        }
+    
+        return $result;
+    }
+
+    /**
      * 获得日期
      * @return string 日期
      */
