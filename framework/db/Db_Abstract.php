@@ -159,7 +159,7 @@ abstract class Db_Abstract
      *
      */
     public function affectedRows() {
-        return $this->_affectedRows();
+        return $this->_affectedRows($this->conn['master']);
     }
 
     /**

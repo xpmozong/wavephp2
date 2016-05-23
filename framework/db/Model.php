@@ -845,17 +845,6 @@ class Model
     }
 
     /**
-     * 获得刚插入数据id
-     *
-     * @return int
-     *
-     */
-    public function insertId()
-    {
-        return $this->getDb()->insertId();
-    }
-
-    /**
      * 删除数据
      *
      * @param string $cache_key     缓存key
@@ -878,6 +867,26 @@ class Model
 
         return $num;
     }
+
+    /**
+     * 获得刚插入数据id
+     *
+     * @return int
+     *
+     */
+    public function insertId()
+    {
+        return $this->getDb()->insertId();
+    }
+
+    /**
+     * 获得刚执行完的条数
+     */
+    public function getAffectedRows()
+    {
+        return $this->getDb()->affectedRows();
+    }
+
 
     /**
      * 统计满足条件的记录个数

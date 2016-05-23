@@ -23,6 +23,7 @@
 class Pdomysql extends Db_Abstract
 {
     private     $errno;             // 错误信息
+    private     $execNums = 0;      // 执行数量
     
     public function __construct($config) {
         if (isset($config['slave'])) {
@@ -90,6 +91,7 @@ class Pdomysql extends Db_Abstract
         }
         if ($is_rw) {
             $result = $conn->exec($sql);
+            $this->execNums = $result;
         }else{
             $result = $conn->query($sql);
         }
@@ -98,6 +100,7 @@ class Pdomysql extends Db_Abstract
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
         }
+
         return $result;
     }
 
@@ -167,7 +170,7 @@ class Pdomysql extends Db_Abstract
      */
     protected function _affectedRows()
     {
-        return 1;
+        return $this->execNums;
     }
 
     /**
@@ -272,6 +275,23 @@ class Pdomysql extends Db_Abstract
     protected function _close($tag) 
     {
         return $this->config[$tag] = null;
+    }
+
+    /**
+     * 显示自定义错误
+     */
+    protected function msg() 
+    {
+        if($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
+            echo $this->getLastSql()."<br>";
+            echo "<div style='color:red;'>\n";
+                echo "<h4>数据库操作错误</h4>\n";
+                echo "<h5>错误信息：".var_dump($this->errno)."</h5>\n";
+            echo "</div>";
+            die;
+        }else{
+            exit('数据库操作错误');
+        }
     }
 
 }

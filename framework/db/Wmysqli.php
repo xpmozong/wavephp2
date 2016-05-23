@@ -77,7 +77,13 @@ class Wmysqli extends Db_Abstract
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
+        }else{
+            // 有错误发生
+            $this->errno = $conn->error;
+            // 强制报错并且die
+            $this->msg();
         }
+
         return $result;
     }
 
@@ -143,9 +149,9 @@ class Wmysqli extends Db_Abstract
      * @return int num
      *
      */
-    protected function _affectedRows()
+    protected function _affectedRows($conn)
     {
-        return mysql_affected_rows();
+        return $conn->affected_rows;
     }
 
     /**
@@ -269,11 +275,9 @@ class Wmysqli extends Db_Abstract
     {
         if($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
             echo $this->getLastSql()."<br>";
-            $errMsg = mysql_error();
             echo "<div style='color:red;'>\n";
                 echo "<h4>数据库操作错误</h4>\n";
-                echo "<h5>错误代码：".$this->errno."</h5>\n";
-                echo "<h5>错误信息：".$errMsg."</h5>\n";
+                echo "<h5>错误信息：".$this->errno."</h5>\n";
             echo "</div>";
             die;
         }else{
