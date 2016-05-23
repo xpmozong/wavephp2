@@ -25,6 +25,7 @@
             "framework/cookie",
             "framework/core",
             "framework/db",
+            "framework/extends",
             "framework/language",
             "framework/mail",
             "framework/session",
