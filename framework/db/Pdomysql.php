@@ -86,9 +86,8 @@ class Pdomysql extends Db_Abstract
      */
     protected function _query($sql, $conn, $is_rw)
     {
-        if (Wave::app()->config['debuger']) {
-            $start_time = microtime(TRUE);
-        }
+        $start_time = microtime(TRUE);
+        
         if ($is_rw) {
             $result = $conn->exec($sql);
             $this->execNums = $result;
@@ -98,6 +97,15 @@ class Pdomysql extends Db_Abstract
         if ($result) {
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
+            }
+            if (Wave::app()->config['write_sql_log']) {
+                $data = array(  'op'    => 'sql_log', 
+                                'time'  => time(), 
+                                'sql'   => $sql,
+                                'execute_time'=>(microtime(TRUE) - $start_time));
+                $content = json_encode($data);
+                $file = Wave::app()->config['write_sql_dir'].'sql_log_'.date('Y-m-d').'.txt';
+                Wave::writeCache($file, $content."\n", 'a+');
             }
         }
 
