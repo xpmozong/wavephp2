@@ -49,6 +49,11 @@ class Wave
         $this->Base = Base::getInstance();
         $this->Base->init($this->config);
         self::$app = $this->Base->app();
+        $this->loadIniSet();
+        $this->loadMemcache();
+        $this->loadRedis();
+        $this->loadSession();
+        $this->loadCookie();
     }
 
     /**
@@ -56,11 +61,6 @@ class Wave
      */
     public function run()
     {
-        $this->loadIniSet();
-        $this->loadMemcache();
-        $this->loadRedis();
-        $this->loadSession();
-        $this->loadCookie();
         self::$Route = new Route();
         self::$Route->route();
         $this->Base->clear();
