@@ -76,7 +76,7 @@ class Wmysqli extends Db_Abstract
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
-            if (Wave::app()->config['write_sql_log']) {
+            if (isset(Wave::app()->config['write_sql_log']) && Wave::app()->config['write_sql_log']) {
                 $data = array(  'op'    => 'sql_log', 
                                 'time'  => time(), 
                                 'sql'   => $sql,
