@@ -107,8 +107,7 @@ class Route
             $c = ucfirst($this->defaultControl).'Controller';
             $f = 'actionIndex';
         }
-        $controller = $this->projectPath.
-                    $this->projectName.'/controllers/'.$c.'.php';
+        $controller = $this->projectPath.$this->projectName.'/controllers/'.$c.'.php';
         if(file_exists($controller)){
             $this->className = $c;
             $this->actionName = $f;
@@ -141,6 +140,15 @@ class Route
      */
     private function error404()
     {
+        $c = ucfirst($this->defaultControl).'Controller';
+        $controller = $this->projectPath.$this->projectName.'/controllers/'.$c.'.php';
+        $f = 'actionError404';
+        if (file_exists($controller) && class_exists($c)) {
+            $cc = new $c;
+            if (method_exists($cc, $f)) {
+                $cc->$f();die;
+            }   
+        }
         echo '<h2>Error 404</h2>';
         echo 'Unable to resolve the request "'.$this->pathInfo.'".';
     }
