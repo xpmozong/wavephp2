@@ -29,7 +29,6 @@
             "framework/language",
             "framework/mail",
             "framework/session",
-            "framework/web",
             "framework/Wave.php",
             "framework/Base.php"
         ]
