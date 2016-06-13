@@ -57,8 +57,8 @@ class Wmysqli extends Db_Abstract
     /**
      * 数据库字符类型选择
      */
-    protected function db_set_charset($tag) {
-        return true;
+    protected function db_set_charset($conn, $charset) {
+        return mysqli_set_charset($conn, $charset);
     }
  
     /**

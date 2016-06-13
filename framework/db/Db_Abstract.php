@@ -36,9 +36,8 @@ abstract class Db_Abstract
             return true;
         }
         $this->conn[$tag] = $this->_connect($tag);
-        $wconfig = Wave::app()->config;
         if (!$this->conn[$tag]) {
-            if ($wconfig['crash_show_sql']) {
+            if (Wave::app()->config['crash_show_sql']) {
                 die('Can not connect to MySQL server:'.$this->config[$tag]['dbhost']);
             }else{
                 die('Can not connect to MySQL server');
@@ -53,17 +52,12 @@ abstract class Db_Abstract
      */
     public function selectCharsetAndDb($tag)
     {
-        $wconfig = Wave::app()->config;
-        if (!$this->db_set_charset($tag)) {
+        if (!$this->db_set_charset($this->conn[$tag], $this->config[$tag]['charset'])) {
             die('Unable to set database connection charset:'.$this->config[$tag]['charset']);
         }
 
         if (!$this->db_select($tag)) {
-            if ($wconfig['crash_show_sql']) {
-                die('Cannot use database:'.$this->config[$tag]['dbname']);
-            }else{
-                die('Cannot use database');
-            }
+            die('Cannot use database');
         }
     }
 
