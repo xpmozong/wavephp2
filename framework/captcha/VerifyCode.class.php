@@ -136,10 +136,11 @@ class VerifyCode
     /**
      * 对外生成
      */
-    public function doimg()
+    public function doimg($key = 'verifycode', $expire = 600)
     {
         $this->createBg();
         $this->createCode();
+        Wave::app()->session->setState($key, $this->getCode(), $expire);
         $this->createLine();
         $this->createFont();
         $this->outPut();

@@ -139,13 +139,12 @@ class Controller
      */
     public function verifyCode($key = 'verifycode', $num = 4, $width = 130, $height = 40, $expire = 600)
     {
-        // require Wave::app()->frameworkPath.'captcha/VerifyCode.class.php';
         $VerifyCode = new VerifyCode();
         $VerifyCode->codelen = $num;
         $VerifyCode->width = $width;
         $VerifyCode->height = $height;
-        $VerifyCode->doimg();
-        Wave::app()->session->setState($key, $VerifyCode->getCode(), $expire);
+        $VerifyCode->doimg($key, $expire);
+        // Wave::app()->session->setState($key, $VerifyCode->getCode(), $expire);
     }
 
     /**
