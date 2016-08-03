@@ -64,8 +64,12 @@ class CookieModule
         if (isset($_COOKIE[$key])) {
             $txt = $_COOKIE[$key];
         }
-
-        return json_decode($txt, true);
+        $result = json_decode($txt, true);
+        if ($result) {
+            return $result;
+        }else{
+            return $txt;
+        }
     }
 
     /**
