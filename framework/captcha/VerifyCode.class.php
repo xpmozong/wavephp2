@@ -22,23 +22,27 @@
  */
 class VerifyCode
 {
-    private $code;              // 验证码
-    public  $codelen    = 4;    // 验证码长度
-    public  $width      = 130;  // 宽度
-    public  $height     = 50;   // 高度
-    private $img;               // 图形资源句柄
-    private $font;              // 指定的字体
-    private $fontsize   = 22;   // 指定字体大小
-    private $fontcolor;         // 指定字体颜色
-    private $charset;           // 随机因子
+    private $code;                      // 验证码
+    public  $codelen    = 4;            // 验证码长度
+    public  $width      = 130;          // 宽度
+    public  $height     = 50;           // 高度
+    private $img;                       // 图形资源句柄
+    private $fonts      = array();      // 字体数组
+    private $fontsize   = 22;           // 指定字体大小
+    private $charset;                   // 随机因子
 
     /**
      *构造方法初始化
      */
     public function __construct()
     {
-        $path = Wave::app()->frameworkPath;
-        $this->font = $path.'captcha/font/Elephant.ttf';
+        $dir = dirname(__FILE__).'/font/';
+        $filesnames = scandir($dir);
+        foreach ($filesnames as $key => $file) {
+            if($file != '.'&& $file != '..'){
+                $this->fonts[] = $dir.$file;
+            }
+        }
     }
 
     /**
@@ -78,17 +82,19 @@ class VerifyCode
     {
         $_x = $this->width / $this->codelen;
         for ($i = 0; $i < $this->codelen; $i++) {
-            $this->fontcolor = imagecolorallocate($this->img,
+            $fontcolor = imagecolorallocate($this->img,
                                                 mt_rand(0,156),
                                                 mt_rand(0,156),
                                                 mt_rand(0,156));
+            $imgIndex = mt_rand(0,count($this->fonts)-1);
+            $imagefont = $this->fonts[$imgIndex];
             imagettftext($this->img,
                         $this->fontsize,
                         mt_rand(-30,10),
                         $_x*$i+mt_rand(1,5),
                         $this->height / 1.4,
-                        $this->fontcolor,
-                        $this->font,
+                        $fontcolor,
+                        $imagefont,
                         $this->code[$i]);
         }
     }
