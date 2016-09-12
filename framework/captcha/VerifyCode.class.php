@@ -37,11 +37,9 @@ class VerifyCode
     public function __construct()
     {
         $dir = dirname(__FILE__).'/font/';
-        $filesnames = scandir($dir);
-        foreach ($filesnames as $key => $file) {
-            if($file != '.'&& $file != '..'){
-                $this->fonts[] = $dir.$file;
-            }
+        $dirArr = range(1,30);
+        foreach ($dirArr as $key => $file) {
+            $this->fonts[] = $dir.$file.'.ttf';
         }
     }
 
@@ -104,7 +102,7 @@ class VerifyCode
      */
     private function createLine()
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 6; $i++) {
             $color = imagecolorallocate($this->img,
                                         mt_rand(0,156),
                                         mt_rand(0,156),
