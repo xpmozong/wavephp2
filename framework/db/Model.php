@@ -838,7 +838,11 @@ class Model
         $this->where($where);
         $conditions = implode(' ', $this->_where);
 
-        $num = $this->getDb()->updatedb($tableName, $data, $conditions);
+        $res = $this->getDb()->updatedb($tableName, $data, $conditions);
+        $num = 0;
+        if ($res) {
+            $num = $this->getAffectedRows();
+        }
         $this->resetSelect();
 
         return $num;
@@ -862,7 +866,13 @@ class Model
         $tableName = $this->getTableName();
         $this->where($where);
         $conditions = implode(' ', $this->_where);
-        $num = $this->getDb()->delete($tableName, $conditions);
+        
+        $res = $this->getDb()->delete($tableName, $conditions);
+        $num = 0;
+        if ($res) {
+            $num = $this->getAffectedRows();
+        }
+
         $this->resetSelect();
 
         return $num;
