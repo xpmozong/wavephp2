@@ -32,6 +32,7 @@ class WaveUpload
         'exts'          =>  array(), //允许上传的文件后缀
         'savePath'      =>  '', //保存路径
         'saveExt'       =>  '', //文件保存后缀，空则使用原后缀
+        'isFormerName'  => false, // 是否使用原文件名
     );
 
     /**
@@ -308,12 +309,12 @@ class WaveUpload
      * @param string $file 文件信息
      */
     private function getSaveName($file) {
-        $savename = md5(time().mt_rand());
+        $savename = $this->config['isFormerName'] ? $file['name'] : md5(time().mt_rand());
 
         /* 文件保存后缀，支持强制更改文件后缀 */
         $ext = empty($this->config['saveExt']) ? $file['ext'] : $this->saveExt;
 
-        return $savename.'.'.$ext;
+        return $this->config['isFormerName'] ? $savename : $savename.'.'.$ext;
     }
 
 }
