@@ -60,7 +60,7 @@ class Route
     private function filterStr($str)
     {
         $preg = '/(\~)|(\!)|(\@)|(\#)|(\$)|(\%)
-                |(\^)|(\&)|(\*)|(\()|(\))|(\-)
+                |(\^)|(\*)|(\()|(\))|(\-)
                 |(\+)|(\[)|(\])|(\')|(\")|(\<)
                 |(\>)|(\?)|(\.)|(\|)/';
 
@@ -95,8 +95,12 @@ class Route
                 $rpathInfo = $this->filterStr($rpathInfo);
                 $pathInfoArr = explode('/', $rpathInfo);
                 $c = ucfirst($pathInfoArr[0]).'Controller';
-                $f = !empty($pathInfoArr[1]) ? 
-                    'action'.ucfirst($pathInfoArr[1]) : 'actionIndex';
+                if (!empty($pathInfoArr[1])) {
+                    $newPathArr = explode('&', $pathInfoArr[1]);
+                    $f = 'action'.ucfirst($newPathArr[0]);
+                }else{
+                    $f = 'actionIndex';
+                }
                 if(count($pathInfoArr) > 2){
                     array_shift($pathInfoArr);
                     array_shift($pathInfoArr);
