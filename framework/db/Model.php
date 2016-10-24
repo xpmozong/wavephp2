@@ -29,7 +29,7 @@ class Model
     protected $_select              = array();
     protected $_from                = '';
     protected $_join                = array();
-    protected $_distinct            = false;
+    protected $_distinct            = '';
     protected $_where               = array();
     protected $_like                = array();
     protected $_instr               = array();
@@ -245,9 +245,9 @@ class Model
      * @return $this
      *
      */
-    public function distinct($val = true)
+    public function distinct($val)
     {
-        $this->_distinct = (is_bool($val)) ? $val : true;
+        $this->_distinct = $val;
         
         return $this;
     }
@@ -567,7 +567,7 @@ class Model
      */
     public function compileSelect()
     {
-        $sql = ( !$this->_distinct) ? 'SELECT ' : 'SELECT DISTINCT ';
+        $sql = empty($this->_distinct) ? 'SELECT ' : 'SELECT DISTINCT '.$this->_distinct;
         $sql .= (count($this->_select) == 0) ? '*' 
                 : implode(', ', $this->_select);
         $sql .= ' FROM ';
