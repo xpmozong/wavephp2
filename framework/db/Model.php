@@ -567,9 +567,10 @@ class Model
      */
     public function compileSelect()
     {
-        $sql = empty($this->_distinct) ? 'SELECT ' : 'SELECT DISTINCT '.$this->_distinct;
-        $sql .= (count($this->_select) == 0) ? '*' 
-                : implode(', ', $this->_select);
+        $sql = empty($this->_distinct) ? 'SELECT ' : 'SELECT DISTINCT '.$this->_distinct.' ';
+        if (empty($this->_distinct)) {
+            $sql .= (count($this->_select) == 0) ? '*' : implode(', ', $this->_select);
+        }
         $sql .= ' FROM ';
         if (empty($this->_from)) {
             $sql .= $this->_tableName;
