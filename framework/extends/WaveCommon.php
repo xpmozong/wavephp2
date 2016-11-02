@@ -206,7 +206,7 @@ class WaveCommon
         return array(
                     'image/jpeg','image/jpg',
                     'image/gif','image/png',
-                    'image/bmp','image/pjepg'
+                    'image/bmp','image/x-ms-bmp','image/pjepg'
                 );
     }
 
