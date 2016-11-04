@@ -204,9 +204,9 @@ class WaveCommon
     public static function getImageTypes()
     {
         return array(
-                    'image/jpeg','image/jpg',
-                    'image/gif','image/png',
-                    'image/bmp','image/x-ms-bmp','image/pjepg'
+                    'image/jpeg','image/jpg','image/pjpeg',
+                    'image/gif','image/png','image/x-png',
+                    'image/bmp','image/x-ms-bmp'
                 );
     }
 
