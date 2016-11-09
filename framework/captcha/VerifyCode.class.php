@@ -37,7 +37,7 @@ class VerifyCode
     public function __construct()
     {
         $dir = dirname(__FILE__).'/font/';
-        $dirArr = range(1,30);
+        $dirArr = range(1, 15);
         foreach ($dirArr as $key => $file) {
             $this->fonts[] = $dir.$file.'.ttf';
         }
