@@ -88,6 +88,11 @@ class Cache_Redis implements Cache_Interface
         return $this->getRedis()->get($key);
     }
 
+    public function delete($key) 
+    {
+        return $this->getRedis()->delete($key);
+    }
+
     public function increment($key, $step = 1) 
     {
         return $this->getRedis()->incr($key, $step);
@@ -96,11 +101,6 @@ class Cache_Redis implements Cache_Interface
     public function decrement($key, $step = 1) 
     {
         return $this->getRedis()->decr($key, $step);
-    }
-
-    public function delete($key) 
-    {
-        return $this->getRedis()->delete($key);
     }
 
     //-------------------------redis操作------------------------//
@@ -132,6 +132,21 @@ class Cache_Redis implements Cache_Interface
     public function llen($key) 
     {
         return $this->getRedis()->llen($key);
+    }
+
+    public function sadd($key, $value)
+    {
+        return $this->getRedis()->sadd($key, $value);
+    }
+
+    public function smembers($key)
+    {
+        return $this->getRedis()->smembers($key);
+    }
+
+    public function sremove($key, $value)
+    {
+        return $this->getRedis()->sremove($key, $value);
     }
 
     //-------------------------哈希操作-------------------------//

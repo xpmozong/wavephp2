@@ -160,18 +160,6 @@ class WaveRedisCluster
     }
   
     /**
-     * 条件形式设置缓存，如果 key 不存时就设置，存在时设置失败
-     *
-     * @param string $key 缓存KEY
-     * @param string $value 缓存值
-     * @return boolean
-     */
-    public function setnx($key, $value)
-    {
-        return $this->getRedis()->setnx($key, $value);
-    }
-  
-    /**
      * 删除缓存
      *
      * @param string || array $key 缓存KEY，支持单个健:"key1" 或多个健:array('key1','key2')
@@ -184,15 +172,45 @@ class WaveRedisCluster
     }
 
     /**
+     * 值加加操作,类似 ++$i ,如果 key 不存在时自动设置为 0 后进行加加操作
+     *
+     * @param string $key 缓存KEY
+     * @param int $default 操作时的默认值
+     * @return int　操作后的值
+     */
+    public function incr($key, $default = 1)
+    {
+        if($default == 1){
+            return $this->getRedis()->incr($key);
+        }else{
+            return $this->getRedis()->incrBy($key, $default);
+        }
+    }
+  
+    /**
+     * 值减减操作,类似 --$i ,如果 key 不存在时自动设置为 0 后进行减减操作
+     *
+     * @param string $key 缓存KEY
+     * @param int $default 操作时的默认值
+     * @return int　操作后的值
+     */
+    public function decr($key, $default = 1)
+    {
+        if($default == 1){
+            return $this->getRedis()->decr($key);
+        }else{
+            return $this->getRedis()->decrBy($key, $default);
+        }
+    }
+
+    /**
      * 插入一个值到列表中,如果列表不存在,新建一个列表
      * @param string $key
      * @param string $value
      */
     public function lpush($key, $value)
     {
-        $ret = $this->getRedis()->lPush($key, $value);
-        
-        return $ret;
+        return $this->getRedis()->lPush($key, $value);
     }
 
     /**
@@ -201,15 +219,7 @@ class WaveRedisCluster
      */
     public function lpop($key)
     {
-        $func = 'lPop';
-
-        // 没有使用M/S
-        if(!$this->_isUseCluster){
-            return $this->getRedis()->{$func}($key);
-        }
-        
-        // 使用了 M/S
-        return $this->_getSlaveRedis()->{$func}($key);
+        return $this->getRedis()->lPop($key);
     }
 
     /**
@@ -219,9 +229,7 @@ class WaveRedisCluster
      */
     public function rpush($key, $value)
     {
-        $ret = $this->getRedis()->rPush($key, $value);
-        
-        return $ret;
+        return $this->getRedis()->rPush($key, $value);
     }
 
     /**
@@ -230,15 +238,7 @@ class WaveRedisCluster
      */
     public function rpop($key)
     {
-        $func = 'rPop';
-
-        // 没有使用M/S
-        if(!$this->_isUseCluster){
-            return $this->getRedis()->{$func}($key);
-        }
-        
-        // 使用了 M/S
-        return $this->_getSlaveRedis()->{$func}($key);
+        return $this->getRedis()->rPop($key);
     }
 
     /**
@@ -272,57 +272,37 @@ class WaveRedisCluster
         // 使用了 M/S
         return $this->_getSlaveRedis()->{$func}($key);
     }
-  
+
     /**
-     * 值加加操作,类似 ++$i ,如果 key 不存在时自动设置为 0 后进行加加操作
-     *
-     * @param string $key 缓存KEY
-     * @param int $default 操作时的默认值
-     * @return int　操作后的值
+     * 成员添加
      */
-    public function incr($key, $default = 1)
+    public function sadd($key, $value)
     {
-        if($default == 1){
-            $func = 'incr';
-            if(!$this->_isUseCluster){
-                return $this->getRedis()->{$func}($key);
-            }else{
-                return $this->_getSlaveRedis()->{$func}($key);
-            }
-        }else{
-            $func = 'incrBy';
-            if(!$this->_isUseCluster){
-                return $this->getRedis()->{$func}($key, $default);
-            }else{
-                return $this->_getSlaveRedis()->{$func}($key, $default);
-            }
-        }
+        return $this->getRedis()->sAdd($key, $value);
     }
-  
+
     /**
-     * 值减减操作,类似 --$i ,如果 key 不存在时自动设置为 0 后进行减减操作
-     *
-     * @param string $key 缓存KEY
-     * @param int $default 操作时的默认值
-     * @return int　操作后的值
+     * 成员列表
      */
-    public function decr($key, $default = 1)
+    public function smembers($key)
     {
-        if($default == 1){
-            $func = 'decr';
-            if(!$this->_isUseCluster){
-                return $this->getRedis()->{$func}($key);
-            }else{
-                return $this->_getSlaveRedis()->{$func}($key);
-            }
-        }else{
-            $func = 'decrBy';
-            if(!$this->_isUseCluster){
-                return $this->getRedis()->{$func}($key, $default);
-            }else{
-                return $this->_getSlaveRedis()->{$func}($key, $default);
-            }
+        $func = 'sMembers';
+
+        // 没有使用M/S
+        if(!$this->_isUseCluster){
+            return $this->getRedis()->{$func}($key);
         }
+
+        // 使用了 M/S
+        return $this->_getSlaveRedis()->{$func}($key);
+    }
+
+    /**
+     * 移除成员
+     */
+    public function sremove($key, $value)
+    {
+        return $this->getRedis()->sRemove($key, $value);
     }
   
     /**
@@ -345,12 +325,7 @@ class WaveRedisCluster
     {
         $return = null;
         if (is_array($data) && !empty($data)) {
-            $func = 'hSet';
-            if(!$this->_isUseCluster){
-                $return = $this->getRedis()->{$func}($hash, $key, $data);
-            }else{
-                $return = $this->_getSlaveRedis()->{$func}($hash, $key, $data);
-            }
+            $return = $this->getRedis()->hSet($hash, $key, $data);
         }
 
         return $return;
@@ -441,16 +416,7 @@ class WaveRedisCluster
      */
     public function hashDel($hash, $key) 
     {
-        $return = null;
-
-        $func = 'hDel';
-        if(!$this->_isUseCluster){
-            $return = $this->getRedis()->{$func}($hash, $key);
-        }else{
-            $return = $this->_getSlaveRedis()->{$func}($hash, $key);
-        }
-
-        return $return;
+        return $this->getRedis()->hDel($hash, $key);
     }
 
     /**
