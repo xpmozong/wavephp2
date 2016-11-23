@@ -42,7 +42,7 @@ class Session_Db extends Model
      */
     public function setState($key, $val, $expire = 0)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start(); 
         }
         if ($expire > 0) {
@@ -62,22 +62,22 @@ class Session_Db extends Model
      */
     public function getState($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
 
         $txt = '';
-        if(isset($_SESSION[$this->sess_id.$key])){
+        if (isset($_SESSION[$this->sess_id.$key])) {
             if (isset($_SESSION[$this->sess_id.$key.'_expire'])) {
                 $expire = $_SESSION[$this->sess_id.$key.'_expire'];
                 // 如果当前时间大于过期时间 清session
                 if (time() > $expire) {
                     $_SESSION[$this->sess_id.$key.'_expire'] = 0;
                     $_SESSION[$this->sess_id.$key] = '';
-                }else{
+                } else {
                     $txt = $_SESSION[$this->sess_id.$key];
                 }
-            }else{
+            } else {
                 $txt = $_SESSION[$this->sess_id.$key];
             }
         }
@@ -90,7 +90,7 @@ class Session_Db extends Model
      */
     public function logout($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION[$this->sess_id.$key] = '';
@@ -132,7 +132,7 @@ class Session_Db extends Model
                     ->getOne('session_data');
         if ($row) {
             return $row['session_data'];
-        }else{
+        } else {
             return '';
         }
    }
@@ -151,10 +151,11 @@ class Session_Db extends Model
                             'session_data'  =>$sessData);
             return $this->update($data, $where);
 
-        }else{
+        } else {
             $data = array('session_id'=>$sessID,
                      'session_expires'=>$newExp, 
                         'session_data'=>$sessData);
+            
             return $this->insert($data);
         }
    }

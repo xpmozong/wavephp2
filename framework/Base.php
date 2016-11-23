@@ -35,7 +35,7 @@ class Base
     
     public static function getInstance()
     {
-        if(self::$instance == null){
+        if (self::$instance == null) {
             self::$instance = new self;
         }
         return self::$instance;
@@ -46,7 +46,7 @@ class Base
      */
     public function init($config = null)
     {
-        if(!empty($config)) {
+        if (!empty($config)) {
             if (!isset($config['debuger'])) {
                 $config['debuger'] = false;
             }
@@ -86,7 +86,7 @@ class Base
             $pathUrl = str_replace($scriptName, '', $_SERVER['REQUEST_URI']);
             self::$pathInfo = str_replace($enterFile, '', $pathUrl);
             self::$homeUrl = $scriptName.'/';
-        }else{
+        } else {
             self::$pathInfo = 
                 isset($_SERVER['PATH_INFO']) 
                 ? strtolower($_SERVER['PATH_INFO']) : '/'.self::$defaultControl.'/index';
@@ -152,7 +152,7 @@ class Base
     {
         if (!empty($file)) {
             require self::$frameworkPath.$file.'.php';
-        }else{
+        } else {
             exit('no file');
         }
     }
@@ -167,7 +167,7 @@ class Base
     {
         if (!empty($file)) {
             require self::$projectPath.$file.'.php';
-        }else{
+        } else {
             exit('no file');
         }
     }

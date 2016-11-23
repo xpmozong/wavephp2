@@ -92,7 +92,7 @@ class Config_File {
                 $this->_trigger_error_msg("Bad config file path '$config_path'");
                 return;
             }
-            if(substr($config_path, -1) != DIRECTORY_SEPARATOR) {
+            if (substr($config_path, -1) != DIRECTORY_SEPARATOR) {
                 $config_path .= DIRECTORY_SEPARATOR;
             }
 
@@ -124,7 +124,7 @@ class Config_File {
             if (empty($section_name)) {
                 return $this->_config_data[$file_name]["vars"][$var_name];
             } else {
-                if(isset($this->_config_data[$file_name]["sections"][$section_name]["vars"][$var_name]))
+                if (isset($this->_config_data[$file_name]["sections"][$section_name]["vars"][$var_name]))
                     return $this->_config_data[$file_name]["sections"][$section_name]["vars"][$var_name];
                 else
                     return array();
@@ -133,7 +133,7 @@ class Config_File {
             if (empty($section_name)) {
                 return (array)$this->_config_data[$file_name]["vars"];
             } else {
-                if(isset($this->_config_data[$file_name]["sections"][$section_name]["vars"]))
+                if (isset($this->_config_data[$file_name]["sections"][$section_name]["vars"]))
                     return (array)$this->_config_data[$file_name]["sections"][$section_name]["vars"];
                 else
                     return array();
@@ -270,7 +270,7 @@ class Config_File {
      */
     function parse_contents($contents)
     {
-        if($this->fix_newlines) {
+        if ($this->fix_newlines) {
             // fix mac/dos formatted newlines
             $contents = preg_replace('!\r\n?!', "\n", $contents);
         }

@@ -39,7 +39,7 @@ abstract class Db_Abstract
         if (!$this->conn[$tag]) {
             if (Wave::app()->config['crash_show_sql']) {
                 die('Can not connect to MySQL server:'.$this->config[$tag]['dbhost']);
-            }else{
+            } else {
                 die('Can not connect to MySQL server');
             }
         }
@@ -71,7 +71,7 @@ abstract class Db_Abstract
     {
         $this->lastSql = $sql;
         $is_rw = $this->is_write($sql);
-        if($this->is_single || $is_rw) {
+        if ($this->is_single || $is_rw) {
             $this->init('master');
             return $this->_query($sql, $this->conn['master'], $is_rw);
         } else {

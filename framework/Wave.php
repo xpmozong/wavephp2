@@ -42,7 +42,7 @@ class Wave
     public function __construct($configfile = null)
     {
         global $config;
-        if(empty($config) && file_exists($configfile)) {
+        if (empty($config) && file_exists($configfile)) {
             require $configfile;
         }
         $this->config = $config;
@@ -84,11 +84,11 @@ class Wave
      */
     private function loadMemcache()
     {
-        if(empty(self::$app->memcache)){
-            if(!empty(self::$app->config['memcache'])){
+        if (empty(self::$app->memcache)){
+            if (!empty(self::$app->config['memcache'])){
                 if (extension_loaded('memcached')){
                     self::$app->memcache = new Cache_Memcached();
-                }else{
+                } else {
                     self::$app->memcache = new Cache_Memcache();
                 }
                 if (empty(self::$app->memcache->cache_name)) {
@@ -103,8 +103,8 @@ class Wave
      */
     private function loadRedis()
     {
-        if(empty(self::$app->redis)){
-            if(!empty(self::$app->config['redis'])){
+        if (empty(self::$app->redis)){
+            if (!empty(self::$app->config['redis'])){
                 self::$app->redis = new Cache_Redis();
                 if (empty(self::$app->redis->cache_name)) {
                     self::$app->redis = new NullStdClass();
@@ -118,8 +118,8 @@ class Wave
      */
     private function loadSession()
     {
-        if(!empty(self::$app->config)){
-            if(isset(self::$app->config['session'])){
+        if (!empty(self::$app->config)){
+            if (isset(self::$app->config['session'])){
                 $driver = self::$app->config['session']['driver'];
                 $class = 'Session_'.ucfirst($driver);
                 $session = new $class();
@@ -140,8 +140,8 @@ class Wave
      */
     private function loadCookie()
     {
-        if(!empty(self::$app->config)){
-            if(isset(self::$app->config['cookie'])){
+        if (!empty(self::$app->config)){
+            if (isset(self::$app->config['cookie'])){
                 self::$app->cookie = new CookieModule();
             }
         }

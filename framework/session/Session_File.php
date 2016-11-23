@@ -43,7 +43,7 @@ class Session_File
      */
     public function setState($key, $val, $expire = 0)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start(); 
         }
         if ($expire > 0) {
@@ -63,22 +63,22 @@ class Session_File
      */
     public function getState($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
 
         $txt = '';
-        if(isset($_SESSION[$this->sess_id.$key])){
+        if (isset($_SESSION[$this->sess_id.$key])) {
             if (isset($_SESSION[$this->sess_id.$key.'_expire'])) {
                 $expire = $_SESSION[$this->sess_id.$key.'_expire'];
                 // 如果当前时间大于过期时间 清session
                 if (time() > $expire) {
                     $_SESSION[$this->sess_id.$key.'_expire'] = 0;
                     $_SESSION[$this->sess_id.$key] = '';
-                }else{
+                } else {
                     $txt = $_SESSION[$this->sess_id.$key];
                 }
-            }else{
+            } else {
                 $txt = $_SESSION[$this->sess_id.$key];
             }
         }
@@ -91,7 +91,7 @@ class Session_File
      */
     public function logout($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION[$this->sess_id.$key] = '';
@@ -107,7 +107,8 @@ class Session_File
 
     function close() 
     { 
-        $this->gc(ini_get('session.gc_maxlifetime')); 
+        $this->gc(ini_get('session.gc_maxlifetime'));
+        
         return true; 
     }
 
@@ -117,7 +118,7 @@ class Session_File
         $sessData = $this->cache->get($this->sess_id);
         if (!empty($sessData)) {
             return $sessData;
-        }else{
+        } else {
             return '';
         }
     }

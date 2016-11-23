@@ -33,9 +33,10 @@ class Request
      */
     public static function getInstance()
     {
-        if(self::$instance == null){
+        if (self::$instance == null) {
             self::$instance = new self;
         }
+        
         return self::$instance;
     }
 
@@ -119,7 +120,7 @@ class Request
     {
         if (isset($_REQUEST[$key])) {
             return (int)$_REQUEST[$key];
-        }else{
+        } else {
             return 0;
         }
     }
@@ -135,7 +136,7 @@ class Request
     {
         if (isset($_REQUEST[$key])) {
             return $_REQUEST[$key];
-        }else{
+        } else {
             return '';
         }
     }
@@ -151,7 +152,7 @@ class Request
     {
         if (isset($_REQUEST[$key])) {
             return addslashes($_REQUEST[$key]);
-        }else{
+        } else {
             return '';
         }
     }
@@ -167,7 +168,7 @@ class Request
     {
         if (isset($_REQUEST[$key])) {
             return htmlspecialchars($_REQUEST[$key]);
-        }else{
+        } else {
             return '';
         }
     }
@@ -191,7 +192,7 @@ class Request
      */
     public function isPost()
     {
-        if( $this->getMethod() == 'POST' ){
+        if ($this->getMethod() == 'POST') {
             return true;
         }
         return false;
@@ -205,7 +206,7 @@ class Request
      */
     public function isGet()
     {
-        if( $this->getMethod() == 'GET' ){
+        if ($this->getMethod() == 'GET') {
             return true;
         }
         return false;
@@ -296,26 +297,27 @@ class Request
     public function getRequestUri()
     {
          $current_uri = '';
-         if( PHP_SAPI === 'cli' ){
+         if (PHP_SAPI === 'cli') {
             // Command line requires a bit of hacking
-            if( isset($_SERVER['argv'][1]) ){
+            if (isset($_SERVER['argv'][1])) {
                 $current_uri = $_SERVER['argv'][1];
                 // Remove GET string from segments
-                if( ($query = strpos($current_uri, '?')) !== FALSE ){
+                if (($query = strpos($current_uri, '?')) !== FALSE) {
                     list($current_uri, $query) = explode('?', $current_uri, 2);
 //                    // Parse the query string into $_GET
                     parse_str($query, $_GET);
                 }
             }
-        }elseif ( isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] ) {
+        } elseif (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI']) {
             //self::$current_uri = $_SERVER['PATH_INFO'];
             $current_uri = $_SERVER['REQUEST_URI'];
-        } elseif ( isset($_SERVER['ORIG_PATH_INFO']) && $_SERVER['ORIG_PATH_INFO'] ) {
+        } elseif (isset($_SERVER['ORIG_PATH_INFO']) && $_SERVER['ORIG_PATH_INFO']) {
             $current_uri = $_SERVER['ORIG_PATH_INFO'];
-        } elseif ( isset($_SERVER['PHP_SELF']) && $_SERVER['PHP_SELF'] ) {
+        } elseif (isset($_SERVER['PHP_SELF']) && $_SERVER['PHP_SELF']) {
             $current_uri = $_SERVER['PHP_SELF'];
         }
         $current_uri = preg_replace('#\.[\s./]*/#', '', $current_uri);
+
         return $current_uri;
     }
 

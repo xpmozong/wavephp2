@@ -46,19 +46,20 @@ class WaveUpload
      * @param array  $config 配置
      * @param string $driver 要使用的上传驱动 LOCAL-本地上传驱动，FTP-FTP上传驱动
      */
-    public function __construct($config = array(), $driver = '', $driverConfig = null){
+    public function __construct($config = array(), $driver = '', $driverConfig = null)
+    {
         /* 获取配置 */
         $this->config   =   array_merge($this->config, $config);
 
         /* 调整配置，把字符串配置参数转换为数组 */
-        if(!empty($this->config['mimes'])){
-            if(is_string($this->mimes)) {
+        if (!empty($this->config['mimes'])) {
+            if (is_string($this->mimes)) {
                 $this->config['mimes'] = explode(',', $this->mimes);
             }
             $this->config['mimes'] = array_map('strtolower', $this->mimes);
         }
-        if(!empty($this->config['exts'])){
-            if (is_string($this->exts)){
+        if (!empty($this->config['exts'])) {
+            if (is_string($this->exts)) {
                 $this->config['exts'] = explode(',', $this->exts);
             }
             $this->config['exts'] = array_map('strtolower', $this->exts);
@@ -70,17 +71,20 @@ class WaveUpload
      * @param  string $name 配置名称
      * @return multitype    配置值
      */
-    public function __get($name) {
+    public function __get($name) 
+    {
         return $this->config[$name];
     }
 
-    public function __set($name,$value){
-        if(isset($this->config[$name])) {
+    public function __set($name,$value)
+    {
+        if (isset($this->config[$name])) {
             $this->config[$name] = $value;
         }
     }
 
-    public function __isset($name){
+    public function __isset($name)
+    {
         return isset($this->config[$name]);
     }
 
@@ -88,7 +92,8 @@ class WaveUpload
      * 获取最后一次上传错误信息
      * @return string 错误信息
      */
-    public function getError(){
+    public function getError()
+    {
         return $this->error;
     }
 
@@ -97,8 +102,10 @@ class WaveUpload
      * @param  array  $file 文件数组
      * @return array        上传成功后的文件信息
      */
-    public function uploadOne($file){
+    public function uploadOne($file)
+    {
         $info = $this->upload(array($file));
+
         return $info ? $info[0] : $info;
     }
 
@@ -106,43 +113,44 @@ class WaveUpload
      * 上传文件
      * @param 文件信息数组 $files ，通常是 $_FILES数组
      */
-    public function upload($files='') {
-        if('' === $files){
+    public function upload($files='') 
+    {
+        if ('' === $files) {
             $files  =   $_FILES;
         }
-        if(empty($files)){
+        if (empty($files)) {
             $this->error = '没有上传的文件！';
             return false;
         }
 
-        
-
         /* 逐个检测并上传文件 */
         $info    =  array();
-        if(function_exists('finfo_open')){
+        if (function_exists('finfo_open')) {
             $finfo   =  finfo_open ( FILEINFO_MIME_TYPE );
         }
         // 对上传文件数组信息处理
         $files   =  $this->dealFiles($files);
         foreach ($files as $key => $file) {
             $file['name']  = strip_tags($file['name']);
-            if(!isset($file['key']))   $file['key']    =   $key;
+            if (!isset($file['key'])) {
+                $file['key'] = $key;
+            }
             /* 通过扩展获取文件类型，可解决FLASH上传$FILES数组返回文件类型错误的问题 */
-            if(isset($finfo)){
-                $file['type']   =   finfo_file ( $finfo ,  $file['tmp_name'] );
+            if (isset($finfo)) {
+                $file['type'] = finfo_file($finfo, $file['tmp_name']);
             }
 
             /* 获取上传文件后缀，允许上传无后缀文件 */
-            $file['ext']    =   pathinfo($file['name'], PATHINFO_EXTENSION);
+            $file['ext'] = pathinfo($file['name'], PATHINFO_EXTENSION);
 
             /* 文件上传检测 */
-            if (!$this->check($file)){
+            if (!$this->check($file)) {
                 continue;
             }
 
             /* 生成保存文件名 */
             $savename = $this->getSaveName($file);
-            if(false == $savename){
+            if (false == $savename) {
                 continue;
             } else {
                 $file['savename'] = $savename;
@@ -150,9 +158,9 @@ class WaveUpload
 
             /* 对图像文件进行严格检测 */
             $ext = strtolower($file['ext']);
-            if(in_array($ext, array('gif','jpg','jpeg','bmp','png','swf'))) {
+            if (in_array($ext, array('gif','jpg','jpeg','bmp','png','swf'))) {
                 $imginfo = getimagesize($file['tmp_name']);
-                if(empty($imginfo) || ($ext == 'gif' && empty($imginfo['bits']))){
+                if (empty($imginfo) || ($ext == 'gif' && empty($imginfo['bits']))) {
                     $this->error = '非法图像文件！';
                     continue;
                 }
@@ -171,9 +179,10 @@ class WaveUpload
                 continue;
             }
         }
-        if(isset($finfo)){
+        if (isset($finfo)) {
             finfo_close($finfo);
         }
+
         return empty($info) ? false : $info;
     }
 
@@ -183,33 +192,36 @@ class WaveUpload
      * @param array $files  上传的文件变量
      * @return array
      */
-    private function dealFiles($files) {
+    private function dealFiles($files) 
+    {
         $fileArray  = array();
         $n          = 0;
-        foreach ($files as $key=>$file){
-            if(is_array($file['name'])) {
+        foreach ($files as $key=>$file) {
+            if (is_array($file['name'])) {
                 $keys       =   array_keys($file);
                 $count      =   count($file['name']);
-                for ($i=0; $i<$count; $i++) {
+                for ($i = 0; $i < $count; $i++) {
                     $fileArray[$n]['key'] = $key;
-                    foreach ($keys as $_key){
+                    foreach ($keys as $_key) {
                         $fileArray[$n][$_key] = $file[$_key][$i];
                     }
                     $n++;
                 }
-            }else{
+            } else {
                $fileArray = $files;
                break;
             }
         }
-       return $fileArray;
+
+        return $fileArray;
     }
 
     /**
      * 检查上传的文件
      * @param array $file 文件信息
      */
-    private function check($file) {
+    private function check($file) 
+    {
         /* 文件上传失败，捕获错误代码 */
         if ($file['error']) {
             $this->error($file['error']);
@@ -217,7 +229,7 @@ class WaveUpload
         }
 
         /* 无效上传 */
-        if (empty($file['name'])){
+        if (empty($file['name'])) {
             $this->error = '未知上传错误！';
         }
 
@@ -255,7 +267,8 @@ class WaveUpload
      * 获取错误代码信息
      * @param string $errorNo  错误号
      */
-    private function error($errorNo) {
+    private function error($errorNo) 
+    {
         switch ($errorNo) {
             case 1:
                 $this->error = '上传的文件超过了 php.ini 中 upload_max_filesize 选项限制的值！';
@@ -284,7 +297,8 @@ class WaveUpload
      * 检查文件大小是否合法
      * @param integer $size 数据
      */
-    private function checkSize($size) {
+    private function checkSize($size) 
+    {
         return !($size > $this->maxSize) || (0 == $this->maxSize);
     }
 
@@ -292,7 +306,8 @@ class WaveUpload
      * 检查上传的文件MIME类型是否合法
      * @param string $mime 数据
      */
-    private function checkMime($mime) {
+    private function checkMime($mime) 
+    {
         return empty($this->config['mimes']) ? true : in_array(strtolower($mime), $this->mimes);
     }
 
@@ -300,7 +315,8 @@ class WaveUpload
      * 检查上传的文件后缀是否合法
      * @param string $ext 后缀
      */
-    private function checkExt($ext) {
+    private function checkExt($ext) 
+    {
         return empty($this->config['exts']) ? true : in_array(strtolower($ext), $this->exts);
     }
 
@@ -308,7 +324,8 @@ class WaveUpload
      * 根据上传文件命名规则取得保存文件名
      * @param string $file 文件信息
      */
-    private function getSaveName($file) {
+    private function getSaveName($file) 
+    {
         $savename = $this->config['isFormerName'] ? $file['name'] : md5(time().mt_rand());
 
         /* 文件保存后缀，支持强制更改文件后缀 */

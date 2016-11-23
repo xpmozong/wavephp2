@@ -85,7 +85,7 @@ class Wmysqli extends Db_Abstract
                 $file = Wave::app()->config['write_sql_dir'].'sql_log_'.date('Y-m-d').'.txt';
                 Wave::writeCache($file, $content."\n", 'a+');
             }
-        }else{
+        } else {
             // 有错误发生
             $this->errno = $conn->error;
             // 强制报错并且die
@@ -107,7 +107,7 @@ class Wmysqli extends Db_Abstract
     protected function _insertdb($table, $array)
     {
         $tbcolumn = $tbvalue = '';
-        foreach($array  as $key=>$value){
+        foreach ($array  as $key=>$value) {
             $value = $this->escape($value);
             $tbcolumn .= '`'.$key.'`'.",";
             $tbvalue  .= ''.$value.',';
@@ -142,7 +142,7 @@ class Wmysqli extends Db_Abstract
     protected function _updatedb($table, $array, $conditions)
     {
         $update = array();
-        foreach ($array as $key => $value){
+        foreach ($array as $key => $value) {
             $value = $this->escape($value);
             $update[] = "`$key`=$value";
         }
@@ -281,14 +281,14 @@ class Wmysqli extends Db_Abstract
      */
     protected function msg() 
     {
-        if($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
+        if ($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
             echo $this->getLastSql()."<br>";
             echo "<div style='color:red;'>\n";
                 echo "<h4>数据库操作错误</h4>\n";
                 echo "<h5>错误信息：".$this->errno."</h5>\n";
             echo "</div>";
             die;
-        }else{
+        } else {
             exit('数据库操作错误');
         }
     }

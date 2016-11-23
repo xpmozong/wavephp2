@@ -82,59 +82,59 @@ class Route
     {
         $callarray = array();
         $rpathInfo = $this->pathInfo;
-        if(!empty($rpathInfo) && $rpathInfo !== '/'){
+        if (!empty($rpathInfo) && $rpathInfo !== '/') {
             $pos = strpos($rpathInfo, '?');
-            if($pos !== false){
+            if ($pos !== false) {
                  $rpathInfo = substr($rpathInfo, 0, $pos);
             }
             $rpathInfo = trim($rpathInfo, '/');
             if (empty($rpathInfo)) {
                 $c = ucfirst($this->defaultControl).'Controller';
                 $f = 'actionIndex';
-            }else{
+            } else {
                 $rpathInfo = $this->filterStr($rpathInfo);
                 $pathInfoArr = explode('/', $rpathInfo);
                 $c = ucfirst($pathInfoArr[0]).'Controller';
                 if (!empty($pathInfoArr[1])) {
                     $newPathArr = explode('&', $pathInfoArr[1]);
                     $f = 'action'.ucfirst($newPathArr[0]);
-                }else{
+                } else {
                     $f = 'actionIndex';
                 }
-                if(count($pathInfoArr) > 2){
+                if (count($pathInfoArr) > 2) {
                     array_shift($pathInfoArr);
                     array_shift($pathInfoArr);
                     $callarray = $pathInfoArr;
                 }
             }
-        }else{
+        } else {
             $c = ucfirst($this->defaultControl).'Controller';
             $f = 'actionIndex';
         }
         $controller = $this->projectPath.$this->projectName.'/controllers/'.$c.'.php';
-        if(file_exists($controller)){
+        if (file_exists($controller)) {
             $this->className = $c;
             $this->actionName = $f;
             // require $controller;
-            if(class_exists($c)){
+            if (class_exists($c)) {
                 $cc = new $c;
-                if(method_exists($cc, $f)){
-                    if(!empty($callarray)){
+                if (method_exists($cc, $f)) {
+                    if (!empty($callarray)) {
                         call_user_func_array(array($cc,$f), $callarray);
-                    }else{
+                    } else {
                         $cc->$f();
                     }
                     $cc->debuger();
                     if ($this->isSmarty) {
                         $cc->display();
                     }
-                }else{
+                } else {
                    $this->error404(); 
                 }
-            }else{
+            } else {
                 $this->error404(); 
             }
-        }else{
+        } else {
             $this->error404();
         }
     }

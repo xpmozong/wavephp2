@@ -89,8 +89,9 @@ class Controller
     /**
      * 初始化view对象
      */
-    public function initView(){
-        if($this->view == null){
+    public function initView() 
+    {
+        if ($this->view == null) {
             $this->view = new View();
         }
 
@@ -100,9 +101,10 @@ class Controller
     /**
      * 将控制器的类成员赋值给模板
      */
-    protected function _assignVars(){
+    protected function _assignVars()
+    {
         $vars = get_object_vars($this);
-        if(is_array($vars)){
+        if (is_array($vars)) {
             $this->view->assign($vars);
         }
     }
@@ -180,7 +182,7 @@ class Controller
                     width: 400px; margin-top: 15%;}
                 </style>
                 <script type="text/javascript">
-                var jump = function(){
+                var jump = function() {
                     window.location.href="'.$url.'";
                 }
                 setTimeout(jump, '.($time*1000).');
@@ -225,7 +227,7 @@ class Controller
         if ($this->isSmarty) {
             $this->debuger = $config['debuger'];
             if ($config['debuger']) {
-                if(!isset($_SESSION)) {
+                if (!isset($_SESSION)) {
                     @session_start(); 
                 }
                 Wave::$_debug['session'] = $_SESSION;
@@ -234,9 +236,9 @@ class Controller
                 $this->escapetime = microtime(TRUE) - START_TIME;
                 $this->memuse = (memory_get_usage() - MEMORY_USAGE_START) / 1024;
             }
-        }else{
+        } else {
             if ($config['debuger']) {
-                if(!isset($_SESSION)) {
+                if (!isset($_SESSION)) {
                     session_start(); 
                 }
                 Wave::$_debug['session'] = $_SESSION;

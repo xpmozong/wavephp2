@@ -37,12 +37,12 @@ class I18nModel extends Model
         $res = $this->queryOne($sql);
         if (empty($res['TABLE_NAME'])) {
             $sql = "CREATE TABLE `w_language` (
-              `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '语言id',
-              `lang_code` varchar(50) NOT NULL DEFAULT '' COMMENT '语言编码',
-              `lang_key` int(11) NOT NULL COMMENT '翻译项',
-              `lang_value` varchar(255) NOT NULL DEFAULT '' COMMENT '翻译内容',
-              PRIMARY KEY (`id`),
-              UNIQUE KEY `lang_index` (`lang_value`,`lang_code`,`lang_key`)
+                `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '语言id',
+                `lang_code` varchar(50) NOT NULL DEFAULT '' COMMENT '语言编码',
+                `lang_key` int(11) NOT NULL COMMENT '翻译项',
+                `lang_value` varchar(255) NOT NULL DEFAULT '' COMMENT '翻译内容',
+                PRIMARY KEY (`id`),
+                UNIQUE KEY `lang_index` (`lang_value`,`lang_code`,`lang_key`)
             ) ENGINE=InnoDB AUTO_INCREMENT=1 
             DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT 
             COMMENT='多语言翻译项';";
@@ -75,7 +75,7 @@ class I18nModel extends Model
 
             $foreign = $this->where(array('lang_code'=>$lang))
                             ->getAll('lang_key,lang_value');
-            foreach ($foreign as $key => $val ) {
+            foreach ($foreign as $key => $val) {
                 $zhcn = $zhnew[$val['lang_key']];
                 $i18n[$zhcn] = $val['lang_value'];
             }
@@ -86,7 +86,7 @@ class I18nModel extends Model
             $content .= "return $cache ?>";
             Wave::writeCache($filepath, $content);
 
-        }else{
+        } else {
             $i18n = require $filepath;
         }
 

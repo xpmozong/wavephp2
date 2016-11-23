@@ -55,7 +55,7 @@ class Pdomysql extends Db_Abstract
         );
         try{
             return new PDO($dbh, $username, $password, $driverOptions);
-        } catch (PDOException $e){
+        } catch (PDOException $e) {
             return null;
         }
     }
@@ -91,7 +91,7 @@ class Pdomysql extends Db_Abstract
         if ($is_rw) {
             $result = $conn->exec($sql);
             $this->execNums = $result;
-        }else{
+        } else {
             $result = $conn->query($sql);
         }
         if ($result) {
@@ -124,7 +124,7 @@ class Pdomysql extends Db_Abstract
     protected function _insertdb($table, $array)
     {
         $tbcolumn = $tbvalue = '';
-        foreach($array  as $key=>$value){
+        foreach ($array  as $key=>$value) {
             $value = $this->escape($value);
             $tbcolumn .= '`'.$key.'`'.",";
             $tbvalue  .= ''.$value.',';
@@ -160,7 +160,7 @@ class Pdomysql extends Db_Abstract
     protected function _updatedb($table, $array, $conditions)
     {
         $update = array();
-        foreach ($array as $key => $value){
+        foreach ($array as $key => $value) {
             $value = $this->escape($value);
             $update[] = "`$key`=$value";
         }
@@ -191,7 +191,7 @@ class Pdomysql extends Db_Abstract
     {
         if ($this->dbquery($sql)) {
             return $this->dbquery($sql)->fetch(PDO::FETCH_ASSOC);
-        }else{
+        } else {
             return array();
         }
     }
@@ -206,7 +206,7 @@ class Pdomysql extends Db_Abstract
     {
         if ($this->dbquery($sql)) {
             return $this->dbquery($sql)->fetchAll(PDO::FETCH_ASSOC);
-        }else{
+        } else {
             return array();
         }
     }
@@ -290,14 +290,14 @@ class Pdomysql extends Db_Abstract
      */
     protected function msg() 
     {
-        if($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
+        if ($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
             echo $this->getLastSql()."<br>";
             echo "<div style='color:red;'>\n";
                 echo "<h4>数据库操作错误</h4>\n";
                 echo "<h5>错误信息：".var_dump($this->errno)."</h5>\n";
             echo "</div>";
             die;
-        }else{
+        } else {
             exit('数据库操作错误');
         }
     }

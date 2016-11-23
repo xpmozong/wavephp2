@@ -45,7 +45,7 @@ class CookieModule
         $val = json_encode($val);
         if (!empty($this->domain)) {
             setcookie($key, $val, time() + $this->lifeTime, '/', $this->domain);
-        }else{
+        } else {
             setcookie($key, $val, time() + $this->lifeTime);
         }
     }
@@ -67,7 +67,7 @@ class CookieModule
         $result = json_decode($txt, true);
         if ($result) {
             return $result;
-        }else{
+        } else {
             return $txt;
         }
     }
@@ -79,7 +79,7 @@ class CookieModule
     {
         if (!empty($this->domain)) {
             setcookie($key, '', time() - $this->lifeTime, '/', $this->domain);
-        }else{
+        } else {
             setcookie($key, '', time() + $this->lifeTime);
         }
     }

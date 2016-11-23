@@ -77,7 +77,7 @@ class Mysql extends Db_Abstract
         
         $result = @mysql_query($sql, $conn_id);
         // 可以用自定义错误信息的方法，就要压制本身的错误信息
-        if($result == true) {
+        if ($result == true) {
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
@@ -90,7 +90,7 @@ class Mysql extends Db_Abstract
                 $file = Wave::app()->config['write_sql_dir'].'sql_log_'.date('Y-m-d').'.txt';
                 Wave::writeCache($file, $content."\n", 'a+');
             }
-        }else{
+        } else {
             // 有错误发生
             $this->errno = mysql_error($conn_id);
             // 强制报错并且die
@@ -112,7 +112,7 @@ class Mysql extends Db_Abstract
     protected function _insertdb($table, $array)
     {
         $tbcolumn = $tbvalue = '';
-        foreach($array  as $key=>$value){
+        foreach ($array  as $key=>$value) {
             $value = $this->escape($value);
             $tbcolumn .= '`'.$key.'`'.",";
             $tbvalue  .= ''.$value.',';
@@ -120,6 +120,7 @@ class Mysql extends Db_Abstract
         $tbcolumn = "(".trim($tbcolumn,',').")";
         $tbvalue = "(".trim($tbvalue,',').")";
         $sql = "INSERT INTO `".$table."` ".$tbcolumn." VALUES ".$tbvalue;
+
         return $this->dbquery($sql);
     }
 
@@ -147,12 +148,13 @@ class Mysql extends Db_Abstract
     protected function _updatedb($table, $array, $conditions)
     {
         $update = array();
-        foreach ($array as $key => $value){
+        foreach ($array as $key => $value) {
             $value = $this->escape($value);
             $update[] = "`$key`=$value";
         }
         $update = implode(",", $update);
         $sql = 'UPDATE `'.$table.'` SET '.$update.' WHERE '.$conditions;
+
         return $this->dbquery($sql);
     }
 
@@ -176,6 +178,7 @@ class Mysql extends Db_Abstract
     protected function _getOne($sql) 
     {
         $res = $this->dbquery($sql);
+        
         return mysql_fetch_assoc($res);
     }
  
@@ -275,7 +278,7 @@ class Mysql extends Db_Abstract
      */
     protected function msg() 
     {
-        if($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
+        if ($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
             echo $this->getLastSql()."<br>";
             $errMsg = mysql_error();
             echo "<div style='color:red;'>\n";
@@ -284,7 +287,7 @@ class Mysql extends Db_Abstract
                 echo "<h5>错误信息：".$errMsg."</h5>\n";
             echo "</div>";
             die;
-        }else{
+        } else {
             exit('数据库操作错误');
         }
     }

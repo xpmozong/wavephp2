@@ -95,13 +95,13 @@ class WaveCommon
     public static function curl($url = '', $method = 'GET', $data = array(), $timeout = 60) 
     {
         $ch = curl_init();
-        if(strtoupper($method) == 'GET' && $data){
+        if (strtoupper($method) == 'GET' && $data) {
             $postdata = http_build_query($data, '', '&');
             $url .= '?'.$postdata;
-        } elseif (strtoupper($method) == 'POST' && $data){
+        } elseif (strtoupper($method) == 'POST' && $data) {
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        } elseif(strtoupper($method) == 'JSON' && $data) {
+        } elseif (strtoupper($method) == 'JSON' && $data) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type:application/json'));
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
@@ -142,13 +142,13 @@ class WaveCommon
         try{
 
             $ch = curl_init();
-            if(strtoupper($method) == 'GET' && $data){
+            if (strtoupper($method) == 'GET' && $data) {
                 $postdata = http_build_query($data, '', '&');
                 $url .= '?'.$postdata;
-            } elseif (strtoupper($method) == 'POST' && $data){
+            } elseif (strtoupper($method) == 'POST' && $data) {
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            } elseif(strtoupper($method) == 'JSON' && $data) {
+            } elseif (strtoupper($method) == 'JSON' && $data) {
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type:application/json'));
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
@@ -166,12 +166,12 @@ class WaveCommon
             $result['data'] = $contents;
 
             // 出错
-            if(curl_errno($ch)) {
+            if (curl_errno($ch)) {
                 $result['error'] = curl_error($ch);
             }
             curl_close ($ch);
 
-        }catch(Exception $ex){
+        } catch(Exception $ex) {
             $result['status'] = false;
             $result['error'] = $ex;
         }
@@ -218,16 +218,16 @@ class WaveCommon
     public static function getFilter($data)
     {
         foreach ($data as $key => $value) {
-            if(!empty($value)){
-                if(is_array($value)){
+            if (!empty($value)) {
+                if (is_array($value)) {
                     foreach ($value as $k => $v) {
                         if (is_array($v)) {
                             $data[$key][$k] = self::getFilter($v);
-                        }else{
+                        } else {
                             $data[$key][$k] = addslashes($v);
                         }
                     }
-                }else{
+                } else {
                     $data[$key] = addslashes($value);
                 }
             }
@@ -266,7 +266,7 @@ class WaveCommon
      */ 
     public static function mkDir($dir, $mode = 0777) 
     { 
-        if($dir == '') return true;
+        if ($dir == '') return true;
         if (is_dir($dir) || @mkdir($dir,$mode)) return true; 
         if (!WaveCommon::mkDir(dirname($dir),$mode)) return false;
 

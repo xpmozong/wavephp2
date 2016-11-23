@@ -53,21 +53,22 @@ class WaveRedisCluster
     public function connect($config, $isMaster = true)
     {
         // default port
-        if(!isset($config['port'])){
+        if (!isset($config['port'])) {
             $config['port'] = 6379;
         }
         // 设置 Master 连接
-        if($isMaster){
+        if ($isMaster) {
             $this->_linkHandle['master'] = new Redis();
             $ret = $this->_linkHandle['master']
                         ->connect($config['host'],$config['port'],3);
-        }else{
+        }else {
             // 多个 Slave 连接
             $this->_linkHandle['slave'][$this->_sn] = new Redis();
             $ret = $this->_linkHandle['slave'][$this->_sn]
                         ->connect($config['host'],$config['port'],3);
             ++$this->_sn;
         }
+        
         return $ret;
     }
   
@@ -80,21 +81,21 @@ class WaveRedisCluster
      */
     public function close($flag = 2)
     {
-        switch($flag){
+        switch ($flag) {
             // 关闭 Master
             case 0:
                 $this->getRedis()->close();
             break;
             // 关闭 Slave
             case 1:
-                for($i = 0; $i < $this->_sn; ++$i){
+                for ($i = 0; $i < $this->_sn; ++$i) {
                     $this->_linkHandle['slave'][$i]->close();
                 }
             break;
             // 关闭所有
             case 2:
                 $this->getRedis()->close();
-                for($i = 0 ; $i < $this->_sn; ++$i){
+                for ($i = 0 ; $i < $this->_sn; ++$i) {
                     $this->_linkHandle['slave'][$i]->close();
                 }
             break;
@@ -114,9 +115,9 @@ class WaveRedisCluster
     public function getRedis($isMaster = true, $slaveOne = true)
     {
         // 只返回 Master
-        if($isMaster){
+        if ($isMaster) {
             return $this->_linkHandle['master'];
-        }else{
+        } else {
             return $slaveOne ? $this->_getSlaveRedis() : $this->_linkHandle['slave'][0];
         }
     }
@@ -131,9 +132,9 @@ class WaveRedisCluster
     public function set($key, $value, $expire = 0)
     {
         // 永不超时
-        if($expire == 0){
+        if ($expire == 0) {
             $ret = $this->getRedis()->set($key, $value);
-        }else{
+        } else {
             $ret = $this->getRedis()->setex($key, $expire, $value);
         }
 
@@ -151,7 +152,7 @@ class WaveRedisCluster
         // 是否一次取多个值
         $func = is_array($key) ? 'mGet' : 'get';
         // 没有使用M/S
-        if(!$this->_isUseCluster){
+        if (!$this->_isUseCluster) {
             return $this->getRedis()->{$func}($key);
         }
         
@@ -180,9 +181,9 @@ class WaveRedisCluster
      */
     public function incr($key, $default = 1)
     {
-        if($default == 1){
+        if ($default == 1) {
             return $this->getRedis()->incr($key);
-        }else{
+        } else {
             return $this->getRedis()->incrBy($key, $default);
         }
     }
@@ -196,9 +197,9 @@ class WaveRedisCluster
      */
     public function decr($key, $default = 1)
     {
-        if($default == 1){
+        if ($default == 1) {
             return $this->getRedis()->decr($key);
-        }else{
+        } else {
             return $this->getRedis()->decrBy($key, $default);
         }
     }
@@ -249,7 +250,7 @@ class WaveRedisCluster
         $func = 'lGet';
 
         // 没有使用M/S
-        if(!$this->_isUseCluster){
+        if (!$this->_isUseCluster) {
             return $this->getRedis()->{$func}($key, $index);
         }
         
@@ -265,7 +266,7 @@ class WaveRedisCluster
         $func = 'lLen';
 
         // 没有使用M/S
-        if(!$this->_isUseCluster){
+        if (!$this->_isUseCluster) {
             return $this->getRedis()->{$func}($key);
         }
         
@@ -289,7 +290,7 @@ class WaveRedisCluster
         $func = 'sMembers';
 
         // 没有使用M/S
-        if(!$this->_isUseCluster){
+        if (!$this->_isUseCluster) {
             return $this->getRedis()->{$func}($key);
         }
 
@@ -341,18 +342,18 @@ class WaveRedisCluster
     {
         $return = null;
         if ($key) {
-            if (is_array($key) && !empty($key)){
+            if (is_array($key) && !empty($key)) {
                 $func = 'hMGet';
-                if(!$this->_isUseCluster){
+                if (!$this->_isUseCluster) {
                     $return = $this->getRedis()->{$func}($hash, $key);
-                }else{
+                } else {
                     $return = $this->_getSlaveRedis()->{$func}($hash, $key);
                 }
-            }else{
+            } else {
                 $func = 'hGet';
-                if(!$this->_isUseCluster){
+                if (!$this->_isUseCluster) {
                     $return = $this->getRedis()->{$func}($hash, $key);
-                }else{
+                } else {
                     $return = $this->_getSlaveRedis()->{$func}($hash, $key);
                 }
             }
@@ -360,25 +361,25 @@ class WaveRedisCluster
             switch ($type) {
                 case 0:
                     $func = 'hKeys';
-                    if(!$this->_isUseCluster){
+                    if (!$this->_isUseCluster) {
                         $return = $this->getRedis()->{$func}($hash);
-                    }else{
+                    } else {
                         $return = $this->_getSlaveRedis()->{$func}($hash);
                     }
                     break;
                 case 1:
                     $func = 'hVals';
-                    if(!$this->_isUseCluster){
+                    if (!$this->_isUseCluster) {
                         $return = $this->getRedis()->{$func}($hash);
-                    }else{
+                    } else {
                         $return = $this->_getSlaveRedis()->{$func}($hash);
                     }
                     break;
                 case 2:
                     $func = 'hGetAll';
-                    if(!$this->_isUseCluster){
+                    if (!$this->_isUseCluster) {
                         $return = $this->getRedis()->{$func}($hash);
-                    }else{
+                    } else {
                         $return = $this->_getSlaveRedis()->{$func}($hash);
                     }
                     break;
@@ -400,9 +401,9 @@ class WaveRedisCluster
         $return = null;
 
         $func = 'hLen';
-        if(!$this->_isUseCluster){
+        if (!$this->_isUseCluster) {
             $return = $this->getRedis()->{$func}($hash);
-        }else{
+        } else {
             $return = $this->_getSlaveRedis()->{$func}($hash);
         }
 
@@ -429,9 +430,9 @@ class WaveRedisCluster
         $return = null;
 
         $func = 'hExists';
-        if(!$this->_isUseCluster){
+        if (!$this->_isUseCluster) {
             $return = $this->getRedis()->{$func}($hash, $key);
-        }else{
+        } else {
             $return = $this->_getSlaveRedis()->{$func}($hash, $key);
         }
 
@@ -448,7 +449,7 @@ class WaveRedisCluster
     private function _getSlaveRedis()
     {
         // 就一台 Slave 机直接返回
-        if($this->_sn <= 1){
+        if ($this->_sn <= 1) {
             return $this->_linkHandle['slave'][0];
         }
         // 随机 Hash 得到 Slave 的句柄
@@ -471,7 +472,7 @@ class WaveRedisCluster
         $l = strlen($k);
         $b = bin2hex($k);
         $h = 0;
-        for($i = 0; $i < $l; $i++) {
+        for ($i = 0; $i < $l; $i++) {
             //相加模式HASH
             $h += substr($b, $i*2, 2);
         }

@@ -32,12 +32,12 @@ class Session_Memcache
         $config = Wave::app()->config;
         $this->lifeTime = $config['session']['timeout'];
         if (isset($config['session_memcache'])) {
-            if (extension_loaded('memcached')){
+            if (extension_loaded('memcached')) {
                 $this->cache = new Cache_Memcached('session_memcached');
-            }else{
+            } else {
                 $this->cache = new Cache_Memcache('session_memcache');
             }
-        }else{
+        } else {
             $this->cache = Wave::app()->memcache;
         }
     }
@@ -51,7 +51,7 @@ class Session_Memcache
      */
     public function setState($key, $val, $expire = 0)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start(); 
         }
         if ($expire > 0) {
@@ -71,22 +71,22 @@ class Session_Memcache
      */
     public function getState($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
 
         $txt = '';
-        if(isset($_SESSION[$this->sess_id.$key])){
+        if (isset($_SESSION[$this->sess_id.$key])) {
             if (isset($_SESSION[$this->sess_id.$key.'_expire'])) {
                 $expire = $_SESSION[$this->sess_id.$key.'_expire'];
                 // 如果当前时间大于过期时间 清session
                 if (time() > $expire) {
                     $_SESSION[$this->sess_id.$key.'_expire'] = 0;
                     $_SESSION[$this->sess_id.$key] = '';
-                }else{
+                } else {
                     $txt = $_SESSION[$this->sess_id.$key];
                 }
-            }else{
+            } else {
                 $txt = $_SESSION[$this->sess_id.$key];
             }
         }
@@ -99,7 +99,7 @@ class Session_Memcache
      */
     public function logout($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION[$this->sess_id.$key] = '';
@@ -125,7 +125,7 @@ class Session_Memcache
         $sessData = $this->cache->get($this->sess_id);
         if (!empty($sessData)) {
             return $sessData;
-        }else{
+        } else {
             return '';
         }
     }

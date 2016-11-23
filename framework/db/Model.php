@@ -32,6 +32,7 @@ class Model
     protected $_distinct            = '';
     protected $_where               = array();
     protected $_like                = array();
+    protected $_between             = array();
     protected $_instr               = array();
     protected $_offset              = '';
     protected $_limit               = '';
@@ -63,16 +64,17 @@ class Model
             $configs = Wave::app()->config[$this->dbname];
             $this->tablePrefixArray[$this->dbname] = $configs['master']['table_prefix'];
         }
-        if(empty($this->dbArray[$this->dbname])){
+        if (empty($this->dbArray[$this->dbname])) {
             $this->dbArray[$this->dbname] = Database::factory($this->dbname);
         }
+
         $this->init();
     }
 
     /**
      * 子模型方法
      */
-    protected function init(){}
+    protected function init() {}
 
     /**
      * 选择是哪个数据库
@@ -115,10 +117,10 @@ class Model
      */
     public function select($field = '*')
     {
-        if( !is_array( $field ) ){
+        if (!is_array($field)) {
             $field = explode(',', $field);
         }
-        foreach( $field as $v ){
+        foreach ($field as $v) {
             $val = $v;
             $this->_select[] = $val;
         }
@@ -210,7 +212,7 @@ class Model
     {
         if ($tableName) {
             $this->_from = $tableName;
-        }else{
+        }else {
             $this->_from = $this->_tableName;
         }
 
@@ -310,22 +312,22 @@ class Model
         if (!empty($where) && is_array($where)) {
             foreach ($where as $k => $v) {
                 $prefix = (count($this->_where) == 0) ? '' : $type.' ';
-                if ( !$this->getDb()->_parse($k) && is_null($v) ) {
+                if (!$this->getDb()->_parse($k) && is_null($v)) {
                     $k .= ' IS NULL';
                 }
-                if ( !$this->getDb()->_parse($k)) {
+                if (!$this->getDb()->_parse($k)) {
                     $k .= ' =';
                 }
                 if (!is_null($v)) {
                     $v = $this->getDb()->escape($v);
                 }
-                if ( !empty($type2) ){
+                if (!empty($type2)) {
                     $_where[] = $k.' '.$v;
-                }else{
+                }else {
                     $this->_where[] = $prefix.$k.' '.$v;
                 }
             }
-            if ( !empty($type2) && !empty($_where)){
+            if (!empty($type2) && !empty($_where)) {
                 $this->_where[] = $prefix .'('.  implode(" $type2 ", $_where) . ') ';
             }
         }
@@ -348,22 +350,22 @@ class Model
         if (!empty($where) && is_array($where)) {
             foreach ($where as $k => $v) {
                 $prefix = (count($this->_having) == 0) ? '' : $type.' ';
-                if ( !$this->getDb()->_parse($k) && is_null($v) ) {
+                if (!$this->getDb()->_parse($k) && is_null($v)) {
                     $k .= ' IS NULL';
                 }
-                if ( !$this->getDb()->_parse($k)) {
+                if (!$this->getDb()->_parse($k)) {
                     $k .= ' =';
                 }
                 if (!is_null($v)) {
                     $v = $this->getDb()->escape($v);
                 }
-                if ( !empty($type2) ){
+                if (!empty($type2)) {
                     $_having[] = $k.' '.$v;
-                }else{
+                }else {
                     $this->_having[] = $prefix.$k.' '.$v;
                 }
             }
-            if ( !empty($type2) && !empty($_having)){
+            if (!empty($type2) && !empty($_having)) {
                 $this->_having[] = $prefix .'('.  implode(" $type2 ", $_having) . ') ';
             }
         }
@@ -428,20 +430,52 @@ class Model
     public function like($where, $not = false, $type = 'AND', $like = 'all')
     {
         if (!empty($where) && is_array($where)) {
-            foreach ( $where as $k => $v ) {
+            foreach ($where as $k => $v) {
                 $v = $this->safe_replace($v);
                 $prefix = (count($this->_like) == 0) ? '' : ' '.$type.' ';
                 $not = ($not) ? ' NOT' : '';
                 $arr = array();
-                if ( $like == 'left' ) {
+                if ($like == 'left') {
                     $keyword = "'%{$v}'";
-                }else if ( $like == 'right' ) {
+                }else if ($like == 'right') {
                     $keyword = "'{$v}%'";
                 }else {
                     $keyword = "'%{$v}%'";
                 }
                 $arr[] =  $k . $not.' LIKE '.$keyword;
                 $this->_like[] = $prefix .'('.  implode(" OR ", $arr) . ') ';
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * between条件查询
+     *
+     * @param array $where      条件
+     * @param string $type      AND或OR
+     *
+     * @return $this
+     *
+     */
+    public function between($where, $type = 'AND')
+    {
+        if (!empty($where) && is_array($where)) {
+            foreach ($where as $k => $v) {
+                if (is_array($v) && (count($v) == 2)) {
+                    $prefix = (count($this->_between) == 0) ? '' : $type.' ';
+                    if (!$this->getDb()->_parse($k)) {
+                        $k .= ' BETWEEN ';
+                    }
+                    if (!is_null($v[0])) {
+                        $v[0] = $this->getDb()->escape($v[0]);
+                    }
+                    if (!is_null($v[1])) {
+                        $v[1] = $this->getDb()->escape($v[1]);
+                    }
+                    $this->_between[] = $prefix.$k.' '.$v[0].' AND '.$v[1];
+                }
             }
         }
 
@@ -476,8 +510,7 @@ class Model
     public function instr($where, $type = 'AND')
     {
         if (!empty($where) && is_array($where)) {
-            foreach ( $where as $k => $v )
-            {
+            foreach ($where as $k => $v) {
                 $prefix = (count($this->_instr) == 0) ? '' : $type.' ';
                 $arr = array();
                 $v = str_replace("+", " ", $v);
@@ -527,7 +560,7 @@ class Model
             if (is_string($field)) {
                 $field = explode(',', $field);
             }
-            foreach ( $field as $v ) {
+            foreach ($field as $v) {
                 $this->_group[] = $v;
             }
         }
@@ -574,13 +607,14 @@ class Model
         $sql .= ' FROM ';
         if (empty($this->_from)) {
             $sql .= $this->_tableName;
-        }else{
+        }else {
             $sql .= $this->_from;
         }
         $sql .= ' ';
         $sql .= implode(' ', $this->_join);
         if (count($this->_where) > 0 
             OR count($this->_like) > 0 
+            OR count($this->_between) > 0 
             OR count($this->_instr) > 0) {
             $sql .= ' WHERE ';
         }
@@ -593,8 +627,18 @@ class Model
             $sql .= implode(' ', $this->_like);
         }
 
+        if (count($this->_between) > 0) {
+            if (count($this->_where) > 0 
+                OR count($this->_like) > 0) {
+                $sql .= ' AND ';
+            }
+            $sql .= implode(' ', $this->_between);
+        }
+
         if (count($this->_instr) > 0) {
-            if (count($this->_where) > 0 OR count($this->_like) > 0) {
+            if (count($this->_where) > 0 
+                OR count($this->_like) > 0 
+                OR count($this->_between) > 0) {
                 $sql .= ' AND ';
             }
             $sql .= implode(' ', $this->_instr);
@@ -627,29 +671,6 @@ class Model
     }
 
     /**
-     * 重置查询数组
-     */
-    public function resetSelect()
-    {
-        $vars = array(
-            '_select'   => array(),
-            '_from'     => '',
-            '_join'     => array(),
-            '_where'    => array(),
-            '_like'     => array(),
-            '_instr'    => array(),
-            '_group'    => array(),
-            '_order'    => array(),
-            '_distinct' => false,
-            '_limit'    => false,
-            '_offset'   => false,
-            '_having'   => array()
-        );
-
-        $this->resetRun($vars);
-    }
-
-    /**
      * 重置查询数组 执行
      *
      * @param array $vars   需要清空的数组
@@ -657,9 +678,33 @@ class Model
      */
     public function resetRun($vars)
     {
-        foreach($vars as $item => $default_value) {
+        foreach ($vars as $item => $default_value) {
             $this->$item = $default_value;
         }
+    }
+
+    /**
+     * 重置查询数组
+     */
+    public function resetSelect()
+    {
+        $vars = array(
+            '_select'   => null,
+            '_from'     => '',
+            '_join'     => null,
+            '_distinct' => null,
+            '_where'    => null,
+            '_like'     => null,
+            '_between'  => null,
+            '_instr'    => null,
+            'offset'    => '',
+            'limit'     => '',
+            '_group'    => null,
+            '_order'    => null,
+            '_having'   => null
+        );
+
+        $this->resetRun($vars);
     }
 
     /**
@@ -700,7 +745,7 @@ class Model
         $sql = '';
         if (count($this->_select)) {
             $sql = $this->where($where)->compileSelect();
-        }else{
+        }else {
             $sql = $this->select($field)->where($where)->compileSelect();
         }
         $rs = $this->getDb()->getAll($sql);
@@ -752,7 +797,7 @@ class Model
         $sql = '';
         if (count($this->_select)) {
             $sql = $this->where($where)->compileSelect();
-        }else{
+        }else {
             $sql = $this->select($field)->where($where)->compileSelect();
         }
         $rs = $this->getDb()->getOne($sql);
@@ -785,10 +830,11 @@ class Model
      * @return string
      *
      */
-    public function getTableName(){
+    public function getTableName()
+    {
         if (empty($this->_from)) {
             return $this->_tableName;
-        }else{
+        }else {
             return $this->_from;
         }
     }
@@ -804,16 +850,16 @@ class Model
      */
     public function insert($data, $cache_key = '')
     {
-        if (!empty($cache_key) && is_object($this->cache)){
+        if (!empty($cache_key) && is_object($this->cache)) {
             $this->cache->delete($cache_key);
         }
 
         $tableName = $this->getTableName();
         $res = $this->getDb()->insertdb($tableName, $data);
         $this->resetSelect();
-        if($res){
+        if ($res) {
             return $this->getDb()->insertId();
-        }else{
+        }else {
             return false;
         }
     }
@@ -830,8 +876,8 @@ class Model
      */
     public function update($data, $where, $cache_key = '')
     {
-        if(!isset($where) || !is_array($where) ) exit('参数错误');
-        if (!empty($cache_key) && is_object($this->cache)){
+        if (!isset($where) || !is_array($where) ) exit('参数错误');
+        if (!empty($cache_key) && is_object($this->cache)) {
             $this->cache->delete($cache_key);
         }
 
@@ -859,8 +905,8 @@ class Model
      */
     public function delete($where, $cache_key = '')
     {
-        if(!isset($where) || !is_array($where) ) exit('参数错误');
-        if (!empty($cache_key) && is_object($this->cache)){
+        if (!isset($where) || !is_array($where) ) exit('参数错误');
+        if (!empty($cache_key) && is_object($this->cache)) {
             $this->cache->delete($cache_key);
         }
 

@@ -29,7 +29,8 @@ class View
     /**
      * 初始化smarty模板引擎
      */
-    public function __construct(){
+    public function __construct()
+    {
         $app = Wave::app();
         $dir = $app->projectPath.$app->projectName;
 
@@ -62,7 +63,7 @@ class View
      */
     public function setOptions(array $options)
     {
-        foreach($options as $param => $value){
+        foreach ($options as $param => $value) {
             $this->engin->$param = $value;
         }
     }
@@ -99,7 +100,7 @@ class View
                         $compile_id = null, 
                         $display = false)
     {
-        if($resource_name == ''){
+        if ($resource_name == '') {
             $resource_name = $this->getDefaultScript();
         }
         $resource_name = str_replace('.html', '', $resource_name).'.html';
@@ -115,7 +116,7 @@ class View
 
     public function assign($name, $val = null)
     {
-        if(empty($name)){
+        if (empty($name)) {
             return false;
         }
         $this->engin->assign($name, $val);

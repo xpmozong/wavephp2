@@ -33,7 +33,7 @@ class Session_Redis
         $this->lifeTime = $config['session']['timeout'];
         if (isset($config['session_redis'])) {
             $this->cache = new Cache_Redis('session_redis');
-        }else{
+        } else {
             $this->cache = Wave::app()->redis;
         }
     }
@@ -47,7 +47,7 @@ class Session_Redis
      */
     public function setState($key, $val, $expire = 0)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start(); 
         }
         if ($expire > 0) {
@@ -67,22 +67,22 @@ class Session_Redis
      */
     public function getState($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
 
         $txt = '';
-        if(isset($_SESSION[$this->sess_id.$key])){
+        if (isset($_SESSION[$this->sess_id.$key])) {
             if (isset($_SESSION[$this->sess_id.$key.'_expire'])) {
                 $expire = $_SESSION[$this->sess_id.$key.'_expire'];
                 // 如果当前时间大于过期时间 清session
                 if (time() > $expire) {
                     $_SESSION[$this->sess_id.$key.'_expire'] = 0;
                     $_SESSION[$this->sess_id.$key] = '';
-                }else{
+                } else {
                     $txt = $_SESSION[$this->sess_id.$key];
                 }
-            }else{
+            } else {
                 $txt = $_SESSION[$this->sess_id.$key];
             }
         }
@@ -95,7 +95,7 @@ class Session_Redis
      */
     public function logout($key)
     {
-        if(!isset($_SESSION)) {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION[$this->sess_id.$key] = '';
@@ -121,7 +121,7 @@ class Session_Redis
         $sessData = $this->cache->get($this->sess_id);
         if (!empty($sessData)) {
             return $sessData;
-        }else{
+        } else {
             return '';
         }
     }
