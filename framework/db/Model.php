@@ -689,19 +689,19 @@ class Model
     public function resetSelect()
     {
         $vars = array(
-            '_select'   => null,
+            '_select'   => array(),
             '_from'     => '',
-            '_join'     => null,
-            '_distinct' => null,
-            '_where'    => null,
-            '_like'     => null,
-            '_between'  => null,
-            '_instr'    => null,
-            'offset'    => '',
-            'limit'     => '',
-            '_group'    => null,
-            '_order'    => null,
-            '_having'   => null
+            '_join'     => array(),
+            '_distinct' => '',
+            '_where'    => array(),
+            '_like'     => array(),
+            '_between'  => array(),
+            '_instr'    => array(),
+            'offset'    => 0,
+            'limit'     => 0,
+            '_group'    => array(),
+            '_order'    => array(),
+            '_having'   => array()
         );
 
         $this->resetRun($vars);
