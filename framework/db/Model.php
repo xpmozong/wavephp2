@@ -34,8 +34,8 @@ class Model
     protected $_like                = array();
     protected $_between             = array();
     protected $_instr               = array();
-    protected $_offset              = '';
-    protected $_limit               = '';
+    protected $_offset              = 0;
+    protected $_limit               = 0;
     protected $_group               = array();
     protected $_order               = array();
     protected $_tableName           = '';
@@ -659,7 +659,7 @@ class Model
             $sql .= implode(', ', $this->_order);
         }
 
-        if (is_numeric($this->_limit) && $this->_limit > 0) {
+        if ($this->_limit > 0) {
             $sql .= $this->getDb()->limit($this->_offset, $this->_limit);
         }
 
@@ -697,8 +697,8 @@ class Model
             '_like'     => array(),
             '_between'  => array(),
             '_instr'    => array(),
-            'offset'    => 0,
-            'limit'     => 0,
+            '_offset'   => 0,
+            '_limit'    => 0,
             '_group'    => array(),
             '_order'    => array(),
             '_having'   => array()
