@@ -44,9 +44,9 @@ class CookieModule
     {
         $val = json_encode($val);
         if (!empty($this->domain)) {
-            setcookie($key, $val, time() + $this->lifeTime, '/', $this->domain);
+            setcookie($key, $val, time() + $this->lifeTime, '/', $this->domain, false, true);
         } else {
-            setcookie($key, $val, time() + $this->lifeTime);
+            setcookie($key, $val, time() + $this->lifeTime, '', '', false, true);
         }
     }
 

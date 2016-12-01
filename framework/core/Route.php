@@ -85,7 +85,7 @@ class Route
         if (!empty($rpathInfo) && $rpathInfo !== '/') {
             $pos = strpos($rpathInfo, '?');
             if ($pos !== false) {
-                 $rpathInfo = substr($rpathInfo, 0, $pos);
+                $rpathInfo = substr($rpathInfo, 0, $pos);
             }
             $rpathInfo = trim($rpathInfo, '/');
             if (empty($rpathInfo)) {
