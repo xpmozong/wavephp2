@@ -37,6 +37,7 @@ class WaveRedisCluster
      * 构造函数
      *
      * @param boolean $isUseCluster 是否采用 M/S 方案
+     *
      */
     public function __construct($isUseCluster = false)
     {
@@ -48,9 +49,11 @@ class WaveRedisCluster
      *
      * @param array $config Redis服务器配置
      * @param boolean $isMaster 当前添加的服务器是否为 Master 服务器
+     * @param int $db 数据库
      * @return boolean
+     *
      */
-    public function connect($config, $isMaster = true)
+    public function connect($config, $isMaster = true, $db = 0)
     {
         // default port
         if (!isset($config['port'])) {
@@ -60,12 +63,18 @@ class WaveRedisCluster
         if ($isMaster) {
             $this->_linkHandle['master'] = new Redis();
             $ret = $this->_linkHandle['master']
-                        ->connect($config['host'],$config['port'],3);
+                        ->connect($config['host'],$config['port'], 3);
+            if ($ret) {
+                $this->_linkHandle['master']->select($db);
+            }
         }else {
             // 多个 Slave 连接
             $this->_linkHandle['slave'][$this->_sn] = new Redis();
             $ret = $this->_linkHandle['slave'][$this->_sn]
-                        ->connect($config['host'],$config['port'],3);
+                        ->connect($config['host'],$config['port'], 3);
+            if ($ret) {
+                $this->_linkHandle['slave'][$this->_sn]->select($db);
+            }
             ++$this->_sn;
         }
         
@@ -111,6 +120,7 @@ class WaveRedisCluster
      * @param boolean $slaveOne 返回的Slave选择 
      * true:负载均衡随机返回一个Slave选择 false:返回所有的Slave选择
      * @return redis object
+     *
      */
     public function getRedis($isMaster = true, $slaveOne = true)
     {
@@ -128,6 +138,7 @@ class WaveRedisCluster
      * @param string $key 组存KEY
      * @param string $value 缓存值
      * @param int $expire 过期时间， 0:表示无过期时间
+     *
      */
     public function set($key, $value, $expire = 0)
     {
@@ -146,6 +157,7 @@ class WaveRedisCluster
      *
      * @param string $key 缓存KEY,支持一次取多个 $key = array('key1','key2')
      * @return string || boolean  失败返回 false, 成功返回字符串
+     *
      */
     public function get($key)
     {
@@ -165,6 +177,7 @@ class WaveRedisCluster
      *
      * @param string || array $key 缓存KEY，支持单个健:"key1" 或多个健:array('key1','key2')
      * @return int 删除的健的数量
+     *
      */
     public function delete($key)
     {
@@ -178,6 +191,7 @@ class WaveRedisCluster
      * @param string $key 缓存KEY
      * @param int $default 操作时的默认值
      * @return int　操作后的值
+     *
      */
     public function incr($key, $default = 1)
     {
@@ -194,6 +208,7 @@ class WaveRedisCluster
      * @param string $key 缓存KEY
      * @param int $default 操作时的默认值
      * @return int　操作后的值
+     *
      */
     public function decr($key, $default = 1)
     {
@@ -208,6 +223,7 @@ class WaveRedisCluster
      * 插入一个值到列表中,如果列表不存在,新建一个列表
      * @param string $key
      * @param string $value
+     *
      */
     public function lpush($key, $value)
     {
@@ -216,7 +232,10 @@ class WaveRedisCluster
 
     /**
      * 删除列表的第一个值并返回它
+     *
      * @param string $key
+     * @return string
+     *
      */
     public function lpop($key)
     {
@@ -225,8 +244,11 @@ class WaveRedisCluster
 
     /**
      * 插入一个值到列表中,如果列表不存在,新建一个列表
+     *
      * @param string $key
      * @param string $value
+     * @return boolean
+     *
      */
     public function rpush($key, $value)
     {
@@ -235,7 +257,10 @@ class WaveRedisCluster
 
     /**
      * 删除并返回列表的最后一个值
+     *
      * @param string $key
+     * @return string
+     *
      */
     public function rpop($key)
     {
@@ -244,6 +269,11 @@ class WaveRedisCluster
 
     /**
      * 从列表中返回指定位置的值
+     *
+     * @param string $key
+     * @param int $index
+     * @return string
+     *
      */
     public function lget($key, $index = 0)
     {
@@ -260,6 +290,10 @@ class WaveRedisCluster
 
     /**
      * 获得列表的长度
+     *
+     * @param string $key
+     * @return int
+     *
      */
     public function llen($key)
     {
@@ -276,6 +310,11 @@ class WaveRedisCluster
 
     /**
      * 成员添加
+     *
+     * @param string $key
+     * @param string $value
+     * @return boolean
+     *
      */
     public function sadd($key, $value)
     {
@@ -284,6 +323,10 @@ class WaveRedisCluster
 
     /**
      * 成员列表
+     *
+     * @param string $key
+     * @return array
+     *
      */
     public function smembers($key)
     {
@@ -300,6 +343,11 @@ class WaveRedisCluster
 
     /**
      * 移除成员
+     *
+     * @param string $key
+     * @param string $value
+     * @return boolean
+     *
      */
     public function sremove($key, $value)
     {
@@ -310,6 +358,7 @@ class WaveRedisCluster
      * 添空当前数据库
      *
      * @return boolean
+     *
      */
     public function clear()
     {
@@ -319,8 +368,11 @@ class WaveRedisCluster
     /* =================== 哈希操作 ========================*/
     /**
      * 将key->value写入hash表中
+     *
      * @param $hash string 哈希表名
      * @param $data array 要写入的数据 array('key'=>'value')
+     * @return boolean
+     *
      */
     public function hashSet($hash, $key, $data) 
     {
@@ -334,9 +386,12 @@ class WaveRedisCluster
 
     /**
      * 获取hash表的数据
+     *
      * @param $hash string 哈希表名
      * @param $key mixed 表中要存储的key名 默认为null 返回所有key>value
      * @param $type int 要获取的数据类型 0:返回所有key 1:返回所有value 2:返回所有key->value
+     * @return array
+     *
      */
     public function hashGet($hash, $key = array(), $type = 0) 
     {
@@ -394,7 +449,9 @@ class WaveRedisCluster
 
     /**
      * 获取hash表中元素个数
+     *
      * @param $hash string 哈希表名
+     *
      */
     public function hashLen($hash) 
     {
@@ -412,8 +469,10 @@ class WaveRedisCluster
 
     /**
      * 删除hash表中的key
+     *
      * @param $hash string 哈希表名
      * @param $key mixed 表中存储的key名
+     *
      */
     public function hashDel($hash, $key) 
     {
@@ -422,8 +481,10 @@ class WaveRedisCluster
 
     /**
      * 查询hash表中某个key是否存在
+     *
      * @param $hash string 哈希表名
      * @param $key mixed 表中存储的key名
+     *
      */
     public function hashExists($hash, $key) 
     {
@@ -445,6 +506,7 @@ class WaveRedisCluster
      * 随机 HASH 得到 Redis Slave 服务器句柄
      *
      * @return redis object
+     *
      */
     private function _getSlaveRedis()
     {
@@ -464,6 +526,7 @@ class WaveRedisCluster
      * @param string $id
      * @param int $m
      * @return int
+     *
      */
     private function _hashId($id,$m=10)
     {

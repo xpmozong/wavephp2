@@ -32,6 +32,9 @@ class Cache_Memcache implements Cache_Interface {
         $this->init();
     }
 
+    /**
+     * 初始化
+     */
     public function init()
     {
         if (extension_loaded('memcache') == false ) {

@@ -31,27 +31,32 @@ class Cache_Redis implements Cache_Interface
         $this->init();
     }
 
+    /**
+     * 初始化
+     */
     public function init() 
     {
-        if (extension_loaded('redis') == false ) {
+        if (extension_loaded('redis') == false) {
             exit('extension redis not found!');
         }
         $hosts = Wave::app()->config[$this->cache_name];
         if (isset($hosts['slave'])) {
             $this->cacheArray[$this->cache_name] = new WaveRedisCluster(true);
+            $db = isset($hosts['master']['db']) ? $hosts['master']['db'] : 0;
+            $db = $db < 0 ? 0 : $db;
+            $db = $db > 15 ? 15 : $db;
             $ret1 = $this->cacheArray[$this->cache_name]->connect(array(
                                         'host'=>$hosts['master']['host'], 
-                                        'port'=>$hosts['master']['port']), true);
-            // if (!$ret1) {
-            //     throw new Exception('redis server '.$this->hosts['master']['host'].':'.$this->hosts['master']['port'].' connection faild.');
-            // }
+                                        'port'=>$hosts['master']['port']), true, $db);
             if ($ret1) {
                 foreach ($hosts['slave'] as $key => $value) {
+                    $db = isset($value['db']) ? $value['db'] : 0;
+                    $db = $db < 0 ? 0 : $db;
+                    $db = $db > 15 ? 15 : $db;
                     $ret = $this->cacheArray[$this->cache_name]->connect(array(
                                                 'host'=>$value['host'],
-                                                'port'=>$value['port']), false);
+                                                'port'=>$value['port']), false, $db);
                     if (!$ret) {
-                        // throw new Exception('redis server '.$value['host'].':'.$value['port'].' connection faild.');
                         $this->cacheArray = null;
                         $this->cache_name = null;
                     }
@@ -62,11 +67,13 @@ class Cache_Redis implements Cache_Interface
             }
         } else {
             $this->cacheArray[$this->cache_name] = new WaveRedisCluster(false);
+            $db = isset($hosts['master']['db']) ? $hosts['master']['db'] : 0;
+            $db = $db < 0 ? 0 : $db;
+            $db = $db > 15 ? 15 : $db;
             $ret = $this->cacheArray[$this->cache_name]->connect(array(
                                         'host'=>$hosts['master']['host'], 
-                                        'port'=>$hosts['master']['port']));
+                                        'port'=>$hosts['master']['port']), true, $db);
             if (!$ret) {
-                // throw new Exception('redis server '.$value['host'].':'.$value['port'].' connection faild.');
                 $this->cacheArray = null;
                 $this->cache_name = null;
             }
