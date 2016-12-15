@@ -28,7 +28,7 @@ class VerifyCode
     public  $height     = 50;           // 高度
     private $img;                       // 图形资源句柄
     private $fonts      = array();      // 字体数组
-    private $fontsize   = 22;           // 指定字体大小
+    private $fontSize   = 26;           // 指定字体大小
     private $charset;                   // 随机因子
 
     /**
@@ -36,11 +36,14 @@ class VerifyCode
      */
     public function __construct()
     {
-        $dir = dirname(__FILE__).'/font/';
-        $dirArr = range(1, 15);
-        foreach ($dirArr as $key => $file) {
-            $this->fonts[] = $dir.$file.'.ttf';
-        }
+        $directory = dirname(__FILE__).'/font/';
+        $mydir = dir($directory); 
+        while($file = $mydir->read()) {
+            if (($file != ".") && ($file != "..")) {
+                $this->fonts[] = $directory.$file;
+            }
+        } 
+        $mydir->close();
     }
 
     /**
@@ -66,11 +69,8 @@ class VerifyCode
     private function createBg()
     {
         $this->img = imagecreatetruecolor($this->width, $this->height);
-        $color = imagecolorallocate($this->img, 
-                                    mt_rand(157,255), 
-                                    mt_rand(157,255), 
-                                    mt_rand(157,255));
-        imagefilledrectangle($this->img,0,$this->height,$this->width,0,$color);
+        $color = imagecolorallocate($this->img, 243, 251, 254);
+        imagefilledrectangle($this->img, 0, $this->height, $this->width, 0, $color);
     }
 
     /**
@@ -79,18 +79,20 @@ class VerifyCode
     private function createFont()
     {
         $_x = $this->width / $this->codelen;
+        $codeNX = 0;
+        $fontcolor = imagecolorallocate($this->img,
+                                        mt_rand(1,150),
+                                        mt_rand(1,150),
+                                        mt_rand(1,150));
         for ($i = 0; $i < $this->codelen; $i++) {
-            $fontcolor = imagecolorallocate($this->img,
-                                                mt_rand(0,156),
-                                                mt_rand(0,156),
-                                                mt_rand(0,156));
             $imgIndex = mt_rand(0,count($this->fonts)-1);
             $imagefont = $this->fonts[$imgIndex];
+            $codeNX  += mt_rand($this->fontSize*1.2, $this->fontSize*1.6);
             imagettftext($this->img,
-                        $this->fontsize,
-                        mt_rand(-30,10),
-                        $_x*$i+mt_rand(1,5),
-                        $this->height / 1.4,
+                        $this->fontSize,
+                        mt_rand(-40, 40),
+                        $codeNX,
+                        $this->fontSize*1.6,
                         $fontcolor,
                         $imagefont,
                         $this->code[$i]);
@@ -98,32 +100,18 @@ class VerifyCode
     }
 
     /**
-     * 生成线条、雪花
+     * 画杂点
+     * 往图片上写不同颜色的字母或数字
      */
-    private function createLine()
-    {
-        for ($i = 0; $i < 6; $i++) {
-            $color = imagecolorallocate($this->img,
-                                        mt_rand(0,156),
-                                        mt_rand(0,156),
-                                        mt_rand(0,156));
-            imageline($this->img,
-                        mt_rand(0,$this->width),
-                        mt_rand(0,$this->height),
-                        mt_rand(0,$this->width),
-                        mt_rand(0,$this->height),
-                        $color);
-        }
-        for ($i = 0; $i < 10; $i++) {
-            $color = imagecolorallocate($this->img,
-                                        mt_rand(200,255),
-                                        mt_rand(200,255),
-                                        mt_rand(200,255));
-            imagestring($this->img,
-                        mt_rand(1,5),
-                        mt_rand(0,$this->width),
-                        mt_rand(0,$this->height),
-                        '*',$color);
+    private function writeNoise() {
+        $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
+        for($i = 0; $i < 8; $i++){
+            //杂点颜色
+            $noiseColor = imagecolorallocate($this->img, mt_rand(100,150), mt_rand(100,150), mt_rand(100,150));
+            for($j = 0; $j < 5; $j++) {
+                // 绘杂点
+                imagestring($this->img, 5, mt_rand(-10, $this->width),  mt_rand(-10, $this->height), $codeSet[mt_rand(0, 29)], $noiseColor);
+            }
         }
     }
 
@@ -142,10 +130,15 @@ class VerifyCode
      */
     public function doimg($key = 'verifycode', $expire = 600)
     {
+        // 图片宽(px)
+        $this->width = $this->codelen*$this->fontSize*1.2 + $this->codelen*$this->fontSize/2; 
+        // 图片高(px)
+        $this->height = $this->fontSize * 2.5;
+
         $this->createBg();
         $this->createCode();
         Wave::app()->session->setState($key, $this->getCode(), $expire);
-        $this->createLine();
+        $this->writeNoise();
         $this->createFont();
         $this->outPut();
     }
