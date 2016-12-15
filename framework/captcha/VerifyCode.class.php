@@ -38,7 +38,7 @@ class VerifyCode
     {
         $directory = dirname(__FILE__).'/font/';
         $mydir = dir($directory); 
-        while($file = $mydir->read()) {
+        while ($file = $mydir->read()) {
             if (($file != ".") && ($file != "..")) {
                 $this->fonts[] = $directory.$file;
             }
@@ -78,8 +78,7 @@ class VerifyCode
      */
     private function createFont()
     {
-        $_x = $this->width / $this->codelen;
-        $codeNX = 0;
+        $codeNX = -10;
         $fontcolor = imagecolorallocate($this->img,
                                         mt_rand(1,150),
                                         mt_rand(1,150),
@@ -90,7 +89,7 @@ class VerifyCode
             $codeNX  += mt_rand($this->fontSize*1.2, $this->fontSize*1.6);
             imagettftext($this->img,
                         $this->fontSize,
-                        mt_rand(-40, 40),
+                        mt_rand(-20, 20),
                         $codeNX,
                         $this->fontSize*1.6,
                         $fontcolor,
@@ -105,13 +104,18 @@ class VerifyCode
      */
     private function writeNoise() {
         $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
-        for($i = 0; $i < 8; $i++){
+        for ($i = 0; $i < 30; $i++) {
             //杂点颜色
-            $noiseColor = imagecolorallocate($this->img, mt_rand(100,150), mt_rand(100,150), mt_rand(100,150));
-            for($j = 0; $j < 5; $j++) {
-                // 绘杂点
-                imagestring($this->img, 5, mt_rand(-10, $this->width),  mt_rand(-10, $this->height), $codeSet[mt_rand(0, 29)], $noiseColor);
-            }
+            $noiseColor = imagecolorallocate($this->img, 
+                                            mt_rand(1,150), 
+                                            mt_rand(1,150), 
+                                            mt_rand(1,150));
+            // 绘杂点
+            imagestring($this->img, 
+                        5, mt_rand(-10, $this->width), 
+                        mt_rand(-10, $this->height), 
+                        $codeSet[mt_rand(0, 29)], 
+                        $noiseColor);
         }
     }
 
