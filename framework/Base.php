@@ -22,7 +22,6 @@
 class Base
 {
     public static $instance;
-    private static $frameworkPath;      // 框架路径
     private static $projectPath;        // 项目路径
     private static $projectName;        // 项目名称
     private static $modelName;          // 需要加载的模型文件夹名
@@ -76,8 +75,6 @@ class Base
 
         self::$projectPath = $_SERVER['DOCUMENT_ROOT'].$scriptName.'/';
 
-        self::$frameworkPath = dirname(__FILE__).'/';
-
         self::$hostInfo = 
             isset($_SERVER['HTTP_HOST']) 
             ? strtolower($_SERVER['HTTP_HOST']) : '';
@@ -110,7 +107,6 @@ class Base
     public static function app()
     {
         $parameter = $request = array();
-        $parameter['frameworkPath']     = self::$frameworkPath;
         $parameter['projectPath']       = self::$projectPath;
         $parameter['projectName']       = self::$projectName;
         $parameter['modelName']         = self::$modelName;
@@ -131,7 +127,6 @@ class Base
      */
     public function clear()
     {
-        self::$frameworkPath    = '';
         self::$projectPath      = '';
         self::$projectName      = '';
         self::$config           = '';
@@ -140,36 +135,6 @@ class Base
         self::$homeUrl          = '';
         self::$baseUrl          = '';
         self::$defaultControl   = '';
-    }
-
-    /**
-     * 框架内加载文件
-     *
-     * @param string $file      文件名
-     *
-     */
-    public function requireFrameworkFile($file=null)
-    {
-        if (!empty($file)) {
-            require self::$frameworkPath.$file.'.php';
-        } else {
-            exit('no file');
-        }
-    }
-
-    /**
-     * 项目内加载文件
-     *
-     * @param string $file      文件名
-     *
-     */
-    public function requireProjectFile($file=null)
-    {
-        if (!empty($file)) {
-            require self::$projectPath.$file.'.php';
-        } else {
-            exit('no file');
-        }
     }
 
 }
