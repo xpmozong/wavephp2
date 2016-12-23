@@ -84,6 +84,7 @@ class WaveCommon
 
     /**
      * curl
+     *
      * @param string    $url        地址
      * @param string    $method     方法
      * @param array     $data       提交数组
@@ -108,6 +109,7 @@ class WaveCommon
         }
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -125,6 +127,7 @@ class WaveCommon
 
     /**
      * curl
+     *
      * @param string    $url        地址
      * @param string    $method     方法
      * @param array     $data       提交数组
@@ -133,7 +136,11 @@ class WaveCommon
      * @return array("status"=>ture|false, "data"=>"", "error"=>"", "http_status"=>200);
      *
      */
-    public static function wcurl($url = '', $method = 'GET', $data = array(), $timeout = 60) 
+    public static function wcurl(   $url        = '', 
+                                    $method     = 'GET', 
+                                    $data       = array(), 
+                                    $timeout    = 60, 
+                                    $header     = array('Content-type:application/json')) 
     {
         $result = array('status' => false,
                         'http_status' => 0,
@@ -149,12 +156,13 @@ class WaveCommon
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             } elseif (strtoupper($method) == 'JSON' && $data) {
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type:application/json'));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             }
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
