@@ -91,7 +91,7 @@ class Wave
                 } else {
                     self::$app->memcache = new Cache_Memcache();
                 }
-                if (empty(self::$app->memcache->cache_name)) {
+                if (empty(self::$app->memcache->cacheName)) {
                     self::$app->memcache = new NullStdClass();
                 }
             }
@@ -106,7 +106,7 @@ class Wave
         if (empty(self::$app->redis)){
             if (!empty(self::$app->config['redis'])){
                 self::$app->redis = new Cache_Redis();
-                if (empty(self::$app->redis->cache_name)) {
+                if (empty(self::$app->redis->cacheName)) {
                     self::$app->redis = new NullStdClass();
                 }
             }
