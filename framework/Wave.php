@@ -31,7 +31,6 @@ if (function_exists('memory_get_usage'))
 class Wave
 {
     public $Base            = null;
-    public $config          = array();
     public static $app      = array();
     public static $_debug   = array();
     public static $Route;
@@ -45,9 +44,8 @@ class Wave
         if (empty($config) && file_exists($configfile)) {
             require $configfile;
         }
-        $this->config = $config;
         $this->Base = Base::getInstance();
-        $this->Base->init($this->config);
+        $this->Base->init($config);
         self::$app = $this->Base->app();
         $this->loadIniSet();
         $this->loadMemcache();
