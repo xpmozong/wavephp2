@@ -113,48 +113,39 @@ class Request
      * 获得参数int型
      *
      * @param string $key
+     * @param int $default
      * @return int
      *
      */
-    public function getInt($key)
+    public function getInt($key, $default = 0)
     {
-        if (isset($_REQUEST[$key])) {
-            return (int)$_REQUEST[$key];
-        } else {
-            return 0;
-        }
+        return isset($_REQUEST[$key]) ? (int)$_REQUEST[$key] : $default;
     }
 
     /**
      * 获得参数string型
      *
      * @param string $key
+     * @param string $default
      * @return string
      *
      */
-    public function getString($key)
+    public function getString($key, $default = '')
     {
-        if (isset($_REQUEST[$key])) {
-            return $_REQUEST[$key];
-        } else {
-            return '';
-        }
+        return isset($_REQUEST[$key]) ? addslashes($_REQUEST[$key]) : $default;
     }
 
     /**
      * 获得参数 加魔术引用
      *
      * @param string $key
+     * @param string $default
      * @return string
      *
      */
-    public function getAddslashes($key)
+    public function getAddslashes($key, $default = '')
     {
-        if (isset($_REQUEST[$key])) {
-            return addslashes($_REQUEST[$key]);
-        } else {
-            return '';
-        }
+        return isset($_REQUEST[$key]) ? addslashes($_REQUEST[$key]) : $default;
     }
 
     /**
@@ -164,13 +155,9 @@ class Request
      * @return string
      *
      */
-    public function getHtmlspecialchars($key)
+    public function getHtmlspecialchars($key, $default = '')
     {
-        if (isset($_REQUEST[$key])) {
-            return htmlspecialchars($_REQUEST[$key]);
-        } else {
-            return '';
-        }
+        return isset($_REQUEST[$key]) ? htmlspecialchars($_REQUEST[$key]) : $default;
     }
 
     /**
