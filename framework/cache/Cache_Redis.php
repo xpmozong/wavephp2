@@ -29,17 +29,11 @@ class Cache_Redis implements Cache_Interface
     public function __construct($came = 'redis') 
     {
         $this->cacheName = $came;
-        $this->init();
-    }
-
-    /**
-     * 初始化
-     */
-    public function init() 
-    {
+        
         if (extension_loaded('redis') == false) {
             exit('extension redis not found!');
         }
+        
         $hosts = Wave::app()->config[$this->cacheName];
         if (isset($hosts['slave'])) {
             $this->cacheArray[$this->cacheName] = new WaveRedisCluster(true);

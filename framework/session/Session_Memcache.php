@@ -27,15 +27,17 @@ class Session_Memcache
     protected $sess_id;
     protected $cache;
 
-    public function __construct() 
+    public function __construct($config) 
     {
-        $config = Wave::app()->config;
-        $this->lifeTime = $config['session']['timeout'];
-        if (isset($config['session_memcache'])) {
+        $this->lifeTime = $config['timeout'];
+        if (!empty(Wave::app()->config['session_memcache'])) {
             if (extension_loaded('memcached')) {
                 $this->cache = new Cache_Memcached('session_memcached');
             } else {
                 $this->cache = new Cache_Memcache('session_memcache');
+            }
+            if (empty($this->cache->cacheName)) {
+                exit('memcache error');   
             }
         } else {
             $this->cache = Wave::app()->memcache;

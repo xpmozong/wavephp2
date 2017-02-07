@@ -28,9 +28,9 @@ class CookieModule
 
     public function __construct() 
     {
-        $option = Wave::app()->config['cookie'];
-        $this->lifeTime = $option['timeout'];
-        $this->domain = $option['domain'];
+        $config = Wave::app()->config['cookie'];
+        $this->lifeTime = $config['timeout'];
+        $this->domain = $config['domain'];
     }
 
     /**

@@ -188,6 +188,50 @@ class WaveCommon
     }
 
     /**
+     * 发起http异步请求 无需等待结果
+     * @param string $url http地址
+     * @param string $method 请求方式
+     * @param array $params 参数
+     * @param string $ip 支持host配置
+     * @param int $connectTimeout 连接超时，单位为秒
+     * @throws Exception
+     */
+    public static function wexec($url, $method = 'GET', $params = array(), $ip = null, $connectTimeout = 1)
+    {
+        $method_get = 'GET';
+        $method_post = 'POST';
+
+        $urlInfo = parse_url($url);
+        $host = $urlInfo['host'];
+        $port = isset($urlInfo['port']) ? $urlInfo['port'] : 80;
+        $path = isset($urlInfo['path']) ? $urlInfo['path'] : '/';
+        !$ip && $ip = $host;
+
+        $method = strtoupper(trim($method)) !== $method_post ? $method_get : $method_post;
+        $params = http_build_query($params);
+
+        if ($method === $method_get && strlen($params) > 0) {
+            $path .= '?' . $params;
+        }
+        $fp = fsockopen($ip, $port, $errorCode, $errorInfo, $connectTimeout);
+        
+        if ($fp === false) {
+            throw new Exception('Connect failed , error code: ' . $errorCode . ', error info: ' . $errorInfo);
+        } else {
+            $http  = "$method $path HTTP/1.1\r\n";
+            $http .= "Host: $host\r\n";
+            $http .= "Content-type: application/x-www-form-urlencoded\r\n";
+            $method === $method_post && $http .= "Content-Length: " . strlen($params) . "\r\n";
+            $http .= "\r\n";
+            $method === $method_post && $http .= $params . "\r\n\r\n";
+
+            if (fwrite($fp, $http) === false || fclose($fp) === false) {
+                throw new Exception('Request failed.');
+            }
+        }
+    }
+
+    /**
      * 获得日期
      * @return string 日期
      */

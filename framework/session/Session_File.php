@@ -27,11 +27,10 @@ class Session_File
     protected $sess_id;
     protected $cache;
 
-    public function __construct() 
+    public function __construct($config) 
     {
-        $option = Wave::app()->config['session'];
-        $this->lifeTime = $option['timeout'];
-        $this->cache = new Cache_File();
+        $this->lifeTime = $config['timeout'];
+        $this->cache = new CacheFile();
     }
 
     /**

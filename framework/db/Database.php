@@ -20,7 +20,8 @@
  * @author          许萍
  *
  */
-class Database {
+class Database 
+{
     public static $db;
     /**
      * 工厂方法
@@ -30,18 +31,20 @@ class Database {
      * @return object $db
      *
      */
-    public static function factory($dbname = '') {
+    public static function factory($dbname = '')
+    {
         $option = Wave::app()->config[$dbname];
         
         $driver = isset($option['driver']) ? $option['driver'] : 'mysql';
-        if (isset(self::$db[$dbname]) && is_object(self::$db[$dbname])) {
-            return self::$db[$dbname];
+        if (isset(self::$db[$dbname]['db']) && is_object(self::$db[$dbname]['db'])) {
+            return self::$db;
         }
         
         $class = ucfirst($driver);
-        self::$db[$dbname] = new $class($option);
+        self::$db[$dbname]['db'] = new $class($option);
+        self::$db[$dbname]['table_prefix'] = $option['master']['table_prefix'];
         
-        return self::$db[$dbname];
+        return self::$db;
     }
 }
 

@@ -20,7 +20,8 @@
  * @author          许萍
  *
  */
-class Cache_Memcache implements Cache_Interface {
+class Cache_Memcache implements Cache_Interface 
+{
     protected $pconnect = true;
     protected $lifetime = 3600;
     protected $cacheArray = array();
@@ -30,17 +31,11 @@ class Cache_Memcache implements Cache_Interface {
     public function __construct($came = 'memcache') 
     {
         $this->cacheName = $came;
-        $this->init();
-    }
-
-    /**
-     * 初始化
-     */
-    public function init()
-    {
+        
         if (extension_loaded('memcache') == false ) {
             exit('extension memcache not found!');
         }
+        
         $hosts = Wave::app()->config[$this->cacheName];
         $this->cacheArray[$this->cacheName] = new Memcache();
         $this->prefixArray[$this->cacheName] = isset($hosts[0]['prefix']) ? $hosts[0]['prefix'] : '';

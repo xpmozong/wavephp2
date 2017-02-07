@@ -26,10 +26,14 @@ class Session_Db extends Model
     protected $lifeTime     = 86400;    // 生存周期
     protected $sess_id;
 
-    protected function init() 
+    public function __construct($config)
     {
-        $option = Wave::app()->config['session'];
-        $this->lifeTime = $option['timeout'];
+        parent::__construct();
+        $this->lifeTime = $config['timeout'];
+    }
+
+    protected function init() 
+    {   
         $this->_tableName = 'w_sessions';
     }
 

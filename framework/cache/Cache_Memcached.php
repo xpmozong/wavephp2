@@ -22,26 +22,20 @@
  */
 class Cache_Memcached implements Cache_Interface 
 {
-    public $pconnect = true;
-    public $lifetime = 3600;
+    protected $pconnect = true;
+    protected $lifetime = 3600;
     protected $cacheArray = array();
     protected $prefixArray = array();
     public $cacheName = null;
 
-    public function __construct($came = 'memcached') 
+    public function __construct($came = 'memcache') 
     {
         $this->cacheName = $came;
-        $this->init();
-    }
-
-    /**
-     * 初始化
-     */
-    public function init() 
-    {
+        
         if (extension_loaded('memcached') == false ) {
             exit('extension memcached not found!');
         }
+        
         $hosts = Wave::app()->config[$this->cacheName];
         $this->cacheArray[$this->cacheName] = new Memcached();
         $this->prefixArray[$this->cacheName] = isset($hosts[0]['prefix']) ? $hosts[0]['prefix'] : '';

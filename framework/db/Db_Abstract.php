@@ -30,7 +30,8 @@ abstract class Db_Abstract
     /**
      * 选数据库
      */
-    public function init($tag) {
+    public function init($tag) 
+    {
         if (isset($this->conn[$tag])) {
             $this->selectCharsetAndDb($tag);
             return true;

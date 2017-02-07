@@ -44,7 +44,8 @@ class Model
     /**
      * 构造函数
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->minit();
     }
 
@@ -54,18 +55,16 @@ class Model
      * @param string $db 数据库名称
      *
      */
-    public function minit($db = '') {
-        // 表前缀
+    public function minit($db = '')
+    {
         $this->dbname = 'database';
         if (!empty($db)) {
             $this->dbname = $db;
         }
-        if (empty($this->tablePrefixArray[$this->dbname])) {
-            $configs = Wave::app()->config[$this->dbname];
-            $this->tablePrefixArray[$this->dbname] = $configs['master']['table_prefix'];
-        }
         if (empty($this->dbArray[$this->dbname])) {
-            $this->dbArray[$this->dbname] = Database::factory($this->dbname);
+            $db = Database::factory($this->dbname);
+            $this->dbArray[$this->dbname] = $db[$this->dbname]['db'];
+            $this->tablePrefixArray[$this->dbname] = $db[$this->dbname]['table_prefix'];
         }
 
         $this->init();
@@ -82,7 +81,8 @@ class Model
      * @return object
      *
      */
-    public function getDb() {
+    public function getDb() 
+    {
         return $this->dbArray[$this->dbname];
     }
 
@@ -92,7 +92,8 @@ class Model
      * @return string
      *
      */
-    public function getTablePrefix() {
+    public function getTablePrefix() 
+    {
         return $this->tablePrefixArray[$this->dbname];
     }
 

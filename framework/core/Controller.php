@@ -36,10 +36,8 @@ class Controller
     public function __construct()
     {
         $app = Wave::app();
-        if (isset($app->config['smarty'])) {
-            if (isset($app->config['smarty']['is_on'])) {
-                $this->isSmarty = $app->config['smarty']['is_on'];
-            }
+        if (isset($app->config['isUseSmarty'])) {
+            $this->isSmarty = $app->config['isUseSmarty'];
         }
         if ($this->isSmarty) {
             $this->view = $this->initView();
@@ -67,13 +65,11 @@ class Controller
                         $compile_id = null, 
                         $display = false)
     {
-        if ($this->isSmarty) {
-            $this->_assignVars();
-            return $this->view->fetch($resource_name,
-                                    $cache_id, 
-                                    $compile_id, 
-                                    $display);
-        }
+        $this->_assignVars();
+        return $this->view->fetch($resource_name,
+                                $cache_id, 
+                                $compile_id, 
+                                $display);
     }
 
     public function display($resource_name = '', 
@@ -222,10 +218,9 @@ class Controller
      */
     public function debuger() 
     {
-        $config = Wave::app()->config;
         if ($this->isSmarty) {
-            $this->debuger = $config['debuger'];
-            if ($config['debuger']) {
+            $this->debuger = Wave::app()->config['debuger'];
+            if ($this->debuger) {
                 if (!isset($_SESSION)) {
                     @session_start(); 
                 }
@@ -236,7 +231,7 @@ class Controller
                 $this->memuse = (memory_get_usage() - MEMORY_USAGE_START) / 1024;
             }
         } else {
-            if ($config['debuger']) {
+            if (Wave::app()->config['debuger']) {
                 if (!isset($_SESSION)) {
                     session_start(); 
                 }

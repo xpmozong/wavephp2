@@ -34,6 +34,10 @@ class Wave
     public static $app      = array();
     public static $_debug   = array();
     public static $Route;
+    // public static $cookie;
+    // public static $session;
+    // public static $redis;
+    // public static $memcache;
 
     /**
      * 初始化
@@ -47,6 +51,7 @@ class Wave
         $this->Base = Base::getInstance();
         $this->Base->init($config);
         self::$app = $this->Base->app();
+
         $this->loadIniSet();
         $this->loadMemcache();
         $this->loadRedis();
@@ -69,8 +74,8 @@ class Wave
      */
     public function loadIniSet()
     {
-        if (!empty(self::$app->config['ini_set'])) {
-            $ini_setArr = self::$app->config['ini_set'];
+        if (!empty(Wave::app()->config['ini_set'])) {
+            $ini_setArr = Wave::app()->config['ini_set'];
             foreach ($ini_setArr as $key => $value) {
                 ini_set($key, $value);
             }
@@ -90,7 +95,7 @@ class Wave
                     self::$app->memcache = new Cache_Memcache();
                 }
                 if (empty(self::$app->memcache->cacheName)) {
-                    self::$app->memcache = new NullStdClass();
+                    exit('memcache error');
                 }
             }
         }
@@ -105,7 +110,7 @@ class Wave
             if (!empty(self::$app->config['redis'])){
                 self::$app->redis = new Cache_Redis();
                 if (empty(self::$app->redis->cacheName)) {
-                    self::$app->redis = new NullStdClass();
+                    exit('redis error');
                 }
             }
         }
@@ -118,15 +123,15 @@ class Wave
     {
         if (!empty(self::$app->config)){
             if (isset(self::$app->config['session'])){
-                $driver = self::$app->config['session']['driver'];
-                $class = 'Session_'.ucfirst($driver);
-                $session = new $class();
-                session_set_save_handler(array(&$session,"open"), 
-                             array(&$session,"close"), 
-                             array(&$session,"read"), 
-                             array(&$session,"write"), 
-                             array(&$session,"destroy"), 
-                             array(&$session,"gc"));
+                $config = Wave::app()->config['session'];
+                $class = 'Session_'.ucfirst($config['driver']);
+                $session = new $class($config);
+                session_set_save_handler(array(&$session,'open'), 
+                             array(&$session,'close'), 
+                             array(&$session,'read'), 
+                             array(&$session,'write'), 
+                             array(&$session,'destroy'), 
+                             array(&$session,'gc'));
 
                 self::$app->session = $session;
             }
@@ -143,6 +148,77 @@ class Wave
                 self::$app->cookie = new CookieModule();
             }
         }
+    }
+
+    /**
+     * memcache 使用
+     */
+    public static function useMemcache()
+    {
+        if (self::$memcache) {
+            return self::$memcache;
+        }
+        if (extension_loaded('memcached')){
+            self::$memcache = new Cache_Memcached();
+        } else {
+            self::$memcache = new Cache_Memcache();
+        }
+        
+        if (empty(self::$memcache->cacheName)) {
+            exit('memcache error');
+        }
+
+        return self::$memcache;
+    }
+
+    /**
+     * redis 使用
+     */
+    public static function useRedis()
+    {
+        if (self::$redis) {
+            return self::$redis;
+        }
+        self::$redis = new Cache_Redis();
+        if (empty(self::$redis->cacheName)) {
+            exit('redis error');
+        }
+
+        return self::$redis;
+    }
+
+    /**
+     * SESSION 使用
+     */
+    public static function useSession()
+    {
+        if (self::$session) {
+            return self::$session;
+        }
+        $config = Wave::app()->config['session'];
+        $class = 'Session_'.ucfirst($config['driver']);
+        self::$session = new $class($config);
+        session_set_save_handler(array(&self::$session,'open'), 
+                     array(&self::$session,'close'), 
+                     array(&self::$session,'read'), 
+                     array(&self::$session,'write'), 
+                     array(&self::$session,'destroy'), 
+                     array(&self::$session,'gc'));
+
+        return self::$session;
+    }
+
+    /**
+     * COOKIE 使用
+     */
+    public function useCookie()
+    {
+        if (self::$cookie) {
+            return self::$cookie;
+        }
+        self::$cookie = new CookieModule();
+
+        return self::$cookie;
     }
 
     /**

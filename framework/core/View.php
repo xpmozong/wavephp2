@@ -31,9 +31,7 @@ class View
      */
     public function __construct()
     {
-        $app = Wave::app();
-        $dir = $app->projectPath.$app->projectName;
-
+        $dir = Wave::app()->projectPath.Wave::app()->projectName;
         $config = Wave::app()->config['smarty'];
 
         $smarty = new Smarty();
@@ -46,7 +44,7 @@ class View
         $smarty->template_dir       = $dir.'/'.$config['template_dir'];
         $smarty->cache_dir          = $dir.'/'.$config['cache_dir'];
         $smarty->config_dir         = $dir.'/'.$config['config_dir'];
-        $smarty->compile_dir        = $app->projectPath.$config['compile_dir'];
+        $smarty->compile_dir        = Wave::app()->projectPath.$config['compile_dir'];
 
         WaveCommon::mkDir($smarty->compile_dir);
         if ($config['caching']) {
