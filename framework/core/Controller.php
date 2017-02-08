@@ -36,8 +36,8 @@ class Controller
     public function __construct()
     {
         $app = Wave::app();
-        if (isset($app->config['isUseSmarty'])) {
-            $this->isSmarty = $app->config['isUseSmarty'];
+        if (isset($app->config['smarty'])) {
+            $this->isSmarty = $app->config['smarty']['is_on'];
         }
         if ($this->isSmarty) {
             $this->view = $this->initView();
