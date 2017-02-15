@@ -270,18 +270,10 @@ class WaveCommon
     public static function getFilter($data)
     {
         foreach ($data as $key => $value) {
-            if (!empty($value)) {
-                if (is_array($value)) {
-                    foreach ($value as $k => $v) {
-                        if (is_array($v)) {
-                            $data[$key][$k] = self::getFilter($v);
-                        } else {
-                            $data[$key][$k] = addslashes($v);
-                        }
-                    }
-                } else {
-                    $data[$key] = addslashes($value);
-                }
+            if (is_array($value)) {
+                $data[$key] = self::getFilter($value);
+            } else {
+                $data[$key] = addslashes($value);
             }
         }
 
@@ -300,7 +292,7 @@ class WaveCommon
         $json_array['msg'] = $msg;
         $json_array['data'] = $data;
         if (!empty($callback)) {
-            echo $callback.'('.json_encode($json_array).')';
+            echo $callback.'('.json_encode($json_array).')';die;
         } else {
             if (Wave::$mode === 'CLI') {
                 Wave::setBody(json_encode($json_array));
