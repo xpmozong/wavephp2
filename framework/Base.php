@@ -42,8 +42,10 @@ class Base
 
     /**
      * 初始化
+     * @param array $config 配置数组
+     * @param string $mode 模式
      */
-    public function init($config = null)
+    public function init($config = null, $mode = null, $buff = array(), $params = array())
     {
         if (!empty($config)) {
             if (!isset($config['debuger'])) {
@@ -59,41 +61,50 @@ class Base
         self::$defaultControl = !empty($config['defaultController']) 
             ? $config['defaultController'] : 'site';
 
-        $this->loadBase();
+        $this->loadBase($mode, $buff, $params);
     }
 
     /**
      * 基础设置
+     * @param string $mode 模式
      */
-    private function loadBase()
+    private function loadBase($mode = null, $buff = array(), $params = array())
     {
-        $scriptArr = explode('/', $_SERVER['SCRIPT_NAME']);
-        $enterFile = end($scriptArr);
-        array_pop($scriptArr);
-        $scriptName = implode('/', $scriptArr);
-        unset($scriptArr);
-
-        self::$projectPath = $_SERVER['DOCUMENT_ROOT'].$scriptName.'/';
-
-        self::$hostInfo = 
-            isset($_SERVER['HTTP_HOST']) 
-            ? strtolower($_SERVER['HTTP_HOST']) : '';
-
-        if ($enterFile == 'index.php') {
-            $pathUrl = str_replace($scriptName, '', $_SERVER['REQUEST_URI']);
-            self::$pathInfo = str_replace($enterFile, '', $pathUrl);
-            self::$homeUrl = $scriptName.'/';
+        if ($mode === 'CLI') {
+            self::$pathInfo = implode('/', $buff);
+            self::$projectPath = ROOT_PATH.'/';
+            self::$baseUrl = '/';
+            self::$homeUrl = '/';
         } else {
-            self::$pathInfo = 
-                isset($_SERVER['PATH_INFO']) 
-                ? strtolower($_SERVER['PATH_INFO']) : '/'.self::$defaultControl.'/index';
+            $scriptArr = explode('/', $_SERVER['SCRIPT_NAME']);
+            $enterFile = end($scriptArr);
+            array_pop($scriptArr);
+            $scriptName = implode('/', $scriptArr);
+            unset($scriptArr);
 
-            self::$homeUrl = 
-                isset($_SERVER['SCRIPT_NAME']) 
-                ? strtolower($_SERVER['SCRIPT_NAME']).'/' : '/';
+            self::$projectPath = $_SERVER['DOCUMENT_ROOT'].$scriptName.'/';
+
+            self::$hostInfo = 
+                isset($_SERVER['HTTP_HOST']) 
+                ? strtolower($_SERVER['HTTP_HOST']) : '';
+
+            if ($enterFile == 'index.php') {
+                $pathUrl = str_replace($scriptName, '', $_SERVER['REQUEST_URI']);
+                self::$pathInfo = str_replace($enterFile, '', $pathUrl);
+                self::$homeUrl = $scriptName.'/index.php/';
+            } else {
+                self::$pathInfo = 
+                    isset($_SERVER['PATH_INFO']) 
+                    ? strtolower($_SERVER['PATH_INFO']) : '/'.self::$defaultControl.'/index';
+
+                self::$homeUrl = 
+                    isset($_SERVER['SCRIPT_NAME']) 
+                    ? strtolower($_SERVER['SCRIPT_NAME']).'/' : '/';
+            }
+
+            self::$baseUrl = $scriptName;
         }
-
-        self::$baseUrl = $scriptName;
+        
     }
 
     /**

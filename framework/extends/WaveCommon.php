@@ -302,9 +302,12 @@ class WaveCommon
         if (!empty($callback)) {
             echo $callback.'('.json_encode($json_array).')';
         } else {
-            echo json_encode($json_array);
+            if (Wave::$mode === 'CLI') {
+                Wave::setBody(json_encode($json_array));
+            } else {
+                echo json_encode($json_array);die;
+            }
         }
-        unset($json_array);die;
     }
 
     /** 

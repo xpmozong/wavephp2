@@ -33,6 +33,8 @@ class Wave
     public $Base            = null;
     public static $app      = array();
     public static $_debug   = array();
+    public static $mode     = null;
+    public static $output   = null; // 输出
     public static $Route;
     // public static $cookie;
     // public static $session;
@@ -41,15 +43,18 @@ class Wave
 
     /**
      * 初始化
+     * @param string $configfile 配置文件
+     * @param string $mode 模式
      */
-    public function __construct($configfile = null)
+    public function __construct($configfile = null, $mode = null, $buff = array(), $params = array())
     {
         global $config;
         if (empty($config) && file_exists($configfile)) {
             require $configfile;
         }
+        self::$mode = $mode;
         $this->Base = Base::getInstance();
-        $this->Base->init($config);
+        $this->Base->init($config, $mode, $buff, $params);
         self::$app = $this->Base->app();
 
         $this->loadIniSet();
@@ -266,6 +271,26 @@ class Wave
     public static function getActionName() 
     {
         return self::$Route->getActionName();
+    }
+
+    /**
+     * 设置内容
+     */
+    public function setBody($content)
+    {
+        Wave::$output = $content;
+    }
+
+    /**
+     * 读出内容
+     */
+    public static function getBody()
+    {
+        if (self::$mode === 'CLI') {
+            return self::$output;
+        } else {
+            echo self::$output;
+        }
     }
 
     /**

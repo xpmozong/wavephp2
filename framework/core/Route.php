@@ -124,7 +124,9 @@ class Route
                     }
                     $cc->debuger();
                     if ($this->isSmarty) {
-                        $cc->display();
+                        if (Wave::$mode !== 'CLI') {
+                            $cc->display();
+                        }
                     }
                 } else {
                    $this->error404(); 
