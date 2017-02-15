@@ -135,13 +135,13 @@ class Controller
      * @return string
      *
      */
-    public function verifyCode($key = 'verifycode', $num = 4, $width = 130, $height = 40, $expire = 600)
+    public function verifyCode($key = 'verifycode', $num = 4, $width = 130, $height = 40, $expire = 600, $useCurve = false)
     {
         $VerifyCode = new VerifyCode();
         $VerifyCode->codelen = $num;
         $VerifyCode->width = $width;
         $VerifyCode->height = $height;
-        $VerifyCode->doimg($key, $expire);
+        $VerifyCode->doimg($key, $expire, $useCurve);
     }
 
     /**

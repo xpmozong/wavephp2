@@ -30,7 +30,7 @@ class Session_File
     public function __construct($config) 
     {
         $this->lifeTime = $config['timeout'];
-        $this->cache = new CacheFile();
+        $this->cache = new Cache_File();
     }
 
     /**

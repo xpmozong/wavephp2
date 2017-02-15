@@ -94,7 +94,7 @@ class VerifyCode
             $codeNX  += mt_rand($this->fontSize*1.2, $this->fontSize*1.6);
             imagettftext($this->img,
                         $this->fontSize,
-                        mt_rand(-50, 40),
+                        mt_rand(-30, 30),
                         $codeNX,
                         $this->fontSize*1.3,
                         $fontcolor,
@@ -171,7 +171,7 @@ class VerifyCode
      */
     private function writeNoise() {
         $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             //杂点颜色
             $noiseColor = imagecolorallocate($this->img, 
                                             mt_rand(1,150), 
@@ -249,14 +249,14 @@ class VerifyCode
     public function doimg($key = 'verifycode', $expire = 600, $useCurve = false)
     {
         // 图片宽(px)
-        $this->width = $this->codelen*$this->fontSize + $this->codelen*$this->fontSize/2; 
+        $this->width = $this->codelen*$this->fontSize + $this->codelen*$this->fontSize/2 + 10; 
         // 图片高(px)
         $this->height = $this->fontSize * 2;
 
         $this->createBg();
         $this->createCode();
         Wave::app()->session->setState($key, $this->getCode(), $expire);
-        $this->writeNoise();
+        // $this->writeNoise();
         if ($useCurve) {
             $this->_writeCurve();
         }
