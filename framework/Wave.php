@@ -30,11 +30,12 @@ if (function_exists('memory_get_usage'))
 
 class Wave
 {
-    public $Base            = null;
-    public static $app      = array();
-    public static $_debug   = array();
-    public static $mode     = null;
-    public static $output   = null; // 输出
+    public $Base                = null;
+    public static $app          = array();
+    public static $_debug       = array();
+    public static $mode         = null;
+    public static $cliParams    = array();
+    public static $output       = null; // 输出
     public static $Route;
     // public static $cookie;
     // public static $session;
@@ -53,6 +54,7 @@ class Wave
             require $configfile;
         }
         self::$mode = $mode;
+        self::$cliParams = $params;
         $this->Base = Base::getInstance();
         $this->Base->init($config, $mode, $buff, $params);
         self::$app = $this->Base->app();

@@ -40,75 +40,6 @@ class Request
         return self::$instance;
     }
 
-    public function __set($name, $value)
-    {
-        throw new Exception('Setting values in superglobals not allowed');
-    }
-
-    public function __isset($key)
-    {
-        switch (true) {
-            case isset($this->_params[$key]):
-                return true;
-            case isset($_GET[$key]):
-                return true;
-            case isset($_POST[$key]):
-                return true;
-            case isset($_COOKIE[$key]):
-                return true;
-            case isset($_SERVER[$key]):
-                return true;
-            case isset($_ENV[$key]):
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public function has($key)
-    {
-        return $this->__isset($key);
-    }
-
-    public function setParams(array $array)
-    {
-        $this->_params = $this->_params + (array) $array;
-
-        foreach ($array as $key => $value) {
-            if (null === $value) {
-                unset($this->_params[$key]);
-            }
-        }
-
-        return $this;
-    }
-
-    public function __get($key)
-    {
-        switch (true) {
-            case isset($this->_params[$key]):
-                return $this->_params[$key];
-            // case isset($_GET[$key]):
-            //     return $_GET[$key];
-            // case isset($_POST[$key]):
-            //     return $_POST[$key];
-            // case isset($_COOKIE[$key]):
-            //     return $_COOKIE[$key];
-            case isset($_REQUEST[$key]):
-                return $_REQUEST[$key];
-            case ($key == 'REQUEST_URI'):
-                return $this->getRequestUri();
-            case ($key == 'PATH_INFO'):
-                return $this->getPathInfo();
-            case isset($_SERVER[$key]):
-                return $_SERVER[$key];
-            case isset($_ENV[$key]):
-                return $_ENV[$key];
-            default:
-                return null;
-        }
-    }
-
     /**
      * 获得参数int型
      *
@@ -119,7 +50,11 @@ class Request
      */
     public function getInt($key, $default = 0)
     {
-        return isset($_REQUEST[$key]) ? (int)$_REQUEST[$key] : $default;
+        if (Wave::$mode !== 'CLI') {
+            return isset($_REQUEST[$key]) ? (int)$_REQUEST[$key] : $default;
+        } else {
+            return isset(Wave::$cliParams[$key]) ? (int)Wave::$cliParams[$key] : $default;
+        }
     }
 
     /**
@@ -132,7 +67,11 @@ class Request
      */
     public function getString($key, $default = '')
     {
-        return isset($_REQUEST[$key]) ? addslashes($_REQUEST[$key]) : $default;
+        if (Wave::$mode !== 'CLI') {
+            return isset($_REQUEST[$key]) ? addslashes($_REQUEST[$key]) : $default;
+        } else {
+            return isset(Wave::$cliParams[$key]) ? addslashes(Wave::$cliParams[$key]) : $default;
+        }
     }
 
     /**
@@ -145,7 +84,11 @@ class Request
      */
     public function getAddslashes($key, $default = '')
     {
-        return isset($_REQUEST[$key]) ? addslashes($_REQUEST[$key]) : $default;
+        if (Wave::$mode !== 'CLI') {
+            return isset($_REQUEST[$key]) ? addslashes($_REQUEST[$key]) : $default;
+        } else {
+            return isset(Wave::$cliParams[$key]) ? addslashes(Wave::$cliParams[$key]) : $default;
+        }
     }
 
     /**
@@ -157,7 +100,11 @@ class Request
      */
     public function getHtmlspecialchars($key, $default = '')
     {
-        return isset($_REQUEST[$key]) ? htmlspecialchars($_REQUEST[$key]) : $default;
+        if (Wave::$mode !== 'CLI') {
+            return isset($_REQUEST[$key]) ? htmlspecialchars($_REQUEST[$key]) : $default;
+        } else {
+            return isset(Wave::$cliParams[$key]) ? htmlspecialchars(Wave::$cliParams[$key]) : $default;
+        }
     }
 
     /**
@@ -362,6 +309,7 @@ class Request
                 $_SERVER['HTTP_HOST'],
             (isset($_SERVER['REQUEST_URI']) ? 
                 $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']));
+
         return $raw ? rawurlencode($current_url) : $current_url;
     }
 
