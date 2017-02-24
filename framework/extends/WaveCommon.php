@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -34,12 +34,12 @@ class WaveCommon
      * @param int $wordWrap         设置每行字符串的长度 默认为80
      * @param string $charSet       设置邮件的字符编码，默认为UTF-8
      * @param int $SMTPAuth         开启认证 默认为true
-     * 
+     *
      * @return bool true为成功
      *
      */
-    public static function sendMail($to         = '', 
-                                    $subject    = '', 
+    public static function sendMail($to         = '',
+                                    $subject    = '',
                                     $body       = '',
                                     $fromName   = 'wavephp',
                                     $attachment = '',
@@ -50,7 +50,7 @@ class WaveCommon
     {
         $mail_config = Wave::app()->config['mail_config'];
         try {
-            $mail = new PHPMailer(true); 
+            $mail = new PHPMailer(true);
             $mail->IsSMTP();
             $mail->CharSet    = $charSet;   // 设置邮件的字符编码，这很重要，不然中文乱码
             $mail->SMTPAuth   = $SMTPAuth;  // 开启认证
@@ -73,9 +73,9 @@ class WaveCommon
                     $mail->AddAttachment($attach);
                 }
             }
-            $mail->IsHTML(true); 
+            $mail->IsHTML(true);
             $mail->Send();
-            
+
             return true;
         } catch (phpmailerException $e) {
             return 'send mail failure: '.$e->errorMessage();
@@ -93,7 +93,7 @@ class WaveCommon
      * @return string or false
      *
      */
-    public static function curl($url = '', $method = 'GET', $data = array(), $timeout = 60) 
+    public static function curl($url = '', $method = 'GET', $data = array(), $timeout = 60)
     {
         $ch = curl_init();
         if (strtoupper($method) == 'GET' && $data) {
@@ -136,11 +136,11 @@ class WaveCommon
      * @return array("status"=>ture|false, "data"=>"", "error"=>"", "http_status"=>200);
      *
      */
-    public static function wcurl(   $url        = '', 
-                                    $method     = 'GET', 
-                                    $data       = array(), 
-                                    $timeout    = 60, 
-                                    $header     = array('Content-type:application/json')) 
+    public static function wcurl(   $url        = '',
+                                    $method     = 'GET',
+                                    $data       = array(),
+                                    $timeout    = 60,
+                                    $header     = array('Content-type:application/json'))
     {
         $result = array('status' => false,
                         'http_status' => 0,
@@ -168,7 +168,7 @@ class WaveCommon
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
             $contents = curl_exec($ch);
-            $response = curl_getinfo($ch);           
+            $response = curl_getinfo($ch);
             $result['status'] = true;
             $result['http_status'] = $response['http_code'];
             $result['data'] = $contents;
@@ -183,7 +183,7 @@ class WaveCommon
             $result['status'] = false;
             $result['error'] = $ex;
         }
-    
+
         return $result;
     }
 
@@ -214,7 +214,7 @@ class WaveCommon
             $path .= '?' . $params;
         }
         $fp = fsockopen($ip, $port, $errorCode, $errorInfo, $connectTimeout);
-        
+
         if ($fp === false) {
             throw new Exception('Connect failed , error code: ' . $errorCode . ', error info: ' . $errorInfo);
         } else {
@@ -302,23 +302,23 @@ class WaveCommon
         }
     }
 
-    /** 
+    /**
      * 循环创建目录
-     * 
+     *
      * @param string $dir 文件夹
      * @param $mode 文件夹权限
      *
      * @return bool
-     * 
-     */ 
-    public static function mkDir($dir, $mode = 0777) 
-    { 
+     *
+     */
+    public static function mkDir($dir, $mode = 0777)
+    {
         if ($dir == '') return true;
-        if (is_dir($dir) || @mkdir($dir,$mode)) return true; 
+        if (is_dir($dir) || @mkdir($dir,$mode)) return true;
         if (!WaveCommon::mkDir(dirname($dir),$mode)) return false;
 
-        return @mkdir($dir,$mode); 
+        return @mkdir($dir,$mode);
     }
-    
+
 }
 ?>

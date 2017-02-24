@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -26,7 +26,7 @@ class CookieModule
     protected $lifeTime     = 86400;    // 生存周期
     protected $domain;
 
-    public function __construct() 
+    public function __construct()
     {
         $config = Wave::app()->config['cookie'];
         $this->lifeTime = $config['timeout'];
@@ -35,7 +35,7 @@ class CookieModule
 
     /**
      * 设置COOKIE
-     *  
+     *
      * @param string $key       关键字
      * @param string $val       值
      *
@@ -52,7 +52,7 @@ class CookieModule
 
     /**
      * 得到COOKIE
-     * 
+     *
      * @param string $key       关键字
      *
      * @return string

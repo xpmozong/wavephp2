@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -21,7 +21,7 @@
  *
  */
 
-class View 
+class View
 {
     public $engin;
     private $scriptPackage;
@@ -86,16 +86,16 @@ class View
         return $classname.'/'.$actionname;
     }
 
-    public function display($resource_name = '', 
-                            $cache_id = null, 
+    public function display($resource_name = '',
+                            $cache_id = null,
                             $compile_id = null)
     {
         echo $this->fetch($resource_name, $cache_id, $compile_id, true);
     }
 
     public function fetch($resource_name,
-                        $cache_id = null, 
-                        $compile_id = null, 
+                        $cache_id = null,
+                        $compile_id = null,
                         $display = false)
     {
         if ($resource_name == '') {
@@ -106,9 +106,9 @@ class View
         if (!file_exists($fileName)) {
             throw new Exception('no have file '.$fileName);
         }
-        return $this->engin->fetch($resource_name, 
-                                    $cache_id, 
-                                    $compile_id, 
+        return $this->engin->fetch($resource_name,
+                                    $cache_id,
+                                    $compile_id,
                                     $display);
     }
 

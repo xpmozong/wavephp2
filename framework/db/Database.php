@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -20,7 +20,7 @@
  * @author          许萍
  *
  */
-class Database 
+class Database
 {
     public static $db;
     /**
@@ -34,16 +34,16 @@ class Database
     public static function factory($dbname = '')
     {
         $option = Wave::app()->config[$dbname];
-        
+
         $driver = isset($option['driver']) ? $option['driver'] : 'mysql';
         if (isset(self::$db[$dbname]['db']) && is_object(self::$db[$dbname]['db'])) {
             return self::$db;
         }
-        
+
         $class = ucfirst($driver);
         self::$db[$dbname]['db'] = new $class($option);
         self::$db[$dbname]['table_prefix'] = $option['master']['table_prefix'];
-        
+
         return self::$db;
     }
 }

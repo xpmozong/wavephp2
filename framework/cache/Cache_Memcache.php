@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -20,7 +20,7 @@
  * @author          许萍
  *
  */
-class Cache_Memcache implements Cache_Interface 
+class Cache_Memcache implements Cache_Interface
 {
     protected $pconnect = true;
     protected $lifetime = 3600;
@@ -28,14 +28,14 @@ class Cache_Memcache implements Cache_Interface
     protected $prefixArray = array();
     public $cacheName = null;
 
-    public function __construct($came = 'memcache') 
+    public function __construct($came = 'memcache')
     {
         $this->cacheName = $came;
-        
+
         if (extension_loaded('memcache') == false ) {
             exit('extension memcache not found!');
         }
-        
+
         $hosts = Wave::app()->config[$this->cacheName];
         $this->cacheArray[$this->cacheName] = new Memcache();
         $this->prefixArray[$this->cacheName] = isset($hosts[0]['prefix']) ? $hosts[0]['prefix'] : '';
@@ -75,18 +75,18 @@ class Cache_Memcache implements Cache_Interface
         return $this->prefixArray[$this->cacheName];
     }
 
-    public function set($key, $value, $lifetime = 3600) 
+    public function set($key, $value, $lifetime = 3600)
     {
         $lifetime = $lifetime >= 0 ? $lifetime : $this->lifetime;
         return $this->getMemcache()->set($this->getPrefix().$key, $value, false, $lifetime);
     }
 
-    public function get($key) 
+    public function get($key)
     {
         return $this->getMemcache()->get($this->getPrefix().$key);
     }
 
-    public function increment($key, $step = 1) 
+    public function increment($key, $step = 1)
     {
         if ($this->get($key)) {
             return $this->getMemcache()->increment($this->getPrefix().$key, $step);
@@ -95,12 +95,12 @@ class Cache_Memcache implements Cache_Interface
         }
     }
 
-    public function decrement($key, $step = 1) 
+    public function decrement($key, $step = 1)
     {
         return $this->getMemcache()->decrement($this->getPrefix().$key, $step);
     }
 
-    public function delete($key) 
+    public function delete($key)
     {
         return $this->getMemcache()->delete($this->getPrefix().$key);
     }

@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -36,7 +36,7 @@ class Request
         if (self::$instance == null) {
             self::$instance = new self;
         }
-        
+
         return self::$instance;
     }
 
@@ -259,24 +259,24 @@ class Request
      * 获取客户端IP
      *
      * @return string
-     * 
+     *
      */
     public static function getClientIp()
     {
         $ip = '';
-        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) { 
-            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"]; 
-        } elseif (isset($_SERVER["HTTP_CLIENT_IP"])) { 
-            $ip = $_SERVER["HTTP_CLIENT_IP"]; 
-        } elseif (isset($_SERVER["REMOTE_ADDR"])) { 
-            $ip = $_SERVER["REMOTE_ADDR"]; 
-        } elseif (getenv("HTTP_X_FORWARDED_FOR")) { 
-            $ip = getenv("HTTP_X_FORWARDED_FOR"); 
-        } elseif (getenv("HTTP_CLIENT_IP")) { 
-            $ip = getenv("HTTP_CLIENT_IP"); 
-        } elseif (getenv("REMOTE_ADDR")) { 
-            $ip = getenv("REMOTE_ADDR"); 
-        } else { 
+        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        } elseif (isset($_SERVER["HTTP_CLIENT_IP"])) {
+            $ip = $_SERVER["HTTP_CLIENT_IP"];
+        } elseif (isset($_SERVER["REMOTE_ADDR"])) {
+            $ip = $_SERVER["REMOTE_ADDR"];
+        } elseif (getenv("HTTP_X_FORWARDED_FOR")) {
+            $ip = getenv("HTTP_X_FORWARDED_FOR");
+        } elseif (getenv("HTTP_CLIENT_IP")) {
+            $ip = getenv("HTTP_CLIENT_IP");
+        } elseif (getenv("REMOTE_ADDR")) {
+            $ip = getenv("REMOTE_ADDR");
+        } else {
             $ip = "Unknown";
         }
 
@@ -291,7 +291,7 @@ class Request
      */
     public function getScheme()
     {
-        return ($this->getServer('HTTPS') == 'on') ? 
+        return ($this->getServer('HTTPS') == 'on') ?
                 self::SCHEME_HTTPS : self::SCHEME_HTTP;
     }
 
@@ -307,7 +307,7 @@ class Request
         $current_url = sprintf('http%s://%s%s',
             (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == TRUE ? 's' : ''),
                 $_SERVER['HTTP_HOST'],
-            (isset($_SERVER['REQUEST_URI']) ? 
+            (isset($_SERVER['REQUEST_URI']) ?
                 $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF']));
 
         return $raw ? rawurlencode($current_url) : $current_url;

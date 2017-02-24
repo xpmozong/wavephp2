@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -49,7 +49,7 @@ class I18n
         if (isset(I18n::$_cache[$lang])) {
             return I18n::$_cache[$lang];
         }
-        
+
         $model = new I18nModel();
         $I18n = $model->getLanguage($lang);
 
@@ -60,7 +60,7 @@ class I18n
 if (!function_exists('__')) {
     function __($string, array $values = NULL) {
         $string = I18n::get($string);
-        
+
         return empty($values) ? $string : strtr($string, $values);
     }
 }

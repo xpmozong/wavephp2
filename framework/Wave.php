@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -133,11 +133,11 @@ class Wave
                 $config = Wave::app()->config['session'];
                 $class = 'Session_'.ucfirst($config['driver']);
                 $session = new $class($config);
-                session_set_save_handler(array(&$session,'open'), 
-                             array(&$session,'close'), 
-                             array(&$session,'read'), 
-                             array(&$session,'write'), 
-                             array(&$session,'destroy'), 
+                session_set_save_handler(array(&$session,'open'),
+                             array(&$session,'close'),
+                             array(&$session,'read'),
+                             array(&$session,'write'),
+                             array(&$session,'destroy'),
                              array(&$session,'gc'));
 
                 self::$app->session = $session;
@@ -170,7 +170,7 @@ class Wave
         } else {
             self::$memcache = new Cache_Memcache();
         }
-        
+
         if (empty(self::$memcache->cacheName)) {
             exit('memcache error');
         }
@@ -205,11 +205,11 @@ class Wave
         $config = Wave::app()->config['session'];
         $class = 'Session_'.ucfirst($config['driver']);
         self::$session = new $class($config);
-        session_set_save_handler(array(&self::$session,'open'), 
-                     array(&self::$session,'close'), 
-                     array(&self::$session,'read'), 
-                     array(&self::$session,'write'), 
-                     array(&self::$session,'destroy'), 
+        session_set_save_handler(array(&self::$session,'open'),
+                     array(&self::$session,'close'),
+                     array(&self::$session,'read'),
+                     array(&self::$session,'write'),
+                     array(&self::$session,'destroy'),
                      array(&self::$session,'gc'));
 
         return self::$session;
@@ -262,7 +262,7 @@ class Wave
     /**
      * 获取控制器名
      */
-    public static function getClassName() 
+    public static function getClassName()
     {
         return self::$Route->getClassName();
     }
@@ -270,7 +270,7 @@ class Wave
     /**
      * 获取控制器方法名
      */
-    public static function getActionName() 
+    public static function getActionName()
     {
         return self::$Route->getActionName();
     }
@@ -302,10 +302,10 @@ class Wave
      * @param string $content 内容
      * @param string $mod 写入类型 默认 w
      *
-     * @return int $strlen 写入字符长度 
+     * @return int $strlen 写入字符长度
      *
      */
-    public static function writeCache($filepath, $content, $mod = 'w') 
+    public static function writeCache($filepath, $content, $mod = 'w')
     {
         $fp = fopen($filepath, $mod);
         flock($fp, LOCK_EX);
@@ -329,7 +329,7 @@ class Wave
         if (file_exists($filepath)) {
             return file_get_contents($filepath);
         }
-        
+
         return '';
     }
 }

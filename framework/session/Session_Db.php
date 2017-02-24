@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -32,14 +32,14 @@ class Session_Db extends Model
         $this->lifeTime = $config['timeout'];
     }
 
-    protected function init() 
-    {   
+    protected function init()
+    {
         $this->_tableName = 'w_sessions';
     }
 
     /**
      * 设置SESSION
-     *  
+     *
      * @param string $key       session关键字
      * @param string $val       session值
      *
@@ -47,18 +47,18 @@ class Session_Db extends Model
     public function setState($key, $val, $expire = 0)
     {
         if (!isset($_SESSION)) {
-            session_start(); 
+            session_start();
         }
         if ($expire > 0) {
             $_SESSION[$this->sess_id.$key.'_expire'] = time() + $expire;
         }
-        
+
         $_SESSION[$this->sess_id.$key] = $val;
     }
 
     /**
      * 得到SESSION
-     * 
+     *
      * @param string $key       session关键字
      *
      * @return string
@@ -99,18 +99,18 @@ class Session_Db extends Model
         }
         $_SESSION[$this->sess_id.$key] = '';
         unset($_SESSION[$this->sess_id.$key]);
-        
+
         session_destroy();
     }
 
-    function open($savePath, $sessName) 
+    function open($savePath, $sessName)
     {
         $dbName = Wave::app()->config['database']['master']['dbname'];
         $sql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='$dbName' and TABLE_NAME='".$this->_tableName."'";
         $res = $this->queryOne($sql);
         if (empty($res['TABLE_NAME'])) {
             $sql = "CREATE TABLE `".$this->_tableName."` (
-                `session_id` varchar(255) CHARACTER 
+                `session_id` varchar(255) CHARACTER
                 SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
                 `session_expires` int(10) unsigned NOT NULL DEFAULT '0',
                 `session_data` text,
@@ -118,17 +118,17 @@ class Session_Db extends Model
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
             $this->sqlQuery($sql);
         }
-        
-        return true; 
+
+        return true;
     }
 
-    function close() 
-    { 
-        $this->gc(ini_get('session.gc_maxlifetime')); 
-        return true; 
+    function close()
+    {
+        $this->gc(ini_get('session.gc_maxlifetime'));
+        return true;
     }
 
-    function read($sessID) 
+    function read($sessID)
     {
         $this->sess_id = $sessID;
         $where = array('session_id'=>$sessID, 'session_expires>'=> time());
@@ -141,37 +141,37 @@ class Session_Db extends Model
         }
    }
 
-   function write($sessID, $sessData) 
+   function write($sessID, $sessData)
    {
-        // new session-expire-time 
-        $newExp = time() + $this->lifeTime; 
-        // is a session with this id in the database? 
+        // new session-expire-time
+        $newExp = time() + $this->lifeTime;
+        // is a session with this id in the database?
         $where = array('session_id'=>$sessID);
         $row = $this->where($where)
                     ->getOne('session_data');
         if ($row) {
 
-            $data = array('session_expires' =>$newExp, 
+            $data = array('session_expires' =>$newExp,
                             'session_data'  =>$sessData);
             return $this->update($data, $where);
 
         } else {
             $data = array('session_id'=>$sessID,
-                     'session_expires'=>$newExp, 
+                     'session_expires'=>$newExp,
                         'session_data'=>$sessData);
-            
+
             return $this->insert($data);
         }
    }
 
-    function destroy($sessID) 
-    { 
-        // delete session-data 
+    function destroy($sessID)
+    {
+        // delete session-data
         $where = array('session_id'=>$sessID);
         return $this->delete($where);
-    } 
+    }
 
-    function gc($sessMaxLifeTime) 
+    function gc($sessMaxLifeTime)
     {
         $where = array('session_expires<'=>time());
         // delete old sessions

@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -25,12 +25,12 @@ abstract class Db_Abstract
     public $config      = array();
     public $conn        = array();
     public $is_single   = true;
-    protected $lastSql  = '';  
+    protected $lastSql  = '';
 
     /**
      * 选数据库
      */
-    public function init($tag) 
+    public function init($tag)
     {
         if (isset($this->conn[$tag])) {
             $this->selectCharsetAndDb($tag);
@@ -98,7 +98,7 @@ abstract class Db_Abstract
      * @return bool
      *
      */
-    public function is_write($sql) 
+    public function is_write($sql)
     {
         if (!preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|LOAD DATA|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s+/i', $sql)) {
             return false;
@@ -113,7 +113,7 @@ abstract class Db_Abstract
      * @param string $table         表名
      * @param array  $array         数据数组
      *
-     * @return boolean 
+     * @return boolean
      *
      */
     public function insertdb($table, $array)
@@ -127,7 +127,7 @@ abstract class Db_Abstract
      * @return int id
      *
      */
-    public function insertId() 
+    public function insertId()
     {
         return $this->_insertId($this->conn['master']);
     }
@@ -142,7 +142,7 @@ abstract class Db_Abstract
      * @return boolean
      *
      */
-    public function updatedb($table, $array, $conditions) 
+    public function updatedb($table, $array, $conditions)
     {
         return $this->_updatedb($table, $array, $conditions);
     }
@@ -219,7 +219,7 @@ abstract class Db_Abstract
      *
      * @param int $offset       第几条
      * @param int $limit        多少条数据
-     * 
+     *
      * @return $this
      *
      */
@@ -245,7 +245,7 @@ abstract class Db_Abstract
 
         return true;
     }
-    
+
     /**
      * 解析过滤
      *

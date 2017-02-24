@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -81,7 +81,7 @@ class Model
      * @return object
      *
      */
-    public function getDb() 
+    public function getDb()
     {
         return $this->dbArray[$this->dbname];
     }
@@ -92,7 +92,7 @@ class Model
      * @return string
      *
      */
-    public function getTablePrefix() 
+    public function getTablePrefix()
     {
         return $this->tablePrefixArray[$this->dbname];
     }
@@ -113,7 +113,7 @@ class Model
      *
      * @param string $field 字段
      *
-     * @return $this 
+     * @return $this
      *
      */
     public function select($field = '*')
@@ -206,7 +206,7 @@ class Model
      *
      * @param string $tableName 表名
      *
-     * @return $this 
+     * @return $this
      *
      */
     public function from($tableName)
@@ -228,7 +228,7 @@ class Model
      * @param string $conditions    条件
      * @param string $type          连接类型
      *
-     * @return $this 
+     * @return $this
      *
      */
     public function join($table, $conditions, $type = 'LEFT')
@@ -251,7 +251,7 @@ class Model
     public function distinct($val)
     {
         $this->_distinct = $val;
-        
+
         return $this;
     }
 
@@ -280,7 +280,7 @@ class Model
                 $this->_where[] = $prefix . $k . $not . " IN (" . implode(", ", $arr) . ") ";
             }
         }
-        
+
         return $this;
     }
 
@@ -303,16 +303,16 @@ class Model
      *
      * @param array $where      条件
      * @param string $type      AND或OR
-     * @param string $type2     类型
      *
      * @return $this
      *
      */
-    public function where($where, $type = 'AND', $type2 = '')
+    public function where($where, $type = 'AND')
     {
         if (!empty($where) && is_array($where)) {
+            $newwhere = array();
             foreach ($where as $k => $v) {
-                $prefix = (count($this->_where) == 0) ? '' : $type.' ';
+                $prefix = count($newwhere) > 0 ? 'AND ' : '';
                 if (!$this->getDb()->_parse($k) && is_null($v)) {
                     $k .= ' IS NULL';
                 }
@@ -322,15 +322,11 @@ class Model
                 if (!is_null($v)) {
                     $v = $this->getDb()->escape($v);
                 }
-                if (!empty($type2)) {
-                    $_where[] = $k.' '.$v;
-                }else {
-                    $this->_where[] = $prefix.$k.' '.$v;
-                }
+                $newwhere[] = $prefix.$k.' '.$v;
             }
-            if (!empty($type2) && !empty($_where)) {
-                $this->_where[] = $prefix .'('.  implode(" $type2 ", $_where) . ') ';
-            }
+            $pre = count($this->_where) > 0 ? $type.' ' : '';
+
+            $this->_where[] = $pre.'('.implode(' ', $newwhere).')';
         }
 
         return $this;
@@ -382,7 +378,7 @@ class Model
      * @return string $string
      *
      */
-    public function safe_replace($string) 
+    public function safe_replace($string)
     {
         $string = str_replace('%20','',$string);
         $string = str_replace('%27','',$string);
@@ -397,7 +393,7 @@ class Model
         $string = str_replace("{",'',$string);
         $string = str_replace('}','',$string);
         $string = str_replace('\\','',$string);
-        
+
         return $string;
     }
 
@@ -415,7 +411,7 @@ class Model
         return $this->like($where, $not, 'OR', $like);
     }
 
-    
+
 
     /**
      * 模糊查询
@@ -423,7 +419,7 @@ class Model
      * @param array $where      条件数组
      * @param bool $not         是否NOT
      * @param string $type      AND或OR
-     * @param string $like      相似范围  
+     * @param string $like      相似范围
      *
      * @return $this
      *
@@ -531,7 +527,7 @@ class Model
      *
      * @param int $offset       第几条
      * @param int $limit        多少条数据
-     * 
+     *
      * @return $this
      *
      */
@@ -551,7 +547,7 @@ class Model
      * GROUP BY
      *
      * @param string $field     字段
-     * 
+     *
      * @return $this
      *
      */
@@ -565,7 +561,7 @@ class Model
                 $this->_group[] = $v;
             }
         }
-        
+
         return $this;
     }
 
@@ -613,9 +609,9 @@ class Model
         }
         $sql .= ' ';
         $sql .= implode(' ', $this->_join);
-        if (count($this->_where) > 0 
-            OR count($this->_like) > 0 
-            OR count($this->_between) > 0 
+        if (count($this->_where) > 0
+            OR count($this->_like) > 0
+            OR count($this->_between) > 0
             OR count($this->_instr) > 0) {
             $sql .= ' WHERE ';
         }
@@ -629,7 +625,7 @@ class Model
         }
 
         if (count($this->_between) > 0) {
-            if (count($this->_where) > 0 
+            if (count($this->_where) > 0
                 OR count($this->_like) > 0) {
                 $sql .= ' AND ';
             }
@@ -637,8 +633,8 @@ class Model
         }
 
         if (count($this->_instr) > 0) {
-            if (count($this->_where) > 0 
-                OR count($this->_like) > 0 
+            if (count($this->_where) > 0
+                OR count($this->_like) > 0
                 OR count($this->_between) > 0) {
                 $sql .= ' AND ';
             }
@@ -713,7 +709,7 @@ class Model
      *
      * @param string $sql       sql语句
      *
-     * @return bool 
+     * @return bool
      *
      */
     public function sqlQuery($sql)
@@ -729,7 +725,7 @@ class Model
      * @param string $cache_key 缓存key
      * @param int $exp          缓存时间
      *
-     * @return array 
+     * @return array
      *
      */
     public function getAll($field = '*', $where = array(), $cache_key = '', $exp = 0)
@@ -781,7 +777,7 @@ class Model
      * @param string $cache_key 缓存key
      * @param int $exp          缓存时间
      *
-     * @return array 
+     * @return array
      *
      */
     public function getOne($field = '*', $where = null, $cache_key = '', $exp = 0)
@@ -914,7 +910,7 @@ class Model
         $tableName = $this->getTableName();
         $this->where($where);
         $conditions = implode(' ', $this->_where);
-        
+
         $res = $this->getDb()->delete($tableName, $conditions);
         $num = 0;
         if ($res) {
@@ -986,7 +982,7 @@ class Model
                 return $res;
             }
         }
-        
+
         $sql = $this->count($field)->where($where)->compileSelect();
         $arr = $this->getDb()->getOne($sql);
         $res = 0;

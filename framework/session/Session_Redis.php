@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -27,13 +27,13 @@ class Session_Redis
     protected $sess_id;
     protected $cache;
 
-    public function __construct($config) 
+    public function __construct($config)
     {
         $this->lifeTime = $config['timeout'];
         if (!empty(Wave::app()->config['session_redis'])) {
             $this->cache = new Cache_Redis('session_redis');
             if (empty($this->cache->cacheName)) {
-                exit('redis error');   
+                exit('redis error');
             }
         } else {
             $this->cache = Wave::app()->redis;
@@ -42,7 +42,7 @@ class Session_Redis
 
     /**
      * 设置SESSION
-     *  
+     *
      * @param string $key       session关键字
      * @param string $val       session值
      *
@@ -50,18 +50,18 @@ class Session_Redis
     public function setState($key, $val, $expire = 0)
     {
         if (!isset($_SESSION)) {
-            session_start(); 
+            session_start();
         }
         if ($expire > 0) {
             $_SESSION[$this->sess_id.$key.'_expire'] = time() + $expire;
         }
-        
+
         $_SESSION[$this->sess_id.$key] = $val;
     }
 
     /**
      * 得到SESSION
-     * 
+     *
      * @param string $key       session关键字
      *
      * @return string
@@ -106,18 +106,18 @@ class Session_Redis
         session_destroy();
     }
 
-    function open($savePath, $sessName) 
+    function open($savePath, $sessName)
     {
-        return true; 
+        return true;
     }
 
-    function close() 
-    { 
-        $this->gc(ini_get('session.gc_maxlifetime')); 
-        return true; 
+    function close()
+    {
+        $this->gc(ini_get('session.gc_maxlifetime'));
+        return true;
     }
 
-    function read($sessID) 
+    function read($sessID)
     {
         $this->sess_id = $sessID;
         $sessData = $this->cache->get($this->sess_id);
@@ -128,20 +128,20 @@ class Session_Redis
         }
     }
 
-    function write($sessID, $sessData) 
+    function write($sessID, $sessData)
     {
         $this->cache->set($this->sess_id, $sessData, $this->lifeTime);
         return true;
     }
 
-    function destroy($sessID) 
-    { 
+    function destroy($sessID)
+    {
         // delete session-data
         $this->cache->delete($this->sess_id);
         return true;
-    } 
+    }
 
-    function gc($sessMaxLifeTime) 
+    function gc($sessMaxLifeTime)
     {
         // delete old sessions
         return true;

@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -22,7 +22,7 @@
  */
 class I18nModel extends Model
 {
-    protected function init() 
+    protected function init()
     {
         $this->_tableName = 'w_language';
     }
@@ -43,8 +43,8 @@ class I18nModel extends Model
                 `lang_value` varchar(255) NOT NULL DEFAULT '' COMMENT '翻译内容',
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `lang_index` (`lang_value`,`lang_code`,`lang_key`)
-            ) ENGINE=InnoDB AUTO_INCREMENT=1 
-            DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT 
+            ) ENGINE=InnoDB AUTO_INCREMENT=1
+            DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT
             COMMENT='多语言翻译项';";
             $this->sqlQuery($sql);
         }
@@ -68,7 +68,7 @@ class I18nModel extends Model
             $zhnew = array();
             $zh = $this ->where(array('lang_code'=>'zh-cn'))
                         ->getAll('lang_key,lang_value');
-            
+
             foreach ($zh as $key => $val) {
                 $zhnew[$val['lang_key']] = $val['lang_value'];
             }

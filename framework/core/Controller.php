@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -60,32 +60,32 @@ class Controller
         $this->view->assign($name, $value);
     }
 
-    public function fetch($resource_name = '', 
-                        $cache_id = null, 
-                        $compile_id = null, 
+    public function fetch($resource_name = '',
+                        $cache_id = null,
+                        $compile_id = null,
                         $display = false)
     {
         $this->_assignVars();
         return $this->view->fetch($resource_name,
-                                $cache_id, 
-                                $compile_id, 
+                                $cache_id,
+                                $compile_id,
                                 $display);
     }
 
-    public function display($resource_name = '', 
-                            $cache_id = null, 
+    public function display($resource_name = '',
+                            $cache_id = null,
                             $compile_id = null)
     {
-        echo $this->fetch($resource_name, 
-                        $cache_id = null, 
-                        $compile_id = null, 
+        echo $this->fetch($resource_name,
+                        $cache_id = null,
+                        $compile_id = null,
                         true);
     }
 
     /**
      * 初始化view对象
      */
-    public function initView() 
+    public function initView()
     {
         if ($this->view == null) {
             $this->view = new View();
@@ -107,7 +107,7 @@ class Controller
 
     /**
      * 加载模版
-     * 
+     *
      * @param string $filename      文件名
      * @param array  $variables     数据
      *
@@ -131,7 +131,7 @@ class Controller
      * @param int $width        验证码宽度
      * @param int $height       验证码高度
      * @param int $expire       过期时间
-     * 
+     *
      * @return string
      *
      */
@@ -146,7 +146,7 @@ class Controller
 
     /**
      * URL跳转
-     * 
+     *
      * @param string $url       跳转URL
      *
      */
@@ -167,13 +167,13 @@ class Controller
     {
         $str = '<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml">
                 <head>
-                <meta http-equiv="Content-Type" 
+                <meta http-equiv="Content-Type"
                 content="text/html; charset=utf-8" />
                 <title>信息弹窗</title>
                 <style type="text/css">
                 *,body{ padding: 0; margin: 0;}
-                .box{ margin: 0 auto; padding: 30px; 
-                    border-radius:3px; border: 5px solid #000; 
+                .box{ margin: 0 auto; padding: 30px;
+                    border-radius:3px; border: 5px solid #000;
                     width: 400px; margin-top: 15%;}
                 </style>
                 <script type="text/javascript">
@@ -202,7 +202,7 @@ class Controller
      * @param string $tpl       模板，默认report
      *
      */
-    public function report($msg, $url, $state = true, 
+    public function report($msg, $url, $state = true,
                         $time = 3, $tpl = 'layout/report')
     {
         $this->assign('msg', $msg);
@@ -216,13 +216,13 @@ class Controller
     /**
      * 加载调试信息
      */
-    public function debuger() 
+    public function debuger()
     {
         if ($this->isSmarty) {
             $this->debuger = Wave::app()->config['debuger'];
             if ($this->debuger) {
                 if (!isset($_SESSION)) {
-                    @session_start(); 
+                    @session_start();
                 }
                 Wave::$_debug['session'] = $_SESSION;
                 Wave::$_debug['files'] = get_included_files();
@@ -233,7 +233,7 @@ class Controller
         } else {
             if (Wave::app()->config['debuger']) {
                 if (!isset($_SESSION)) {
-                    session_start(); 
+                    session_start();
                 }
                 Wave::$_debug['session'] = $_SESSION;
                 Wave::$_debug['files'] = get_included_files();

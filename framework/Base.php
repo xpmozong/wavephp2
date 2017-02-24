@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -31,7 +31,7 @@ class Base
     private static $baseUrl;            // 除域名外的根目录地址
     private static $config;             // 配置项目
     private static $defaultControl;     // 默认控制层
-    
+
     public static function getInstance()
     {
         if (self::$instance == null) {
@@ -58,7 +58,7 @@ class Base
 
         self::$modelName = !empty($config['modelName']) ? $config['modelName'] : 'protected';
 
-        self::$defaultControl = !empty($config['defaultController']) 
+        self::$defaultControl = !empty($config['defaultController'])
             ? $config['defaultController'] : 'site';
 
         $this->loadBase($mode, $buff, $params);
@@ -84,8 +84,8 @@ class Base
 
             self::$projectPath = $_SERVER['DOCUMENT_ROOT'].$scriptName.'/';
 
-            self::$hostInfo = 
-                isset($_SERVER['HTTP_HOST']) 
+            self::$hostInfo =
+                isset($_SERVER['HTTP_HOST'])
                 ? strtolower($_SERVER['HTTP_HOST']) : '';
 
             if ($enterFile == 'index.php') {
@@ -93,18 +93,18 @@ class Base
                 self::$pathInfo = str_replace($enterFile, '', $pathUrl);
                 self::$homeUrl = $scriptName.'/index.php/';
             } else {
-                self::$pathInfo = 
-                    isset($_SERVER['PATH_INFO']) 
+                self::$pathInfo =
+                    isset($_SERVER['PATH_INFO'])
                     ? strtolower($_SERVER['PATH_INFO']) : '/'.self::$defaultControl.'/index';
 
-                self::$homeUrl = 
-                    isset($_SERVER['SCRIPT_NAME']) 
+                self::$homeUrl =
+                    isset($_SERVER['SCRIPT_NAME'])
                     ? strtolower($_SERVER['SCRIPT_NAME']).'/' : '/';
             }
 
             self::$baseUrl = $scriptName;
         }
-        
+
     }
 
     /**

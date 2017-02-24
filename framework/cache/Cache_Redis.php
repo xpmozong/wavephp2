@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -20,20 +20,20 @@
  * @author          许萍
  *
  */
-class Cache_Redis implements Cache_Interface 
+class Cache_Redis implements Cache_Interface
 {
     protected $cacheArray = array();
     protected $prefixArray = array();
     public $cacheName = null;
 
-    public function __construct($came = 'redis') 
+    public function __construct($came = 'redis')
     {
         $this->cacheName = $came;
-        
+
         if (extension_loaded('redis') == false) {
             exit('extension redis not found!');
         }
-        
+
         $hosts = Wave::app()->config[$this->cacheName];
         if (isset($hosts['slave'])) {
             $this->cacheArray[$this->cacheName] = new WaveRedisCluster(true);
@@ -42,7 +42,7 @@ class Cache_Redis implements Cache_Interface
             $db = $db < 0 ? 0 : $db;
             $db = $db > 15 ? 15 : $db;
             $ret1 = $this->cacheArray[$this->cacheName]->connect(array(
-                                        'host'=>$hosts['master']['host'], 
+                                        'host'=>$hosts['master']['host'],
                                         'port'=>$hosts['master']['port']), true, $db);
             if ($ret1) {
                 foreach ($hosts['slave'] as $key => $value) {
@@ -68,7 +68,7 @@ class Cache_Redis implements Cache_Interface
             $db = $db < 0 ? 0 : $db;
             $db = $db > 15 ? 15 : $db;
             $ret = $this->cacheArray[$this->cacheName]->connect(array(
-                                        'host'=>$hosts['master']['host'], 
+                                        'host'=>$hosts['master']['host'],
                                         'port'=>$hosts['master']['port']), true, $db);
             if (!$ret) {
                 $this->cacheArray = array();
@@ -99,58 +99,58 @@ class Cache_Redis implements Cache_Interface
         return $this->prefixArray[$this->cacheName];
     }
 
-    public function set($key, $value, $lifetime = 0) 
+    public function set($key, $value, $lifetime = 0)
     {
         return $this->getRedis()->set($this->getPrefix().$key, $value, $lifetime);
     }
 
-    public function get($key) 
+    public function get($key)
     {
         return $this->getRedis()->get($this->getPrefix().$key);
     }
 
-    public function delete($key) 
+    public function delete($key)
     {
         return $this->getRedis()->delete($this->getPrefix().$key);
     }
 
-    public function increment($key, $step = 1) 
+    public function increment($key, $step = 1)
     {
         return $this->getRedis()->incr($this->getPrefix().$key, $step);
     }
 
-    public function decrement($key, $step = 1) 
+    public function decrement($key, $step = 1)
     {
         return $this->getRedis()->decr($this->getPrefix().$key, $step);
     }
 
     //-------------------------redis操作------------------------//
-    public function lpush($key, $value) 
+    public function lpush($key, $value)
     {
         return $this->getRedis()->lpush($this->getPrefix().$key, $value);
     }
 
-    public function lpop($key) 
+    public function lpop($key)
     {
         return $this->getRedis()->lpop($this->getPrefix().$key);
     }
 
-    public function rpush($key, $value) 
+    public function rpush($key, $value)
     {
         return $this->getRedis()->rpush($this->getPrefix().$key, $value);
     }
 
-    public function rpop($key) 
+    public function rpop($key)
     {
         return $this->getRedis()->rpop($this->getPrefix().$key);
     }
 
-    public function lget($key, $index = 0) 
+    public function lget($key, $index = 0)
     {
         return $this->getRedis()->lget($this->getPrefix().$key, $index);
     }
 
-    public function llen($key) 
+    public function llen($key)
     {
         return $this->getRedis()->llen($this->getPrefix().$key);
     }

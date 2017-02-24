@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -68,9 +68,9 @@ class Route
     /**
      * route 处理
      *
-     * 例如 index.php/site/index 
+     * 例如 index.php/site/index
      * 会使用SiteController.php这个文件，调用actionIndex这个方法
-     * 例如 index.php/site/index/a/b 
+     * 例如 index.php/site/index/a/b
      * 会使用SiteController.php这个文件，调用actionIndex($a, $b)这个方法
      *
      * 默认使用SiteController.php这个文件，调用actionIndex这个方法
@@ -129,10 +129,10 @@ class Route
                         }
                     }
                 } else {
-                   $this->error404(); 
+                   $this->error404();
                 }
             } else {
-                $this->error404(); 
+                $this->error404();
             }
         } else {
             $this->error404();
@@ -151,7 +151,7 @@ class Route
             $cc = new $c;
             if (method_exists($cc, $f)) {
                 $cc->$f();die;
-            }   
+            }
         }
         echo '<h2>Error 404</h2>';
         echo 'Unable to resolve the request "'.$this->pathInfo.'".';
@@ -160,7 +160,7 @@ class Route
     /**
      * 获取控制器名
      */
-    public function getClassName() 
+    public function getClassName()
     {
         return strtolower(str_replace('Controller', '', $this->className));
     }

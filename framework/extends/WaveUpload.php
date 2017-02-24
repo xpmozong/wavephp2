@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -71,7 +71,7 @@ class WaveUpload
      * @param  string $name 配置名称
      * @return multitype    配置值
      */
-    public function __get($name) 
+    public function __get($name)
     {
         return $this->config[$name];
     }
@@ -113,7 +113,7 @@ class WaveUpload
      * 上传文件
      * @param 文件信息数组 $files ，通常是 $_FILES数组
      */
-    public function upload($files='') 
+    public function upload($files='')
     {
         if ('' === $files) {
             $files  =   $_FILES;
@@ -192,7 +192,7 @@ class WaveUpload
      * @param array $files  上传的文件变量
      * @return array
      */
-    private function dealFiles($files) 
+    private function dealFiles($files)
     {
         $fileArray  = array();
         $n          = 0;
@@ -220,7 +220,7 @@ class WaveUpload
      * 检查上传的文件
      * @param array $file 文件信息
      */
-    private function check($file) 
+    private function check($file)
     {
         /* 文件上传失败，捕获错误代码 */
         if ($file['error']) {
@@ -267,7 +267,7 @@ class WaveUpload
      * 获取错误代码信息
      * @param string $errorNo  错误号
      */
-    private function error($errorNo) 
+    private function error($errorNo)
     {
         switch ($errorNo) {
             case 1:
@@ -297,7 +297,7 @@ class WaveUpload
      * 检查文件大小是否合法
      * @param integer $size 数据
      */
-    private function checkSize($size) 
+    private function checkSize($size)
     {
         return !($size > $this->maxSize) || (0 == $this->maxSize);
     }
@@ -306,7 +306,7 @@ class WaveUpload
      * 检查上传的文件MIME类型是否合法
      * @param string $mime 数据
      */
-    private function checkMime($mime) 
+    private function checkMime($mime)
     {
         return empty($this->config['mimes']) ? true : in_array(strtolower($mime), $this->mimes);
     }
@@ -315,7 +315,7 @@ class WaveUpload
      * 检查上传的文件后缀是否合法
      * @param string $ext 后缀
      */
-    private function checkExt($ext) 
+    private function checkExt($ext)
     {
         return empty($this->config['exts']) ? true : in_array(strtolower($ext), $this->exts);
     }
@@ -324,7 +324,7 @@ class WaveUpload
      * 根据上传文件命名规则取得保存文件名
      * @param string $file 文件信息
      */
-    private function getSaveName($file) 
+    private function getSaveName($file)
     {
         $savename = $this->config['isFormerName'] ? $file['name'] : md5(time().mt_rand());
 

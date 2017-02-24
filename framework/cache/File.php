@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -20,7 +20,7 @@
  * @author          许萍
  *
  */
-class File 
+class File
 {
     /**
      * 写入文件
@@ -29,7 +29,7 @@ class File
      * @param string mod     文件打开模式
      * @return void
      */
-    public static function write($file, $contents, $mod = 'w') 
+    public static function write($file, $contents, $mod = 'w')
     {
         $fp = fopen($file, $mod);
         flock($fp, LOCK_EX);
@@ -37,38 +37,38 @@ class File
         flock($fp, LOCK_UN);
         fclose($fp);
     }
-    
+
     /**
      * 递归创建文件目录
      * @param string dir 文件目录
      * @param int    mod 目录权限
      * @return bool
      */
-    public static function mkdirs($dir, $mod = 0755) 
+    public static function mkdirs($dir, $mod = 0755)
     {
         if (!is_dir($dir)) {
             self::mkdirs(dirname($dir), $mod);
             return mkdir($dir, $mod);
         }
     }
-    
+
     /**
      * 读取文件内容
      * @param string file 文件路径
      * @return bool/string
      */
-    public static function read($file) 
+    public static function read($file)
     {
         return @file_get_contents($file);
     }
-    
+
     /**
      * 下载文件
      * @param string file 文件目录
      * @param string filename 文件名称
      * @return void
      */
-    public static function download($file, $filename = '') 
+    public static function download($file, $filename = '')
     {
         if (!is_file($file)) {
             exit('the '.$file.' is not found.');
@@ -97,7 +97,7 @@ class File
     /**
      * 获取附件类型
      */
-    public static function getType($type) 
+    public static function getType($type)
     {
         if (is_numeric($type)) {
             $typeid = $type;
@@ -122,7 +122,7 @@ class File
     /**
      * 友好格式显示文件大小
      */
-    public static function getSize($filesize) 
+    public static function getSize($filesize)
     {
         if (is_file($filesize)) {
             $filesize = filesize($filesize);

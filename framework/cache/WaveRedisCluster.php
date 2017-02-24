@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -19,20 +19,20 @@
  * @author          许萍
  *
  */
-class WaveRedisCluster 
+class WaveRedisCluster
 {
     // 是否使用 M/S 的读写集群方案
     private $_isUseCluster = false;
-  
+
     // Slave 句柄标记
     private $_sn = 0;
-  
+
     // 服务器连接句柄
     private $_linkHandle = array(
         'master'=>null,// 只支持一台 Master
         'slave'=>array(),// 可以有多台 Slave
     );
-  
+
     /**
      * 构造函数
      *
@@ -77,10 +77,10 @@ class WaveRedisCluster
             }
             ++$this->_sn;
         }
-        
+
         return $ret;
     }
-  
+
     /**
      * 关闭连接
      *
@@ -112,7 +112,7 @@ class WaveRedisCluster
 
         return true;
     }
-  
+
     /**
      * 得到 Redis 原始对象可以有更多的操作
      *
@@ -132,7 +132,7 @@ class WaveRedisCluster
             }
         }
     }
-  
+
     /**
      * 写缓存
      *
@@ -152,7 +152,7 @@ class WaveRedisCluster
 
         return $ret;
     }
-  
+
     /**
      * 读缓存
      *
@@ -167,7 +167,7 @@ class WaveRedisCluster
 
         return $this->getRedis(false)->{$func}($key);
     }
-  
+
     /**
      * 删除缓存
      *
@@ -197,7 +197,7 @@ class WaveRedisCluster
             return $this->getRedis()->incrBy($key, $default);
         }
     }
-  
+
     /**
      * 值减减操作,类似 --$i ,如果 key 不存在时自动设置为 0 后进行减减操作
      *
@@ -331,7 +331,7 @@ class WaveRedisCluster
     {
         return $this->getRedis()->sRemove($key, $value);
     }
-  
+
     /**
      * 添空当前数据库
      *
@@ -352,7 +352,7 @@ class WaveRedisCluster
      * @return boolean
      *
      */
-    public function hashSet($hash, $key, $data) 
+    public function hashSet($hash, $key, $data)
     {
         $return = null;
         if (is_array($data) && !empty($data)) {
@@ -371,7 +371,7 @@ class WaveRedisCluster
      * @return array
      *
      */
-    public function hashGet($hash, $key = array(), $type = 0) 
+    public function hashGet($hash, $key = array(), $type = 0)
     {
         $return = null;
         if (!empty($key)) {
@@ -410,7 +410,7 @@ class WaveRedisCluster
      * @param $hash string 哈希表名
      *
      */
-    public function hashLen($hash) 
+    public function hashLen($hash)
     {
         $return = null;
 
@@ -427,7 +427,7 @@ class WaveRedisCluster
      * @param $key mixed 表中存储的key名
      *
      */
-    public function hashDel($hash, $key) 
+    public function hashDel($hash, $key)
     {
         return $this->getRedis()->hDel($hash, $key);
     }
@@ -439,7 +439,7 @@ class WaveRedisCluster
      * @param $key mixed 表中存储的key名
      *
      */
-    public function hashExists($hash, $key) 
+    public function hashExists($hash, $key)
     {
         $return = null;
 
@@ -448,9 +448,9 @@ class WaveRedisCluster
 
         return $return;
     }
-  
+
     /* =================== 以下私有方法 =================== */
-  
+
     /**
      * 随机 HASH 得到 Redis Slave 服务器句柄
      *
@@ -465,10 +465,10 @@ class WaveRedisCluster
         }
         // 随机 Hash 得到 Slave 的句柄
         $hash = $this->_hashId(mt_rand(), $this->_sn);
-        
+
         return $this->_linkHandle['slave'][$hash];
     }
-  
+
     /**
      * 根据ID得到 hash 后 0～m-1 之间的值
      *

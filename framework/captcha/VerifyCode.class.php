@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -42,12 +42,12 @@ class VerifyCode
     public function __construct()
     {
         $directory = dirname(__FILE__).'/font/';
-        $mydir = dir($directory); 
+        $mydir = dir($directory);
         while ($file = $mydir->read()) {
             if (($file != ".") && ($file != "..")) {
                 $this->fonts[] = $directory.$file;
             }
-        } 
+        }
         $mydir->close();
     }
 
@@ -103,9 +103,9 @@ class VerifyCode
         }
     }
 
-    /** 
-     * 画一条由两条连在一起构成的随机正弦函数曲线作干扰线(你可以改成更帅的曲线函数) 
-     *      
+    /**
+     * 画一条由两条连在一起构成的随机正弦函数曲线作干扰线(你可以改成更帅的曲线函数)
+     *
      *      高中的数学公式咋都忘了涅，写出来
      *      正弦型函数解析式：y=Asin(ωx+φ)+b
      *      各常数值对函数图像的影响：
@@ -122,14 +122,14 @@ class VerifyCode
                                         mt_rand(1,150));
 
         $px = $py = 0;
-        
+
         // 曲线前部分
         $A = mt_rand(1, $this->height/2);                  // 振幅
         $b = mt_rand(-$this->height/4, $this->height/4);   // Y轴方向偏移量
         $f = mt_rand(-$this->height/4, $this->height/4);   // X轴方向偏移量
         $T = mt_rand($this->height, $this->width*2);  // 周期
         $w = (2* M_PI)/$T;
-                        
+
         $px1 = 0;  // 曲线横坐标起始位置
         $px2 = mt_rand($this->width/2, $this->width * 0.8);  // 曲线横坐标结束位置
 
@@ -137,18 +137,18 @@ class VerifyCode
             if ($w!=0) {
                 $py = $A * sin($w*$px + $f)+ $b + $this->height/2;  // y = Asin(ωx+φ) + b
                 $i = (int) ($this->fontSize/5);
-                while ($i > 0) {    
-                    imagesetpixel($this->img, $px + $i , $py + $i, $fontcolor);  // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多               
+                while ($i > 0) {
+                    imagesetpixel($this->img, $px + $i , $py + $i, $fontcolor);  // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
                     $i--;
                 }
             }
         }
-        
+
         // 曲线后部分
-        $A = mt_rand(1, $this->height/2);                  // 振幅        
+        $A = mt_rand(1, $this->height/2);                  // 振幅
         $f = mt_rand(-$this->height/4, $this->height/4);   // X轴方向偏移量
         $T = mt_rand($this->height, $this->width*2);  // 周期
-        $w = (2* M_PI)/$T;      
+        $w = (2* M_PI)/$T;
         $b = $py - $A * sin($w*$px + $f) - $this->height/2;
         $px1 = $px2;
         $px2 = $this->width;
@@ -157,8 +157,8 @@ class VerifyCode
             if ($w!=0) {
                 $py = $A * sin($w*$px + $f)+ $b + $this->height/2;  // y = Asin(ωx+φ) + b
                 $i = (int) ($this->fontSize/5);
-                while ($i > 0) {            
-                    imagesetpixel($this->img, $px + $i, $py + $i, $fontcolor);    
+                while ($i > 0) {
+                    imagesetpixel($this->img, $px + $i, $py + $i, $fontcolor);
                     $i--;
                 }
             }
@@ -173,15 +173,15 @@ class VerifyCode
         $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
         for ($i = 0; $i < 20; $i++) {
             //杂点颜色
-            $noiseColor = imagecolorallocate($this->img, 
-                                            mt_rand(1,150), 
-                                            mt_rand(1,150), 
+            $noiseColor = imagecolorallocate($this->img,
+                                            mt_rand(1,150),
+                                            mt_rand(1,150),
                                             mt_rand(1,150));
             // 绘杂点
-            imagestring($this->img, 
-                        5, mt_rand(-10, $this->width), 
-                        mt_rand(-10, $this->height), 
-                        $codeSet[mt_rand(0, 29)], 
+            imagestring($this->img,
+                        5, mt_rand(-10, $this->width),
+                        mt_rand(-10, $this->height),
+                        $codeSet[mt_rand(0, 29)],
                         $noiseColor);
         }
     }
@@ -249,7 +249,7 @@ class VerifyCode
     public function doimg($key = 'verifycode', $expire = 600, $useCurve = false)
     {
         // 图片宽(px)
-        $this->width = $this->codelen*$this->fontSize + $this->codelen*$this->fontSize/2 + 10; 
+        $this->width = $this->codelen*$this->fontSize + $this->codelen*$this->fontSize/2 + 10;
         // 图片高(px)
         $this->height = $this->fontSize * 2;
 
@@ -266,7 +266,7 @@ class VerifyCode
         $this->outPut();
         $this->cleanup();
     }
-    
+
     /**
      * 获取验证码
      *

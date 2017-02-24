@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP 5.0 以上
- * 
+ *
  * @package         Wavephp
  * @author          许萍
  * @copyright       Copyright (c) 2016
@@ -24,7 +24,7 @@ class Pdomysql extends Db_Abstract
 {
     private     $errno;             // 错误信息
     private     $execNums = 0;      // 执行数量
-    
+
     public function __construct($config) {
         if (isset($config['slave'])) {
             $this->is_single = false;
@@ -77,7 +77,7 @@ class Pdomysql extends Db_Abstract
 
         return true;
     }
- 
+
     /**
      * 数据库执行语句
      *
@@ -87,7 +87,7 @@ class Pdomysql extends Db_Abstract
     protected function _query($sql, $conn, $is_rw)
     {
         $start_time = microtime(TRUE);
-        
+
         if ($is_rw) {
             $result = $conn->exec($sql);
             $this->execNums = $result;
@@ -99,8 +99,8 @@ class Pdomysql extends Db_Abstract
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
             if (isset(Wave::app()->config['write_sql_log']) && Wave::app()->config['write_sql_log']) {
-                $data = array(  'op'    => 'sql_log', 
-                                'time'  => time(), 
+                $data = array(  'op'    => 'sql_log',
+                                'time'  => time(),
                                 'sql'   => $sql,
                                 'execute_time'=>(microtime(TRUE) - $start_time));
                 $content = json_encode($data);
@@ -118,7 +118,7 @@ class Pdomysql extends Db_Abstract
      * @param string $table         表名
      * @param array  $array         数据数组
      *
-     * @return boolean 
+     * @return boolean
      *
      */
     protected function _insertdb($table, $array)
@@ -187,7 +187,7 @@ class Pdomysql extends Db_Abstract
      * @return array
      *
      */
-    protected function _getOne($sql) 
+    protected function _getOne($sql)
     {
         if ($this->dbquery($sql)) {
             return $this->dbquery($sql)->fetch(PDO::FETCH_ASSOC);
@@ -195,7 +195,7 @@ class Pdomysql extends Db_Abstract
             return array();
         }
     }
- 
+
     /**
      * 获得查询语句多条结果
      *
@@ -223,7 +223,7 @@ class Pdomysql extends Db_Abstract
     protected function _delete($table, $fields)
     {
         $sql = "DELETE FROM $table WHERE $fields";
-        
+
         return $this->dbquery($sql);
     }
 
@@ -280,7 +280,7 @@ class Pdomysql extends Db_Abstract
      * @return blooean
      *
      */
-    protected function _close($tag) 
+    protected function _close($tag)
     {
         return $this->config[$tag] = null;
     }
@@ -288,7 +288,7 @@ class Pdomysql extends Db_Abstract
     /**
      * 显示自定义错误
      */
-    protected function msg() 
+    protected function msg()
     {
         if ($this->errno && !empty(Wave::app()->config['crash_show_sql'])) {
             echo $this->getLastSql()."<br>";
