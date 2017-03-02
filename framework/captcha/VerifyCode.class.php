@@ -264,7 +264,7 @@ class VerifyCode
         // $this->waveImage();
         // $this->reduceImage();
         $this->outPut();
-        $this->cleanup();
+        // $this->cleanup();
     }
 
     /**
