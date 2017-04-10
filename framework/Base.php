@@ -45,7 +45,7 @@ class Base
      * @param array $config 配置数组
      * @param string $mode 模式
      */
-    public function init($config = null, $mode = null, $buff = array(), $params = array())
+    public function init($config = null, $mode = null, $buff = array())
     {
         if (!empty($config)) {
             if (!isset($config['debuger'])) {
@@ -54,21 +54,23 @@ class Base
             self::$config = $config;
         }
 
-        self::$projectName = !empty($config['projectName']) ? $config['projectName'] : 'protected';
+        self::$projectName = !empty($config['projectName'])
+                                ? $config['projectName'] : 'protected';
 
-        self::$modelName = !empty($config['modelName']) ? $config['modelName'] : 'protected';
+        self::$modelName = !empty($config['modelName'])
+                            ? $config['modelName'] : 'protected';
 
         self::$defaultControl = !empty($config['defaultController'])
             ? $config['defaultController'] : 'site';
 
-        $this->loadBase($mode, $buff, $params);
+        $this->loadBase($mode, $buff);
     }
 
     /**
      * 基础设置
      * @param string $mode 模式
      */
-    private function loadBase($mode = null, $buff = array(), $params = array())
+    private function loadBase($mode = null, $buff = array())
     {
         if ($mode === 'CLI') {
             self::$pathInfo = implode('/', $buff);
@@ -84,27 +86,24 @@ class Base
 
             self::$projectPath = $_SERVER['DOCUMENT_ROOT'].$scriptName.'/';
 
-            self::$hostInfo =
-                isset($_SERVER['HTTP_HOST'])
-                ? strtolower($_SERVER['HTTP_HOST']) : '';
+            self::$hostInfo = isset($_SERVER['HTTP_HOST'])
+                            ? $_SERVER['HTTP_HOST'] : '';
 
             if ($enterFile == 'index.php') {
                 $pathUrl = str_replace($scriptName, '', $_SERVER['REQUEST_URI']);
-                self::$pathInfo = str_replace($enterFile, '', $pathUrl);
+                self::$pathInfo = strtolower(str_replace($enterFile, '', $pathUrl));
                 self::$homeUrl = $scriptName.'/index.php/';
             } else {
-                self::$pathInfo =
-                    isset($_SERVER['PATH_INFO'])
-                    ? strtolower($_SERVER['PATH_INFO']) : '/'.self::$defaultControl.'/index';
+                self::$pathInfo = isset($_SERVER['PATH_INFO'])
+                                ? strtolower($_SERVER['PATH_INFO'])
+                                : '/'.self::$defaultControl.'/index';
 
-                self::$homeUrl =
-                    isset($_SERVER['SCRIPT_NAME'])
-                    ? strtolower($_SERVER['SCRIPT_NAME']).'/' : '/';
+                self::$homeUrl = isset($_SERVER['SCRIPT_NAME'])
+                                ? strtolower($_SERVER['SCRIPT_NAME']).'/' : '/';
             }
 
             self::$baseUrl = $scriptName;
         }
-
     }
 
     /**

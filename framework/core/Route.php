@@ -24,8 +24,6 @@ class Route
 {
     private $isDebuger          = false;    // 是否开启日志输出
     private $isSmarty           = false;    // 是否用Smarty模板
-    private $projectPath        = '';       // 项目路径
-    private $projectName        = '';       // 项目名称
     private $defaultControl     = '';       // 默认控制层
 
     public $className           = '';
@@ -43,8 +41,6 @@ class Route
         if (isset($app->config['debuger'])) {
             $this->isDebuger = $app->config['debuger'];
         }
-        $this->projectPath      = $app->projectPath;
-        $this->projectName      = $app->projectName;
         $this->pathInfo         = $app->request->pathInfo;
         $this->defaultControl   = $app->defaultControl;
     }
@@ -60,7 +56,7 @@ class Route
         $preg = '/(\~)|(\!)|(\@)|(\#)|(\$)|(\%)
                 |(\^)|(\*)|(\()|(\))|(\-)
                 |(\+)|(\[)|(\])|(\')|(\")|(\<)
-                |(\>)|(\?)|(\.)|(\|)/';
+                |(\>)|(\?)|(\.)|(\&)|(\|)/';
 
         return preg_replace($preg, '', $str);
     }
@@ -80,24 +76,20 @@ class Route
     {
         $callarray = array();
         $rpathInfo = $this->pathInfo;
+        $c = $this->defaultControl;
+        $f = 'actionIndex';
         if (!empty($rpathInfo) && $rpathInfo !== '/') {
             $pos = strpos($rpathInfo, '?');
             if ($pos !== false) {
                 $rpathInfo = substr($rpathInfo, 0, $pos);
             }
             $rpathInfo = trim($rpathInfo, '/');
-            if (empty($rpathInfo)) {
-                $c = ucfirst($this->defaultControl).'Controller';
-                $f = 'actionIndex';
-            } else {
+            if (!empty($rpathInfo)) {
                 $rpathInfo = $this->filterStr($rpathInfo);
                 $pathInfoArr = explode('/', $rpathInfo);
-                $c = ucfirst($pathInfoArr[0]).'Controller';
+                $c = $pathInfoArr[0];
                 if (!empty($pathInfoArr[1])) {
-                    $newPathArr = explode('&', $pathInfoArr[1]);
-                    $f = 'action'.ucfirst($newPathArr[0]);
-                } else {
-                    $f = 'actionIndex';
+                    $f = 'action'.ucfirst($pathInfoArr[1]);
                 }
                 if (count($pathInfoArr) > 2) {
                     array_shift($pathInfoArr);
@@ -105,34 +97,28 @@ class Route
                     $callarray = $pathInfoArr;
                 }
             }
-        } else {
-            $c = ucfirst($this->defaultControl).'Controller';
-            $f = 'actionIndex';
         }
-        $controller = $this->projectPath.$this->projectName.'/controllers/'.$c.'.php';
-        if (file_exists($controller)) {
-            $this->className = $c;
-            $this->actionName = $f;
-            // require $controller;
-            if (class_exists($c)) {
-                $cc = new $c;
-                if (method_exists($cc, $f)) {
-                    if (!empty($callarray)) {
-                        call_user_func_array(array($cc,$f), $callarray);
-                    } else {
-                        $cc->$f();
-                    }
-                    $cc->debuger();
-                    if ($this->isSmarty) {
-                        if (Wave::$mode !== 'CLI') {
-                            $cc->display();
-                        }
-                    }
+        $c = ucfirst($c);
+        $c .= 'Controller';
+
+        $this->className = $c;
+        $this->actionName = $f;
+        if (class_exists($c)) {
+            $cc = new $c;
+            if (method_exists($cc, $f)) {
+                if (!empty($callarray)) {
+                    call_user_func_array(array($cc,$f), $callarray);
                 } else {
-                   $this->error404();
+                    $cc->$f();
+                }
+                $cc->debuger();
+                if ($this->isSmarty) {
+                    if (Wave::$mode !== 'CLI') {
+                        $cc->display();
+                    }
                 }
             } else {
-                $this->error404();
+               $this->error404();
             }
         } else {
             $this->error404();
@@ -145,9 +131,8 @@ class Route
     private function error404()
     {
         $c = ucfirst($this->defaultControl).'Controller';
-        $controller = $this->projectPath.$this->projectName.'/controllers/'.$c.'.php';
         $f = 'actionError404';
-        if (file_exists($controller) && class_exists($c)) {
+        if (class_exists($c)) {
             $cc = new $c;
             if (method_exists($cc, $f)) {
                 $cc->$f();die;
