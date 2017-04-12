@@ -80,10 +80,15 @@ class View
      */
     private function getDefaultScript()
     {
+        $version = Wave::getClassVersion();
         $classname = Wave::getClassName();
         $actionname = Wave::getActionName();
+        if (!empty($version)) {
+            $classname = str_replace($version, '', $classname);
+            $version .= '/';
+        }
 
-        return $classname.'/'.$actionname;
+        return $version.$classname.'/'.$actionname;
     }
 
     public function display($resource_name = '',

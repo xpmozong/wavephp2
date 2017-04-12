@@ -26,6 +26,7 @@ class Route
     private $isSmarty           = false;    // 是否用Smarty模板
     private $defaultControl     = '';       // 默认控制层
 
+    public $version             = '';
     public $className           = '';
     public $actionName          = '';
 
@@ -87,19 +88,25 @@ class Route
             if (!empty($rpathInfo)) {
                 $rpathInfo = $this->filterStr($rpathInfo);
                 $pathInfoArr = explode('/', $rpathInfo);
-                $c = $pathInfoArr[0];
-                if (!empty($pathInfoArr[1])) {
-                    $f = 'action'.ucfirst($pathInfoArr[1]);
+                if (preg_match("/v\d+/i", $pathInfoArr[0])) {
+                    $this->version = $pathInfoArr[0];
+                    $index = 1;
+                }else {
+                    $index = 0;
                 }
-                if (count($pathInfoArr) > 2) {
-                    array_shift($pathInfoArr);
-                    array_shift($pathInfoArr);
+                $c = $pathInfoArr[$index];
+                if (!empty($pathInfoArr[$index + 1])) {
+                    $f = 'action'.ucfirst($pathInfoArr[$index + 1]);
+                }
+                if (count($pathInfoArr) > ($index + 2)) {
+                    for ($i = 0; $i < ($index + 2); $i++) { 
+                        array_shift($pathInfoArr);
+                    }
                     $callarray = $pathInfoArr;
                 }
             }
         }
-        $c = ucfirst($c);
-        $c .= 'Controller';
+        $c = ucfirst($this->version).ucfirst($c).'Controller';
 
         $this->className = $c;
         $this->actionName = $f;
@@ -140,6 +147,14 @@ class Route
         }
         echo '<h2>Error 404</h2>';
         echo 'Unable to resolve the request "'.$this->pathInfo.'".';
+    }
+
+    /**
+     * 获取控制器版本
+     */
+    public function getClassVersion()
+    {
+        return strtolower($this->version);
     }
 
     /**

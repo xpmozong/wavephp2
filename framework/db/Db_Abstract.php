@@ -53,9 +53,7 @@ abstract class Db_Abstract
      */
     public function selectCharsetAndDb($tag)
     {
-        // if (!$this->db_set_charset($this->conn[$tag], $this->config[$tag]['charset'])) {
-        //     die('Unable to set database connection charset:'.$this->config[$tag]['charset']);
-        // }
+        $this->db_set_charset($this->conn[$tag], $this->config[$tag]['charset']);
 
         if (!$this->db_select($tag)) {
             die('Cannot use database');

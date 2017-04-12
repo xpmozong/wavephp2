@@ -260,6 +260,14 @@ class Wave
     }
 
     /**
+     * 获取控制器版本
+     */
+    public static function getClassVersion()
+    {
+        return self::$Route->getClassVersion();
+    }
+
+    /**
      * 获取控制器名
      */
     public static function getClassName()
