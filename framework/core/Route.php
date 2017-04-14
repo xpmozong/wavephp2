@@ -88,12 +88,12 @@ class Route
             if (!empty($rpathInfo)) {
                 $rpathInfo = $this->filterStr($rpathInfo);
                 $pathInfoArr = explode('/', $rpathInfo);
-                if (preg_match("/v\d+/i", $pathInfoArr[0])) {
-                    $this->version = $pathInfoArr[0];
-                    $index = 1;
-                }else {
+                // if (preg_match("/v\d+/i", $pathInfoArr[0])) {
+                //     $this->version = $pathInfoArr[0];
+                //     $index = 1;
+                // } else {
                     $index = 0;
-                }
+                // }
                 $c = $pathInfoArr[$index];
                 if (!empty($pathInfoArr[$index + 1])) {
                     $f = 'action'.ucfirst($pathInfoArr[$index + 1]);
