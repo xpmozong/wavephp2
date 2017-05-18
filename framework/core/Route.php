@@ -111,21 +111,25 @@ class Route
         $this->className = $c;
         $this->actionName = $f;
         if (class_exists($c)) {
-            $cc = new $c;
-            if (method_exists($cc, $f)) {
-                if (!empty($callarray)) {
-                    call_user_func_array(array($cc,$f), $callarray);
-                } else {
-                    $cc->$f();
-                }
-                $cc->debuger();
-                if ($this->isSmarty) {
-                    if (Wave::$mode !== 'CLI') {
-                        $cc->display();
+            try {
+                $cc = new $c;
+                if (method_exists($cc, $f)) {
+                    if (!empty($callarray)) {
+                        call_user_func_array(array($cc, $f), $callarray);
+                    } else {
+                            $cc->$f();
                     }
+                    $cc->debuger();
+                    if ($this->isSmarty) {
+                        if (Wave::$mode !== 'CLI') {
+                            $cc->display();
+                        }
+                    }
+                } else {
+                   $this->error404();
                 }
-            } else {
-               $this->error404();
+            } catch (Exception $e) {
+                WaveCommon::exportResult($e->getCode(), $e->getMessage());
             }
         } else {
             $this->error404();

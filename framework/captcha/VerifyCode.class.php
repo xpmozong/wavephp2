@@ -255,7 +255,6 @@ class VerifyCode
 
         $this->createBg();
         $this->createCode();
-        Wave::app()->session->setState($key, $this->getCode(), $expire);
         // $this->writeNoise();
         if ($useCurve) {
             $this->_writeCurve();
