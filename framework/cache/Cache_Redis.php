@@ -135,6 +135,11 @@ class Cache_Redis implements Cache_Interface
         return $this->getRedis()->lpop($this->getPrefix().$key);
     }
 
+    public function lrem($key, $value, $count = 1)
+    {
+        return $this->getRedis()->lrem($this->getPrefix().$key, $value, $count);
+    }
+
     public function rpush($key, $value)
     {
         return $this->getRedis()->rpush($this->getPrefix().$key, $value);

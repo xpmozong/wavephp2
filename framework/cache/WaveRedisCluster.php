@@ -239,6 +239,14 @@ class WaveRedisCluster
     }
 
     /**
+     * 删除列表的某个值
+     */
+    public function lrem($key, $value, $count)
+    {
+        return $this->getRedis()->lRem($key, $value, $count);
+    }
+
+    /**
      * 插入一个值到列表中,如果列表不存在,新建一个列表
      *
      * @param string $key
