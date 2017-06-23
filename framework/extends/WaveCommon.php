@@ -303,6 +303,28 @@ class WaveCommon
     }
 
     /**
+     * 输出结果
+     * @param bool $code        错误码
+     * @param string $msg       信息
+     */
+    public static function exportResult2($code, $msg, $data = array(), $callback = null)
+    {
+        $json_array = array();
+        $json_array['code'] = $code;
+        $json_array['msg'] = $msg;
+        $json_array['data'] = empty($data) ? null : $data;
+        if (!empty($callback)) {
+            echo $callback.'('.json_encode($json_array).')';die;
+        } else {
+            if (Wave::$mode === 'CLI') {
+                Wave::setBody(json_encode($json_array));
+            } else {
+                echo json_encode($json_array);die;
+            }
+        }
+    }
+
+    /**
      * 循环创建目录
      *
      * @param string $dir 文件夹

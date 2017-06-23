@@ -171,7 +171,7 @@ class VerifyCode
      */
     private function writeNoise() {
         $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             //杂点颜色
             $noiseColor = imagecolorallocate($this->img,
                                             mt_rand(1,150),
@@ -255,9 +255,10 @@ class VerifyCode
 
         $this->createBg();
         $this->createCode();
-        // $this->writeNoise();
+        $this->writeNoise();
         if ($useCurve) {
             $this->_writeCurve();
+            // $this->_writeCurve();
         }
         $this->createFont();
         // $this->waveImage();

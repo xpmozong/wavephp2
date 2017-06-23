@@ -37,10 +37,6 @@ class Wave
     public static $cliParams    = array();
     public static $output       = null; // 输出
     public static $Route;
-    // public static $cookie;
-    // public static $session;
-    // public static $redis;
-    // public static $memcache;
 
     /**
      * 初始化
@@ -155,77 +151,6 @@ class Wave
                 self::$app->cookie = new CookieModule();
             }
         }
-    }
-
-    /**
-     * memcache 使用
-     */
-    public static function useMemcache()
-    {
-        if (self::$memcache) {
-            return self::$memcache;
-        }
-        if (extension_loaded('memcached')){
-            self::$memcache = new Cache_Memcached();
-        } else {
-            self::$memcache = new Cache_Memcache();
-        }
-
-        if (empty(self::$memcache->cacheName)) {
-            exit('memcache error');
-        }
-
-        return self::$memcache;
-    }
-
-    /**
-     * redis 使用
-     */
-    public static function useRedis()
-    {
-        if (self::$redis) {
-            return self::$redis;
-        }
-        self::$redis = new Cache_Redis();
-        if (empty(self::$redis->cacheName)) {
-            exit('redis error');
-        }
-
-        return self::$redis;
-    }
-
-    /**
-     * SESSION 使用
-     */
-    public static function useSession()
-    {
-        if (self::$session) {
-            return self::$session;
-        }
-        $config = Wave::app()->config['session'];
-        $class = 'Session_'.ucfirst($config['driver']);
-        self::$session = new $class($config);
-        session_set_save_handler(array(&self::$session,'open'),
-                     array(&self::$session,'close'),
-                     array(&self::$session,'read'),
-                     array(&self::$session,'write'),
-                     array(&self::$session,'destroy'),
-                     array(&self::$session,'gc'));
-
-        return self::$session;
-    }
-
-    /**
-     * COOKIE 使用
-     */
-    public function useCookie()
-    {
-        if (self::$cookie) {
-            return self::$cookie;
-        }
-        self::$cookie = new CookieModule();
-
-        return self::$cookie;
     }
 
     /**
