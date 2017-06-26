@@ -129,7 +129,7 @@ class Route
                    $this->error404();
                 }
             } catch (Exception $e) {
-                WaveCommon::exportResult($e->getCode(), $e->getMessage());
+                WaveCommon::exportResult((int)$e->getCode(), $e->getMessage());
             }
         } else {
             $this->error404();
