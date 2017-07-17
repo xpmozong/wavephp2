@@ -87,12 +87,12 @@ class Pdomysql extends Db_Abstract
     protected function _query($sql, $conn, $is_rw)
     {
         $start_time = microtime(TRUE);
-
+        $stmt = $conn->prepare($sql);
+        $exes = $stmt->execute();
         if ($is_rw) {
-            $result = $conn->exec($sql);
-            $this->execNums = $result;
+            $result = $stmt->rowCount();
         } else {
-            $result = $conn->query($sql);
+            $result = $stmt;
         }
         if ($result) {
             if (Wave::app()->config['debuger']) {
