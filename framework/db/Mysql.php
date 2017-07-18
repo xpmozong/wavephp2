@@ -270,7 +270,7 @@ class Mysql extends Db_Abstract
      */
     protected function _close($conn)
     {
-        return mysql_close($conn);
+        return @mysql_close($conn);
     }
 
     /**

@@ -23,6 +23,7 @@
 class Wmysqli extends Db_Abstract
 {
     private     $errno;             // 错误信息
+    private     $execNums = 0;      // 执行数量
 
     public function __construct($config) {
         if (isset($config['slave'])) {
@@ -70,9 +71,16 @@ class Wmysqli extends Db_Abstract
     protected function _query($sql, $conn, $is_rw = false)
     {
         $start_time = microtime(TRUE);
-
-        $result = $conn->query($sql);
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute();
         if ($result) {
+            if ($is_rw) {
+                $this->execNums = $stmt->affected_rows;
+                $stmt->close();
+            } else {
+                $result = $stmt;
+            }
+
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
@@ -159,7 +167,7 @@ class Wmysqli extends Db_Abstract
      */
     protected function _affectedRows($conn)
     {
-        return $conn->affected_rows;
+        return $this->execNums;
     }
 
     /**
@@ -170,16 +178,23 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getOne($sql)
     {
-        $arr = array();
-        $result = $this->dbquery($sql);
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $arr = $row;
-            }
-            $result->free();
+        $result = array();
+        $sql .= ' limit 0,1';
+        $stmt = $this->dbquery($sql);
+        $meta = $stmt->result_metadata();
+        while ($field = $meta->fetch_field()) {
+            $params[] = &$row[$field->name];
         }
+        call_user_func_array(array($stmt, 'bind_result'), $params);
+        while ($stmt->fetch()) {
+            foreach($row as $key => $val) {
+                $c[$key] = $val;
+            }
+            $result = $c;
+        }
+        $stmt->close();
 
-        return $arr;
+        return $result;
     }
 
     /**
@@ -190,16 +205,22 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getAll($sql)
     {
-        $arr = array();
-        $result = $this->dbquery($sql);
-        if ($result) {
-            while($row = $result->fetch_assoc()) {
-                $arr[] = $row;
-            }
-            $result->free();
+        $result = array();
+        $stmt = $this->dbquery($sql);
+        $meta = $stmt->result_metadata();
+        while ($field = $meta->fetch_field()) {
+            $params[] = &$row[$field->name];
         }
+        call_user_func_array(array($stmt, 'bind_result'), $params);
+        while ($stmt->fetch()) {
+            foreach($row as $key => $val) {
+                $c[$key] = $val;
+            }
+            $result[] = $c;
+        }
+        $stmt->close();
 
-        return $arr;
+        return $result;
     }
 
     /**
@@ -273,7 +294,7 @@ class Wmysqli extends Db_Abstract
      */
     protected function _close($conn)
     {
-        return $conn->close();
+        return @$conn->close();
     }
 
     /**

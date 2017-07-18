@@ -1038,5 +1038,14 @@ class Model
         return $this->getDb()->truncate($table);
     }
 
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
+        // echo '关闭数据库<br>';
+        $this->closedb();
+    }
+
 }
 ?>

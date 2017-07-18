@@ -88,13 +88,14 @@ class Pdomysql extends Db_Abstract
     {
         $start_time = microtime(TRUE);
         $stmt = $conn->prepare($sql);
-        $exes = $stmt->execute();
-        if ($is_rw) {
-            $result = $stmt->rowCount();
-        } else {
-            $result = $stmt;
-        }
+        $result = $stmt->execute();
         if ($result) {
+            if ($is_rw) {
+                $this->execNums = $stmt->rowCount();
+            } else {
+                $result = $stmt;
+            }
+
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
@@ -189,8 +190,9 @@ class Pdomysql extends Db_Abstract
      */
     protected function _getOne($sql)
     {
-        if ($this->dbquery($sql)) {
-            return $this->dbquery($sql)->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->dbquery($sql);
+        if ($stmt) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
             return array();
         }
@@ -204,8 +206,9 @@ class Pdomysql extends Db_Abstract
      */
     protected function _getAll($sql)
     {
-        if ($this->dbquery($sql)) {
-            return $this->dbquery($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = $this->dbquery($sql);
+        if ($stmt) {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             return array();
         }
@@ -282,7 +285,7 @@ class Pdomysql extends Db_Abstract
      */
     protected function _close($tag)
     {
-        return $this->config[$tag] = null;
+        return @$this->config[$tag] = null;
     }
 
     /**
