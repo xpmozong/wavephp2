@@ -1044,7 +1044,7 @@ class Model
     public function __destruct()
     {
         // echo '关闭数据库<br>';
-        $this->closedb();
+        // $this->closedb();
     }
 
 }
