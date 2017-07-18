@@ -178,7 +178,7 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getOne($sql)
     {
-        $result = array();
+        $result = $row = $c = array();
         $sql .= ' limit 0,1';
         $stmt = $this->dbquery($sql);
         $meta = $stmt->result_metadata();
@@ -205,7 +205,7 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getAll($sql)
     {
-        $result = array();
+        $result = $row = $c = array();
         $stmt = $this->dbquery($sql);
         $meta = $stmt->result_metadata();
         while ($field = $meta->fetch_field()) {
