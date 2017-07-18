@@ -86,10 +86,11 @@ class Pdomysql extends Db_Abstract
      */
     protected function _query($sql, $conn, $is_rw)
     {
+        $result = false;
         $start_time = microtime(TRUE);
         $stmt = $conn->prepare($sql);
-        $result = $stmt->execute();
-        if ($result) {
+        if ($stmt) {
+            $result = $stmt->execute();
             if ($is_rw) {
                 $this->execNums = $stmt->rowCount();
             } else {

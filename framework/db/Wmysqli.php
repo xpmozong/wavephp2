@@ -23,7 +23,6 @@
 class Wmysqli extends Db_Abstract
 {
     private     $errno;             // 错误信息
-    private     $execNums = 0;      // 执行数量
 
     public function __construct($config) {
         if (isset($config['slave'])) {
@@ -71,16 +70,9 @@ class Wmysqli extends Db_Abstract
     protected function _query($sql, $conn, $is_rw = false)
     {
         $start_time = microtime(TRUE);
-        $stmt = $conn->prepare($sql);
-        $result = $stmt->execute();
-        if ($result) {
-            if ($is_rw) {
-                $this->execNums = $stmt->affected_rows;
-                $stmt->close();
-            } else {
-                $result = $stmt;
-            }
 
+        $result = $conn->query($sql);
+        if ($result) {
             if (Wave::app()->config['debuger']) {
                 Wave::debug_log('database', (microtime(TRUE) - $start_time), $sql);
             }
@@ -167,7 +159,7 @@ class Wmysqli extends Db_Abstract
      */
     protected function _affectedRows($conn)
     {
-        return $this->execNums;
+        return $conn->affected_rows;
     }
 
     /**
@@ -178,16 +170,16 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getOne($sql)
     {
-        $result = array();
-        $sql .= ' limit 0,1';
-        $stmt = $this->dbquery($sql);
-        $rs = $stmt->get_result();
-        while ($row = $rs->fetch_array(MYSQLI_ASSOC)) {
-            $result = $row;
+        $arr = array();
+        $result = $this->dbquery($sql);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $arr = $row;
+            }
+            $result->free();
         }
-        $stmt->close();
 
-        return $result;
+        return $arr;
     }
 
     /**
@@ -198,15 +190,16 @@ class Wmysqli extends Db_Abstract
      */
     protected function _getAll($sql)
     {
-        $result = array();
-        $stmt = $this->dbquery($sql);
-        $rs = $stmt->get_result();
-        while ($row = $rs->fetch_array(MYSQLI_ASSOC)) {
-            $result[] = $row;
+        $arr = array();
+        $result = $this->dbquery($sql);
+        if ($result) {
+            while($row = $result->fetch_assoc()) {
+                $arr[] = $row;
+            }
+            $result->free();
         }
-        $stmt->close();
 
-        return $result;
+        return $arr;
     }
 
     /**
