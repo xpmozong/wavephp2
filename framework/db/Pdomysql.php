@@ -53,7 +53,7 @@ class Pdomysql extends Db_Abstract
             PDO::ATTR_ERRMODE                    => $error,
             PDO::MYSQL_ATTR_INIT_COMMAND         => 'SET NAMES '.$this->config[$tag]['charset'],
         );
-        try{
+        try {
             return new PDO($dbh, $username, $password, $driverOptions);
         } catch (PDOException $e) {
             return null;
