@@ -213,7 +213,7 @@ class Model
     {
         if ($tableName) {
             $this->_from = $tableName;
-        }else {
+        } else {
             $this->_from = $this->_tableName;
         }
 
@@ -358,7 +358,7 @@ class Model
                 }
                 if (!empty($type2)) {
                     $_having[] = $k.' '.$v;
-                }else {
+                } else {
                     $this->_having[] = $prefix.$k.' '.$v;
                 }
             }
@@ -434,9 +434,9 @@ class Model
                 $arr = array();
                 if ($like == 'left') {
                     $keyword = "'%{$v}'";
-                }else if ($like == 'right') {
+                } else if ($like == 'right') {
                     $keyword = "'{$v}%'";
-                }else {
+                } else {
                     $keyword = "'%{$v}%'";
                 }
                 $arr[] =  $k . $not.' LIKE '.$keyword;
@@ -604,7 +604,7 @@ class Model
         $sql .= ' FROM ';
         if (empty($this->_from)) {
             $sql .= $this->_tableName;
-        }else {
+        } else {
             $sql .= $this->_from;
         }
         $sql .= ' ';
@@ -742,7 +742,7 @@ class Model
         $sql = '';
         if (count($this->_select)) {
             $sql = $this->where($where)->compileSelect();
-        }else {
+        } else {
             $sql = $this->select($field)->where($where)->compileSelect();
         }
         $rs = $this->getDb()->getAll($sql);
@@ -794,7 +794,7 @@ class Model
         $sql = '';
         if (count($this->_select)) {
             $sql = $this->where($where)->compileSelect();
-        }else {
+        } else {
             $sql = $this->select($field)->where($where)->compileSelect();
         }
         $rs = $this->getDb()->getOne($sql);
@@ -831,7 +831,7 @@ class Model
     {
         if (empty($this->_from)) {
             return $this->_tableName;
-        }else {
+        } else {
             return $this->_from;
         }
     }
@@ -856,7 +856,7 @@ class Model
         $this->resetSelect();
         if ($res) {
             return $this->getDb()->insertId();
-        }else {
+        } else {
             return false;
         }
     }

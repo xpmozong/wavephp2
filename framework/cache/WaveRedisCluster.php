@@ -67,7 +67,7 @@ class WaveRedisCluster
             if ($ret && $db) {
                 $this->_linkHandle['master']->select($db);
             }
-        }else {
+        } else {
             // 多个 Slave 连接
             $this->_linkHandle['slave'][$this->_sn] = new Redis();
             $ret = $this->_linkHandle['slave'][$this->_sn]
