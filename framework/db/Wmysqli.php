@@ -68,7 +68,7 @@ class Wmysqli extends Db_Abstract
      * @return blooean
      *
      */
-    protected function _query($sql, $conn, $is_rw = false)
+    protected function _query($sql, $conn, $is_rw = false, $isTranscationStart)
     {
         $result = false;
         $start_time = microtime(TRUE);
@@ -94,10 +94,14 @@ class Wmysqli extends Db_Abstract
                 Wave::writeCache($file, $content."\n", 'a+');
             }
         } else {
+            if ($isTranscationStart) {
+                $conn->rollback();
+            }
+
             // 有错误发生
             $this->errno = $conn->error;
             // 强制报错并且die
-            $this->msg();
+            $this->msg($conn, $isTranscationStart);
         }
 
         return $result;
@@ -112,7 +116,7 @@ class Wmysqli extends Db_Abstract
      * @return boolean
      *
      */
-    protected function _insertdb($table, $array)
+    protected function _insertdb($table, $array, $isTranscationStart)
     {
         $tbcolumn = $tbvalue = '';
         foreach ($array  as $key=>$value) {
@@ -123,7 +127,7 @@ class Wmysqli extends Db_Abstract
         $tbcolumn = "(".trim($tbcolumn,',').")";
         $tbvalue = "(".trim($tbvalue,',').")";
         $sql = "INSERT INTO `".$table."` ".$tbcolumn." VALUES ".$tbvalue;
-        return $this->dbquery($sql);
+        return $this->dbquery($sql, $isTranscationStart);
     }
 
     /**
@@ -147,7 +151,7 @@ class Wmysqli extends Db_Abstract
      * @return boolean
      *
      */
-    protected function _updatedb($table, $array, $conditions)
+    protected function _updatedb($table, $array, $conditions, $isTranscationStart)
     {
         $update = array();
         foreach ($array as $key => $value) {
@@ -156,7 +160,7 @@ class Wmysqli extends Db_Abstract
         }
         $update = implode(",", $update);
         $sql = 'UPDATE `'.$table.'` SET '.$update.' WHERE '.$conditions;
-        return $this->dbquery($sql);
+        return $this->dbquery($sql, $isTranscationStart);
     }
 
     /**
@@ -197,10 +201,10 @@ class Wmysqli extends Db_Abstract
      * @return array
      *
      */
-    protected function _getOne($sql)
+    protected function _getOne($sql, $isTranscationStart)
     {
         $arr = array();
-        $stmt = $this->dbquery($sql);
+        $stmt = $this->dbquery($sql, $isTranscationStart);
         if ($stmt) {
             $stmt->store_result();
             while ($assoc_array = $this->fetchAssocStatement($stmt)) {
@@ -218,10 +222,10 @@ class Wmysqli extends Db_Abstract
      * @return array
      *
      */
-    protected function _getAll($sql)
+    protected function _getAll($sql, $isTranscationStart)
     {
         $arr = array();
-        $stmt = $this->dbquery($sql);
+        $stmt = $this->dbquery($sql, $isTranscationStart);
         if ($stmt) {
             $stmt->store_result();
             while ($assoc_array = $this->fetchAssocStatement($stmt)) {
@@ -242,11 +246,30 @@ class Wmysqli extends Db_Abstract
      * @return boolean
      *
      */
-    protected function _delete($table, $fields)
+    protected function _delete($table, $fields, $isTranscationStart)
     {
         $sql = "DELETE FROM $table WHERE $fields";
 
-        return $this->dbquery($sql);
+        return $this->dbquery($sql, $isTranscationStart);
+    }
+
+    /**
+     * 事务是否自动提交
+     */
+    protected function _setAutocmit($conn, $autocmit)
+    {
+        return $conn->autocommit($autocmit);
+    }
+
+    /**
+     * 事务提交
+     */
+    public function _transcationCommit($conn)
+    {
+        $rs = $conn->commit();
+        $conn->autocommit(true);
+        
+        return $rs;
     }
 
     /**

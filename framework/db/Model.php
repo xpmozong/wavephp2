@@ -40,6 +40,7 @@ class Model
     protected $_order               = array();
     protected $_tableName           = '';
     protected $_having              = array();
+    public $isTranscationStart      = false;
 
     /**
      * 构造函数
@@ -714,7 +715,7 @@ class Model
      */
     public function sqlQuery($sql)
     {
-        return $this->getDb()->dbquery($sql);
+        return $this->getDb()->dbquery($sql, $this->isTranscationStart);
     }
 
     /**
@@ -745,7 +746,7 @@ class Model
         } else {
             $sql = $this->select($field)->where($where)->compileSelect();
         }
-        $rs = $this->getDb()->getAll($sql);
+        $rs = $this->getDb()->getAll($sql, $this->isTranscationStart);
         $this->resetSelect();
 
         if (!empty($cache_key) && is_object($this->cache)) {
@@ -766,7 +767,7 @@ class Model
      */
     public function queryAll($sql)
     {
-        return $this->getDb()->getAll($sql);
+        return $this->getDb()->getAll($sql, $this->isTranscationStart);
     }
 
     /**
@@ -797,7 +798,7 @@ class Model
         } else {
             $sql = $this->select($field)->where($where)->compileSelect();
         }
-        $rs = $this->getDb()->getOne($sql);
+        $rs = $this->getDb()->getOne($sql, $this->isTranscationStart);
         $this->resetSelect();
 
         if (!empty($cache_key) && is_object($this->cache)) {
@@ -818,7 +819,7 @@ class Model
      */
     public function queryOne($sql)
     {
-        return $this->getDb()->getOne($sql);
+        return $this->getDb()->getOne($sql, $this->isTranscationStart);
     }
 
     /**
@@ -852,7 +853,7 @@ class Model
         }
 
         $tableName = $this->getTableName();
-        $res = $this->getDb()->insertdb($tableName, $data);
+        $res = $this->getDb()->insertdb($tableName, $data, $this->isTranscationStart);
         $this->resetSelect();
         if ($res) {
             return $this->getDb()->insertId();
@@ -882,7 +883,7 @@ class Model
         $this->where($where);
         $conditions = implode(' ', $this->_where);
 
-        $res = $this->getDb()->updatedb($tableName, $data, $conditions);
+        $res = $this->getDb()->updatedb($tableName, $data, $conditions, $this->isTranscationStart);
         $num = 0;
         if ($res) {
             $num = $this->getAffectedRows();
@@ -911,7 +912,7 @@ class Model
         $this->where($where);
         $conditions = implode(' ', $this->_where);
 
-        $res = $this->getDb()->delete($tableName, $conditions);
+        $res = $this->getDb()->delete($tableName, $conditions, $this->isTranscationStart);
         $num = 0;
         if ($res) {
             $num = $this->getAffectedRows();
@@ -995,6 +996,24 @@ class Model
         }
 
         return $res;
+    }
+
+    /**
+     * 开启事务
+     */
+    public function openTranscation($autocmit = true)
+    {
+        $this->isTranscationStart = true;
+        return $this->getDb()->setAutocmit($autocmit);
+    }
+
+    /**
+     * 关闭事务
+     */
+    public function closeTranscation()
+    {
+        $this->isTranscationStart = false;
+        return $this->getDb()->transcationCommit();
     }
 
     /**

@@ -61,21 +61,39 @@ abstract class Db_Abstract
     }
 
     /**
+     * 事务是否自动提交
+     */
+    public function setAutocmit($autocmit)
+    {
+        $this->init('master');
+        return $this->_setAutocmit($this->conn['master'], $autocmit);
+    }
+
+    /**
+     * 事务提交
+     */
+    public function transcationCommit()
+    {
+        $this->init('master');
+        return $this->_transcationCommit($this->conn['master']);
+    }
+
+    /**
      * 数据库执行语句
      *
      * @return blooean
      *
      */
-    public function dbquery($sql)
+    public function dbquery($sql, $isTranscationStart)
     {
         $this->lastSql = $sql;
         $is_rw = $this->is_write($sql);
-        if ($this->is_single || $is_rw) {
+        if ($this->is_single || $is_rw || $isTranscationStart) {
             $this->init('master');
-            return $this->_query($sql, $this->conn['master'], $is_rw);
+            return $this->_query($sql, $this->conn['master'], $is_rw, $isTranscationStart);
         } else {
             $this->init('slave');
-            return $this->_query($sql, $this->conn['slave'], $is_rw);
+            return $this->_query($sql, $this->conn['slave'], $is_rw, $isTranscationStart);
         }
     }
 
@@ -114,9 +132,9 @@ abstract class Db_Abstract
      * @return boolean
      *
      */
-    public function insertdb($table, $array)
+    public function insertdb($table, $array, $isTranscationStart)
     {
-        return $this->_insertdb($table, $array);
+        return $this->_insertdb($table, $array, $isTranscationStart);
     }
 
     /**
@@ -140,9 +158,9 @@ abstract class Db_Abstract
      * @return boolean
      *
      */
-    public function updatedb($table, $array, $conditions)
+    public function updatedb($table, $array, $conditions, $isTranscationStart)
     {
-        return $this->_updatedb($table, $array, $conditions);
+        return $this->_updatedb($table, $array, $conditions, $isTranscationStart);
     }
 
     /**
@@ -161,9 +179,9 @@ abstract class Db_Abstract
      * @return array
      *
      */
-    public function getOne($sql)
+    public function getOne($sql, $isTranscationStart)
     {
-        return $this->_getOne($sql);
+        return $this->_getOne($sql, $isTranscationStart);
     }
 
     /**
@@ -172,9 +190,9 @@ abstract class Db_Abstract
      * @return array
      *
      */
-    public function getAll($sql)
+    public function getAll($sql, $isTranscationStart)
     {
-        return $this->_getAll($sql);
+        return $this->_getAll($sql, $isTranscationStart);
     }
 
     /**
@@ -186,9 +204,9 @@ abstract class Db_Abstract
      * @return boolean
      *
      */
-    public function delete($table, $fields)
+    public function delete($table, $fields, $isTranscationStart)
     {
-        return $this->_delete($table, $fields);
+        return $this->_delete($table, $fields, $isTranscationStart);
     }
 
     /**
