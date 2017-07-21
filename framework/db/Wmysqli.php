@@ -101,7 +101,7 @@ class Wmysqli extends Db_Abstract
             // 有错误发生
             $this->errno = $conn->error;
             // 强制报错并且die
-            $this->msg($conn, $isTranscationStart);
+            $this->msg();
         }
 
         return $result;
