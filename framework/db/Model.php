@@ -985,7 +985,7 @@ class Model
         }
 
         $sql = $this->count($field)->where($where)->compileSelect();
-        $arr = $this->getDb()->getOne($sql);
+        $arr = $this->getDb()->getOne($sql, $this->isTranscationStart);
         $res = 0;
         if (!empty($arr)) {
             $res = $arr['count'];
