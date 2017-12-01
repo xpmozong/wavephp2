@@ -88,12 +88,7 @@ class Route
             if (!empty($rpathInfo)) {
                 $rpathInfo = $this->filterStr($rpathInfo);
                 $pathInfoArr = explode('/', $rpathInfo);
-                // if (preg_match("/v\d+/i", $pathInfoArr[0])) {
-                //     $this->version = $pathInfoArr[0];
-                //     $index = 1;
-                // } else {
-                    $index = 0;
-                // }
+                $index = 0;
                 $c = $pathInfoArr[$index];
                 if (!empty($pathInfoArr[$index + 1])) {
                     $f = 'action'.ucfirst($pathInfoArr[$index + 1]);
@@ -115,9 +110,10 @@ class Route
                 $cc = new $c;
                 if (method_exists($cc, $f)) {
                     if (!empty($callarray)) {
-                        call_user_func_array(array($cc, $f), $callarray);
+                        // call_user_func_array(array($cc, $f), $callarray);
+                        $cc->$f(...$callarray);
                     } else {
-                            $cc->$f();
+                        $cc->$f();
                     }
                     $cc->debuger();
                     if ($this->isSmarty) {
