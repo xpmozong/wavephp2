@@ -86,8 +86,9 @@ class Base
 
             self::$projectPath = $_SERVER['DOCUMENT_ROOT'].$scriptName.'/';
 
+            $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
             self::$hostInfo = isset($_SERVER['HTTP_HOST'])
-                            ? $_SERVER['HTTP_HOST'] : '';
+                            ? $http_type.$_SERVER['HTTP_HOST'] : '';
 
             if ($enterFile == 'index.php') {
                 $pathUrl = str_replace($scriptName, '', $_SERVER['REQUEST_URI']);
