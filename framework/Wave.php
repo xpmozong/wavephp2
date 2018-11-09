@@ -129,12 +129,14 @@ class Wave
                 $config = Wave::app()->config['session'];
                 $class = 'Session_'.ucfirst($config['driver']);
                 $session = new $class($config);
-                session_set_save_handler(array(&$session,'open'),
-                             array(&$session,'close'),
-                             array(&$session,'read'),
-                             array(&$session,'write'),
-                             array(&$session,'destroy'),
-                             array(&$session,'gc'));
+                // session_set_save_handler(array(&$session,'open'),
+                //              array(&$session,'close'),
+                //              array(&$session,'read'),
+                //              array(&$session,'write'),
+                //              array(&$session,'destroy'),
+                //              array(&$session,'gc'));
+                session_set_save_handler($session);
+                session_start();
 
                 self::$app->session = $session;
             }

@@ -1,5 +1,7 @@
 wavephp2.0 PHP框架 2.0版本
 
+PHP >= 5.6
+
 去掉验证码字体所占空间，框架大小为675KB。
 
 composer.json 配置

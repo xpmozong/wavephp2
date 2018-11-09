@@ -21,7 +21,7 @@
  *
  */
 
-class Session_Memcache
+class Session_Memcache implements SessionHandlerInterface
 {
     protected $lifeTime     = 86400;    // 生存周期
     protected $sess_id;
@@ -53,9 +53,9 @@ class Session_Memcache
      */
     public function setState($key, $val, $expire = 0)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        // if (!isset($_SESSION)) {
+        //     session_start();
+        // }
         if ($expire > 0) {
             $_SESSION[$this->sess_id.$key.'_expire'] = time() + $expire;
         }
@@ -73,9 +73,9 @@ class Session_Memcache
      */
     public function getState($key)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        // if (!isset($_SESSION)) {
+        //     session_start();
+        // }
 
         $txt = '';
         if (isset($_SESSION[$this->sess_id.$key])) {
@@ -101,13 +101,13 @@ class Session_Memcache
      */
     public function logout($key)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        // if (!isset($_SESSION)) {
+        //     session_start();
+        // }
         $_SESSION[$this->sess_id.$key] = '';
         unset($_SESSION[$this->sess_id.$key]);
 
-        session_destroy();
+        // session_destroy();
     }
 
     function open($savePath, $sessName)

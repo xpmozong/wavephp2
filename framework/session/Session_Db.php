@@ -21,7 +21,7 @@
  *
  */
 
-class Session_Db extends Model
+class Session_Db extends Model implements SessionHandlerInterface
 {
     protected $lifeTime     = 86400;    // 生存周期
     protected $sess_id;
@@ -46,9 +46,9 @@ class Session_Db extends Model
      */
     public function setState($key, $val, $expire = 0)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        // if (!isset($_SESSION)) {
+        //     session_start();
+        // }
         if ($expire > 0) {
             $_SESSION[$this->sess_id.$key.'_expire'] = time() + $expire;
         }
@@ -66,9 +66,9 @@ class Session_Db extends Model
      */
     public function getState($key)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        // if (!isset($_SESSION)) {
+        //     session_start();
+        // }
 
         $txt = '';
         if (isset($_SESSION[$this->sess_id.$key])) {
@@ -94,13 +94,13 @@ class Session_Db extends Model
      */
     public function logout($key)
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
+        // if (!isset($_SESSION)) {
+        //     session_start();
+        // }
         $_SESSION[$this->sess_id.$key] = '';
         unset($_SESSION[$this->sess_id.$key]);
 
-        session_destroy();
+        // session_destroy();
     }
 
     function open($savePath, $sessName)
@@ -153,14 +153,16 @@ class Session_Db extends Model
 
             $data = array('session_expires' =>$newExp,
                             'session_data'  =>$sessData);
-            return $this->update($data, $where);
+            $this->update($data, $where);
+            return true;
 
         } else {
             $data = array('session_id'=>$sessID,
                      'session_expires'=>$newExp,
                         'session_data'=>$sessData);
 
-            return $this->insert($data);
+            $this->insert($data);
+            return true;
         }
    }
 
@@ -168,14 +170,18 @@ class Session_Db extends Model
     {
         // delete session-data
         $where = array('session_id'=>$sessID);
-        return $this->delete($where);
+        $this->delete($where);
+
+        return true;
     }
 
     function gc($sessMaxLifeTime)
     {
         $where = array('session_expires<'=>time());
         // delete old sessions
-        return $this->delete($where);
+        $this->delete($where);
+
+        return true;
     }
 }
 ?>
